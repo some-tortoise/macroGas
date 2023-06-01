@@ -26,10 +26,10 @@ download_csv_files <- function(){
     drive_download(currentCSV, overwrite = TRUE, type = 'csv') # overwrite = TRUE tells us to overwrite local copies of the files. This is extremely inefficient, but does not work if I don't do it so......
     foo <- read_csv(currentCSV, skip = 1)
     data_list[[x]] <- foo
-    data_list[[x]] <- as.data.frame(data_list[[x]])
+    print(data_list[[x]])
   }
-  
-  return(as.data.frame(data_list))
+  data_list <- lapply(data_list, as.data.frame)
+  return(data_list)
 }
 
 clean_csv_files <- function(df){
@@ -40,8 +40,8 @@ clean_csv_files <- function(df){
     df |>
     select(-c("V1")) |>
     rename(Date_Time = V2, Low_Range = V3, Full_Range = V4, Temp_C = V5) |>
-    slice(-1) |>
-    separate(Date_Time, into = c("Date", "Time"), sep = " ")
+    slice(-1) #|>
+    #separate(Date_Time, into = c("Date", "Time"), sep = " ")
   
   
   out <- out |>
@@ -50,7 +50,8 @@ clean_csv_files <- function(df){
     mutate(Temp_C = as.numeric(Temp_C))
   
   
-  out$Date <-  as.POSIXct(out$Date, format = "%m/%d/%y", tz = "UTC" )
+  #out$Date_Time <-  as.POSIXct(out$Date_Time, format = "%m/%d/%y %H:%M:%S", tz = "UTC" )
+  out$Date_Time <- mdy_hms(out$Date_Time, tz='GMT')
   return(out)
 }
 
@@ -63,7 +64,9 @@ for (x in seq(1:num_files)){
   clean_data_list[[x]] <- clean_csv_files(data_list[[x]])
 }
 
+view(clean_data_list[[1]])
+
 #FOR TESTING
-ggplot(clean_data_list[[1]][clean_data_list[[1]]$Date==as.Date('2023-05-25'), ], aes(x = Time, y = Temp_C)) +
+ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = Temp_C)) +
   geom_point() +
   geom_line() 
