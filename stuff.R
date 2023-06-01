@@ -64,4 +64,4 @@ for (x in seq(1:num_files)){
   clean_data_list[[x]] <- clean_csv_files(data_list[[x]])
 }
 
-#view(clean_data_list[[2]])
+view(clean_data_list[[2]])
