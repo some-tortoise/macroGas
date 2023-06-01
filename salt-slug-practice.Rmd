@@ -2,6 +2,9 @@
 title: "Salt Slug Practice",
 Author: "Kaley Sperling"
 ---
+
+Cleaning Code
+
 ```{r}
 #| library-packages
 
@@ -51,7 +54,22 @@ organized_mgas_erwin_station_1_2023_05_25 |>
 ```
 
 ```{r}
-#| changing-date-and-time
+#| changing-date
 
+organized_mgas_erwin_station_1_2023_05_25$Date <-  as.POSIXct(organized_mgas_erwin_station_1_2023_05_25$Date, format = "%m/%d/%y", tz = "UTC" )
+
+#organized_mgas_erwin_station_1_2023_05_25$Date = #sapply(organized_mgas_erwin_station_1_2023_05_25$Date,)
 ```
 
+Visualizations
+
+```{r}
+#|making-graph
+select
+organized_mgas_erwin_station_1_2023_05_25[organized_mgas_erwin_station_1_2023_05_25$Date==as.Date('2023-05-25'), ] |>
+  ggplot(aes(x = Time, y = Temp_C)) +
+  geom_point() +
+  geom_line()
+  
+
+```
