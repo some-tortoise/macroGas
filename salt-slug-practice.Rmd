@@ -10,7 +10,6 @@ Cleaning Code
 
 library(tidyverse)
 library(googledrive)
-library(googlesheets4)
 library(lubridate)
 ```
 
@@ -69,12 +68,10 @@ Visualizations
 
 ```{r}
 #|making-graph
-select
-organized_mgas_erwin_station_1_2023_05_25[organized_mgas_erwin_station_1_2023_05_25$Date==as.Date('2023-05-25'), ] 
-p1 <- ggplot(organized_mgas_erwin_station_1_2023_05_25[organized_mgas_erwin_station_1_2023_05_25$Date==as.Date('2023-05-25'), ], aes(x = Time, y = Temp_C)) +
+ggplot(organized_mgas_erwin_station_1_2023_05_25[organized_mgas_erwin_station_1_2023_05_25$Date==as.Date('2023-05-25'), ], aes(x = Time, y = Temp_C)) +
   geom_point() +
   geom_line() 
   
-p1
+  
 
 ```

@@ -1,6 +1,6 @@
 library(shiny)
 source(
-  knitr::purl("salt-slug-practice.Rmd",
+  knitr::purl("stuff.R",
               output = tempfile(),
               quiet = TRUE))
 
@@ -15,7 +15,7 @@ ui <- fluidPage(
                             format = "yyyy/mm/dd"),
                 radioButtons("radioInput",
                                      label = "Y Axis",
-                                     choices = c("Low Range" = "lr", "Full Range" = "fr", "Temp C" = "tempc")),
+                                     choices = c("Low Range", "Full Range" = "fr", "Temp C" = "tempc")),
                 actionButton("run",
                              label = "run")),
       
@@ -26,7 +26,11 @@ ui <- fluidPage(
 )
 
 server <- function(input, output){
-  #output$plotOutput <- renderPlot()
+  output$plotOutput <- renderPlot({
+    ggplot(clean_data_list[[1]][clean_data_list[[1]]$Date==as.Date(input$dateInput), ], aes(x = Time, y = Temp_C)) +
+      geom_point() +
+      geom_line() 
+  })
   
 }
 
