@@ -23,7 +23,8 @@ ui <- fluidPage(
 
 server <- function(input, output){
   output$plotOutput <- renderPlot({
-    ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = Temp_C)) +
+    ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = Temp_C, color = 'red')) +
+      theme(panel.background = element_rect(fill = 'green')) +
       geom_point() +
       geom_line() 
   })
