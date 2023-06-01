@@ -1,6 +1,7 @@
 library('googledrive')
 library('readr')
 library('tidyverse')
+library(lubridate)
 
 google_drive_auth <- function(){
   drive_auth(
@@ -14,7 +15,7 @@ google_drive_auth <- function(){
 }
 
 download_csv_files <- function(){
-  macro_folder <- 'https://drive.google.com/drive/u/0/folders/12bxB-gn3DvutNcwmH8CO1er3ngmCjdlo'
+  macro_folder <- 'https://drive.google.com/drive/u/0/folders/1sulvzGLL6dfAUfFTy6NCSDPOlVVNTWu-'
   folder_id = drive_get(as_id(macro_folder))
   files = drive_ls(folder_id) # gets files from inside folder
   vector_of_CSVs <- c(as.data.frame(files[1]))[[1]] # column 1 tells it to grab first column with names of csv
@@ -32,7 +33,7 @@ download_csv_files <- function(){
   return(data_list)
 }
 
-clean_csv_files <- function(df){
+clean_csv_files <- function(df, x){
   df <- df[0:5]
   colnames(df) <- c('V1','V2','V3', 'V4', 'V5')
   
@@ -52,6 +53,7 @@ clean_csv_files <- function(df){
   
   #out$Date_Time <-  as.POSIXct(out$Date_Time, format = "%m/%d/%y %H:%M:%S", tz = "UTC" )
   out$Date_Time <- mdy_hms(out$Date_Time, tz='GMT')
+  out$station = x
   return(out)
 }
 
@@ -61,7 +63,8 @@ num_files <- length(data_list)
 
 clean_data_list <- list()
 for (x in seq(1:num_files)){
-  clean_data_list[[x]] <- clean_csv_files(data_list[[x]])
+  clean_data_list[[x]] <- clean_csv_files(data_list[[x]], x)
 }
 
-view(clean_data_list[[2]])
+combined_df = do.call(rbind, clean_data_list)
+
