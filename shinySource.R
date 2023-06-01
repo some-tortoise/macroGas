@@ -8,12 +8,11 @@ ui <- fluidPage(
     titlePanel("Our App"),
     
     sidebarLayout(
-      sidebarPanel("sidebar",
+      sidebarPanel("",
                 radioButtons("radioInput",
                                      label = "Y Axis",
                                      choices = c("Low Range" = "", "Full Range" = "fr", "Temp C" = "tempc")),
-                actionButton("run",
-                             label = "run")),
+    ),
       
       mainPanel("Visualization", plotOutput("plotOutput"))
     

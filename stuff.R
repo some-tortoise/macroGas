@@ -14,7 +14,7 @@ google_drive_auth <- function(){
 }
 
 download_csv_files <- function(){
-  macro_folder <- 'https://drive.google.com/drive/folders/1QhIzFToANF5JNOyxp2_q6WGaFrFUM3iA'
+  macro_folder <- 'https://drive.google.com/drive/u/0/folders/12bxB-gn3DvutNcwmH8CO1er3ngmCjdlo'
   folder_id = drive_get(as_id(macro_folder))
   files = drive_ls(folder_id) # gets files from inside folder
   vector_of_CSVs <- c(as.data.frame(files[1]))[[1]] # column 1 tells it to grab first column with names of csv
