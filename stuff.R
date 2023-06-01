@@ -55,7 +55,7 @@ clean_csv_files <- function(df){
   return(out)
 }
 
-google_drive_auth()
+#google_drive_auth()
 data_list <- download_csv_files() # use data_list[[x]] to get the x'th tibble. Range from 1:num_files
 num_files <- length(data_list)
 
@@ -64,9 +64,4 @@ for (x in seq(1:num_files)){
   clean_data_list[[x]] <- clean_csv_files(data_list[[x]])
 }
 
-view(clean_data_list[[1]])
-
-#FOR TESTING
-ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = Temp_C)) +
-  geom_point() +
-  geom_line() 
+#view(clean_data_list[[2]])
