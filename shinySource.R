@@ -11,7 +11,7 @@ ui <- fluidPage(
       sidebarPanel("",
                 radioButtons("radioInput",
                                      label = "Y Axis",
-                                     choices = c("Low Range" = "", "Full Range" = "fr", "Temp C" = "tempc")),
+                                     choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
     ),
       
       mainPanel("Visualization", plotOutput("plotOutput"))
@@ -22,7 +22,7 @@ ui <- fluidPage(
 
 server <- function(input, output){
   output$plotOutput <- renderPlot({
-    ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = Temp_C, color = 'red')) +
+    ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
       theme(panel.background = element_rect(fill = 'green')) +
       geom_point() +
       geom_line() 
