@@ -15,42 +15,43 @@ ui <- fluidPage(
                      choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
     ),
       
-      mainPanel(plotOutput("plotOutput"))
+      mainPanel(plotlyOutput("plotOutput"))
     
   )
   
 )
 
 server <- function(input, output){
-  #output$plotOutput <- renderPlotly({
-  #  p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-   #   theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-    #  geom_point() +
-     # geom_line() +
-      #labs(x = 'Time', y = input$radioInput)
-    #ggplotly(p)
-  
-  output$plotOutput <- renderPlot({
-    if(input$station=='All'){
-      avg_df = combined_df |> 
-        group_by(Date_Time) |> 
-        summarise(Low_Range = mean(Low_Range),
-                  Full_Range = mean(Full_Range),
-                  Temp_C = mean(Temp_C))
-      ggplot(data = avg_df, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-        theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-        geom_point() +
-        geom_line() +
-        labs(x = 'Time', y = input$radioInput)
-    }
-    else{
-      ggplot(data = clean_data_list[[as.numeric(input$station)]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-        theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-        geom_point() +
-        geom_line() +
-        labs(x = 'Time', y = input$radioInput)
-    }
+  output$plotOutput <- renderPlotly({
+   p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
+    theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
+   geom_point() +
+  geom_line() +
+  labs(x = 'Time', y = input$radioInput)
+  ggplotly(p)
   })
+  
+  # output$plotOutput <- renderPlot({
+  #   if(input$station=='All'){
+  #     avg_df = combined_df |>
+  #       group_by(Date_Time) |>
+  #       summarise(Low_Range = mean(Low_Range),
+  #                 Full_Range = mean(Full_Range),
+  #                 Temp_C = mean(Temp_C))
+  #     ggplot(data = avg_df, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
+  #       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
+  #       geom_point() +
+  #       geom_line() +
+  #       labs(x = 'Time', y = input$radioInput)
+  #   }
+  #   else{
+  #     ggplot(data = clean_data_list[[as.numeric(input$station)]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
+  #       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
+  #       geom_point() +
+  #       geom_line() +
+  #       labs(x = 'Time', y = input$radioInput)
+  #   }
+  #})
   
   
 }
