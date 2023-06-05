@@ -79,23 +79,23 @@ clean_csv_files <- function(dfs){
 }
 
 upload_csv_file <- function(clean_df, name){
-  file <- name
+  file <- paste('processed_',name, sep='')
   file <- drive_put(
     media = file,
-    name = paste('processed_',name, sep=''),
+    name = file,
     type = 'csv',
     path = as_id(processed_folder))
-  print(2)
 }
 
-turn_file_to_csv <- function(clean_df){
-  write.csv(clean_df, "./chicken.csv", row.names=FALSE)
+turn_file_to_csv <- function(clean_df, name){
+  write.csv(clean_df, paste('./processed_',name, sep=''), row.names=FALSE)
 }
 
 upload_files <- function(clean_dfs, list_of_raw_names){
   for(x in seq(1:length(clean_dfs))){
-    turn_file_to_csv(clean_dfs[[x]])
-    upload_csv_file(clean_dfs[[x]], as.character(nth(list_of_raw_names, x)))
+    name <- as.character(nth(list_of_raw_names, x))
+    turn_file_to_csv(clean_dfs[[x]], name)
+    upload_csv_file(clean_dfs[[x]], name)
   }
 }
 
@@ -109,3 +109,17 @@ clean_data_list <- clean_csv_files(data_list)
 combined_df = do.call(rbind, clean_data_list)
 
 upload_files(clean_data_list, list_of_raw_names)
+
+
+
+
+
+
+
+
+
+
+view(combined_df)
+
+
+
