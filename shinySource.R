@@ -21,7 +21,17 @@ ui <- fluidPage(
 server <- function(input, output){
   
   output$plotOutput <- renderPlotly({
-    p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput))) +
+    if(input$station=='All'){
+      df = combined_df |>
+        group_by(Date_Time) |>
+        summarise(Low_Range = mean(Low_Range),
+        Full_Range = mean(Full_Range),
+        Temp_C = mean(Temp_C))
+    }
+    else{
+      df = clean_data_list[[as.numeric(input$station)]]
+    }
+    p <- ggplot(data = df, mapping = aes(x = Date_Time, y = !!as.name(input$radioInput))) +
       theme(panel.background = element_rect(fill = '#e5ecf6'), legend.position = 'None') +
       geom_line() +
       labs(x = 'Time', y = input$radioInput)
