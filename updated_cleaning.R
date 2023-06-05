@@ -2,10 +2,10 @@ library(googledrive)
 library(tidyverse)
 library(lubridate)
 library(readr)
-# drive_auth()
+drive_auth()
 
 macro_link = "https://drive.google.com/drive/u/0/folders/1G1lauwH1H3Ds92ReuW6S2DNijWrXCB3Q"
-names = unlist(drive_ls(macro_link)['name'])
+names = drive_ls(macro_link)[['name']]
 
 df = c()
 for(i in 1:length(names)){
