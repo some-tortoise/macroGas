@@ -1,5 +1,6 @@
 library(shiny)
 library(plotly)
+library(DT)
 source(knitr::purl("stuff.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- fluidPage(
@@ -13,7 +14,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(type = 'tabs',
                   tabPanel('plot', plotlyOutput("plotOutput")),
-                  tabPanel('table', p('table would go here')))
+                  tabPanel('table', p('table would go here'), dataTableOutput('df')))
       )
   )
 )
@@ -21,16 +22,22 @@ ui <- fluidPage(
 server <- function(input, output){
   
   output$plotOutput <- renderPlotly({
-    p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput))) +
+    p <- ggplot(data = clean_data_list[[4]], mapping = aes_string(x = 'Date_Time', y = input$radioInput)) +
       theme(panel.background = element_rect(fill = '#e5ecf6'), legend.position = 'None') +
       geom_line() +
       labs(x = 'Time', y = input$radioInput)
     
     ggplotly(p) %>% 
-      layout(showlegend = FALSE) %>% 
-      config(displayModeBar = FALSE)
+      layout(showlegend = FALSE) #%>% 
+      #config(displayModeBar = FALSE)
     
   })
+  
+  output$df <- renderDT(
+    clean_data_list[[4]], options = list(
+      pageLength = 5
+    )
+  )
   
   # output$plotOutput <- renderPlot({
   #   if(input$station=='All'){
