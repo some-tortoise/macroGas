@@ -14,7 +14,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(type = 'tabs',
                   tabPanel('plot', plotlyOutput("plotOutput")),
-                  tabPanel('table', p('table would go here'), dataTableOutput('df')))
+                  tabPanel('table', dataTableOutput('df')))
       )
   )
 )
