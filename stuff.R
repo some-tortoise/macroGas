@@ -2,11 +2,13 @@ library('googledrive')
 library('readr')
 library('tidyverse')
 library('lubridate')
+library('gargle')
 
 #
 # GLOBAL VARS
 #
-macro_folder <- 'https://drive.google.com/drive/u/0/folders/12bxB-gn3DvutNcwmH8CO1er3ngmCjdlo'
+raw_folder <- 'https://drive.google.com/drive/u/0/folders/1G1lauwH1H3Ds92ReuW6S2DNijWrXCB3Q'
+processed_folder <- 'https://drive.google.com/drive/u/0/folders/1oApNS0FhID95xUn0R0q9BMxe0LzqNSjs'
 
 #
 # FUNCTIONS
@@ -14,18 +16,19 @@ macro_folder <- 'https://drive.google.com/drive/u/0/folders/12bxB-gn3DvutNcwmH8C
 
 google_drive_auth <- function(){
   drive_auth(
-    email = gargle::gargle_oauth_email(),
+    email = gargle_oauth_email(),
     path = NULL,
     scopes = "https://www.googleapis.com/auth/drive",
-    cache = gargle::gargle_oauth_cache(),
-    use_oob = gargle::gargle_oob_default(),
+    cache = gargle_oauth_cache(),
+    use_oob = gargle_oob_default(),
     token = NULL
   )
 }
 
 download_csv_files <- function(){
-  folder_id <- drive_get(as_id(macro_folder))
+  folder_id <- drive_get(as_id(raw_folder))
   files <- drive_ls(folder_id) # gets files from inside folder
+  list_of_raw_names <- select(files, 'name')
   vector_of_CSVs <- c(as.data.frame(files[1]))[[1]] # column 1 tells it to grab first column with names of csv
   num_files <- length(vector_of_CSVs) # number of files in the google drive
   data_list <- list() # list of CSVs in the order they are in google drive.
@@ -37,10 +40,12 @@ download_csv_files <- function(){
     print(data_list[[x]]) # just for visuals during the downloading process
   }
   data_list <- lapply(data_list, as.data.frame) # turns the tibble into a dataframes
-  return(data_list)
+  
+  out <- list(data_list,list_of_raw_names)
+  return(out)
 }
 
-clean_csv_files <- function(df, x){
+clean_csv_file <- function(df, x){
   df <- df[0:5]
   colnames(df) <- c('V1','V2','V3', 'V4', 'V5')
   
@@ -64,14 +69,44 @@ clean_csv_files <- function(df, x){
   return(out)
 }
 
-#google_drive_auth()
-data_list <- download_csv_files() # use data_list[[x]] to get the x'th tibble. Range from 1:num_files
-
-num_files <- length(data_list)
-clean_data_list <- list()
-for (x in seq(1:num_files)){
-  clean_data_list[[x]] <- clean_csv_files(data_list[[x]], x)
+clean_csv_files <- function(dfs){
+  num_files <- length(dfs)
+  clean_data_list <- list()
+  for (x in seq(1:num_files)){
+    clean_data_list[[x]] <- clean_csv_file(dfs[[x]], x)
+  }
+  return(clean_data_list)
 }
 
+upload_csv_file <- function(clean_df, name){
+  file <- paste(name,'.csv', sep='')
+  file <- drive_put(
+    media = file,
+    name = name,
+    type = 'csv',
+    path = as_id(processed_folder))
+  print(2)
+}
+
+turn_file_to_csv <- function(clean_df){
+  write.csv(clean_df, "./chicken.csv", row.names=FALSE)
+}
+
+upload_files <- function(clean_dfs){
+  for(x in seq(1:length(clean_dfs))){
+    turn_file_to_csv(clean_dfs[[x]])
+    upload_csv_file(clean_dfs[[x]], 'chicken')
+  }
+}
+
+google_drive_auth()
+download_output <- download_csv_files() # use data_list[[x]] to get the x'th tibble. Range from 1:num_files
+data_list <- download_output[[1]]
+list_of_raw_names <- download_output[[2]]
+
+clean_data_list <- clean_csv_files(data_list)
+
 combined_df = do.call(rbind, clean_data_list)
+
+upload_files(clean_data_list)
 

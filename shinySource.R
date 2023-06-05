@@ -1,6 +1,7 @@
-library(shiny)
-library(plotly)
-library(DT)
+library(shiny) # for webpage creation
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(htmlwidgets)
 source(knitr::purl("stuff.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- fluidPage(
@@ -13,13 +14,32 @@ ui <- fluidPage(
       ),
     mainPanel(
       tabsetPanel(type = 'tabs',
-                  tabPanel('plot', plotlyOutput("plotOutput")),
-                  tabPanel('table', p('table would go here'), dataTableOutput('df')))
+                  tabPanel('plot', 
+                           plotlyOutput("plotOutput")
+                           ),
+                  tabPanel('table', 
+                           dataTableOutput('df')
+                           )
+                  ),
+      textOutput('text')
+      
       )
   )
 )
 
+code <- "
+        function(el) { 
+          el.on('plotly_click', function(d) { 
+            Shiny.onInputChange('txt', d.points[0].text);
+          });
+        }
+               "
+
 server <- function(input, output){
+  
+  txt <- reactive({ input$txt })
+  
+  output$text <- renderText({input$txt})
   
   output$plotOutput <- renderPlotly({
     if(input$station=='All'){
@@ -38,8 +58,9 @@ server <- function(input, output){
       labs(x = 'Time', y = input$radioInput)
     
     ggplotly(p) %>% 
-      layout(showlegend = FALSE) #%>% 
-      #config(displayModeBar = FALSE)
+      layout(showlegend = FALSE) %>% 
+      config(displayModeBar = FALSE) %>%
+      onRender(code)
     
   })
   
@@ -48,29 +69,6 @@ server <- function(input, output){
       pageLength = 5
     )
   )
-  
-  # output$plotOutput <- renderPlot({
-  #   if(input$station=='All'){
-  #     avg_df = combined_df |>
-  #       group_by(Date_Time) |>
-  #       summarise(Low_Range = mean(Low_Range),
-  #                 Full_Range = mean(Full_Range),
-  #                 Temp_C = mean(Temp_C))
-  #     ggplot(data = avg_df, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-  #       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-  #       geom_point() +
-  #       geom_line() +
-  #       labs(x = 'Time', y = input$radioInput)
-  #   }
-  #   else{
-  #     ggplot(data = clean_data_list[[as.numeric(input$station)]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-  #       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-  #       geom_point() +
-  #       geom_line() +
-  #       labs(x = 'Time', y = input$radioInput)
-  #   }
-  #})
-  
   
 }
 
