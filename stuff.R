@@ -73,5 +73,5 @@ for (x in seq(1:num_files)){
   clean_data_list[[x]] <- clean_csv_files(data_list[[x]], x)
 }
 
-#combined_df = do.call(rbind, clean_data_list)
+combined_df = do.call(rbind, clean_data_list)
 
