@@ -1,34 +1,35 @@
 library(shiny)
 library(plotly)
-source(
-  knitr::purl("stuff.R",
-              output = tempfile(),
-              quiet = TRUE))
+source(knitr::purl("stuff.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- fluidPage(
-    titlePanel("Salt Slug Visualizations"),
-    
-    sidebarLayout(
-      sidebarPanel(
-        selectInput('station', label = 'select the station', c('All', 1, 2, 3, 4, 5)),
-        radioButtons("radioInput",label = helpText('Select variable to graph'),
-                     choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
-    ),
-      
-      mainPanel(plotlyOutput("plotOutput"))
-    
+  titlePanel("Salt Slug Visualizations"),
+  sidebarLayout(
+    sidebarPanel(
+      selectInput('station', label = 'select the station', c('All', 1, 2, 3, 4, 5)),
+      radioButtons("radioInput",label = helpText('Select variable to graph'),
+                   choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
+      ),
+    mainPanel(
+      tabsetPanel(type = 'tabs',
+                  tabPanel('plot', plotlyOutput("plotOutput")),
+                  tabPanel('table', p('table would go here')))
+      )
   )
-  
 )
 
 server <- function(input, output){
+  
   output$plotOutput <- renderPlotly({
-   p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
-    theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-   geom_point() +
-  geom_line() +
-  labs(x = 'Time', y = input$radioInput)
-  ggplotly(p)
+    p <- ggplot(data = clean_data_list[[4]], mapping = aes(x = Date_Time, y = !!as.name(input$radioInput))) +
+      theme(panel.background = element_rect(fill = '#e5ecf6'), legend.position = 'None') +
+      geom_line() +
+      labs(x = 'Time', y = input$radioInput)
+    
+    ggplotly(p) %>% 
+      layout(showlegend = FALSE) %>% 
+      config(displayModeBar = FALSE)
+    
   })
   
   # output$plotOutput <- renderPlot({
