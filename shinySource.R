@@ -8,7 +8,7 @@ ui <- fluidPage(
   titlePanel("Salt Slug Visualizations"),
   sidebarLayout(
     sidebarPanel(
-      selectInput('station', label = 'select the station', c('All', 1, 2, 3, 4, 5)),
+      selectInput('station', label = 'Select station', c('All', 1, 2, 3, 4, 5)),
       radioButtons("radioInput",label = helpText('Select variable to graph'),
                    choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
       ),
