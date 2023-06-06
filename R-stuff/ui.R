@@ -5,18 +5,22 @@ library(htmlwidgets)
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-ui <- navbarPage("",
+ui <- navbarPage(strong("Salt Slugs"),
              tabPanel(strong('Home'), # at some point need to put this as the first tab #
                       titlePanel(strong("Salt Slugs")),
                       p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
-                      p("To upload your data, visit the 'Upload' tab"),
+                      p("To upload your data, please visit the 'Upload' tab"),
                       br(),
+                      hr(),
                       h4(strong("Resources:")),
-                      p(HTML('Covino et al. 2011. (working on this link as well as the ones below)')),
+                      p("For more information:",
+                        tags$a(href = "http://dx.doi.org/10.1029/2011WR010942", "Covino et al. 2011."),
+                        tags$em("'Stream-groundwater exchange and hydrologic turnover at the network scale.'")),
                       br(),
                       p('Template for salt slug data upload'),
-                      p('Example salt slug data')
+                      p('Example salt slug data'),
+                      
                       
              ),
              tabPanel("Upload",
