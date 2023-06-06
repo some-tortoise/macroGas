@@ -14,7 +14,7 @@ ui <- fluidPage(
     
     sidebarLayout(
       sidebarPanel(
-        selectInput('station', label = 'select the station', c(1, 2, 3, 4, 5)),
+        selectInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
         radioButtons('radioInput',label = helpText('Select variable to graph'),
                      c('Low Range' = 'Low_Range', 'Full Range' = 'Full_Range', 'Temp C' = 'Temp_C')),
         actionButton('flag', label = 'flag bad points'),
@@ -47,7 +47,7 @@ server <- function(input, output){
     df_plot = SharedData$new(data$df[data$df$station == as.numeric(input$station),])
     data$p <- ggplot(data = df_plot, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-      geom_point() +
+      #geom_point() +
       geom_line() +
       labs(x = 'Time', y = input$radioInput)
   })
