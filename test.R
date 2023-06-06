@@ -1,23 +1,25 @@
 library(shiny)
+library(shinyFiles)
 
-ui <- navbarPage('Test App',id = "inTabset",
-                 tabPanel(title = "Visualize", value = "panel1", 
-                          actionButton('jumpToP2', 'Jump to Second Tab')),
-                 tabPanel(title = "Update", value = "panel2", 
-                          actionButton('jumpToP1', 'Jump to First Tab'))
+ui <- fluidPage(
+  shinyDirButton("folderBtn", "Select Folder", title = "Choose Download Location"),
+  downloadButton("downloadBtn", "Download File")
 )
 
 server <- function(input, output, session) {
-  observeEvent(input$jumpToP2, {
-    updateTabsetPanel(session, "inTabset",
-                      selected = "panel2")
-  })
+  shinyFileChoose(input, "folderBtn", roots = c(home = '~'))
   
-  observeEvent(input$jumpToP1, {
-    updateTabsetPanel(session, "inTabset",
-                      selected = "panel1")
-  })
-  
+  output$downloadBtn <- downloadHandler(
+    filename = function() {
+      # Set the filename of the downloaded file
+      "my_file.csv"
+    },
+    content = function(file) {
+      # Generate the content of the file
+      # In this example, we create a simple CSV file with the Iris dataset
+      write.csv(iris, file, row.names = FALSE)
+    }
+  )
 }
 
 shinyApp(ui, server)

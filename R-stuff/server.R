@@ -94,14 +94,21 @@ server <- function(input, output, session){
     targ <- switch(input$row_and_col_select,
                    'rows' = 'row',
                    'columns' = 'column')
-    datatable(uploaded_data$data, extensions = 'Select', selection = list(target = targ), options = list(ordering = FALSE, searching = FALSE, pageLength = 5)) 
-
+    datatable(uploaded_data$data, extensions = 'Select', selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
   })
   
-  
-   observeEvent(input$download_locally, {
-     print('File has been \'downloaded\'')
-   })
+  output$downloadBtn <- downloadHandler(
+    filename = function() {
+      # Set the filename of the downloaded file
+      "my_file.csv"
+    },
+    content = function(file) {
+      # Generate the content of the file
+      # In this example, we create a simple CSV file with the Iris dataset
+      write.csv(uploaded_data$data, file, row.names = FALSE)
+      print('File has been \'downloaded\'')
+    }
+  )
    
    observeEvent(input$upload_to_gdrive, {
      name <- input$file1$name
