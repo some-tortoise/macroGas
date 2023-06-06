@@ -80,6 +80,20 @@ ui <- fluidPage(
                         )
                         
                       )),
-             tabPanel("IDK")
+             tabPanel("Home",          # at some point need to put this as the first tab #
+                      titlePanel(strong("Salt Slugs")),
+                      p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
+                      br(),
+                      p("To upload your data, visit the 'Upload' tab"),
+                      br(),
+                      h4(strong("Resources:")),
+                      p(HTML('Covino et al. 2011. (working on this link as well as the ones below)')),
+                      br(),
+                      p('Template for salt slug data upload'),
+                      p('Example salt slug data'),
+                      
+                  )
+                  
   )
 )
+
