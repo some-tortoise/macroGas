@@ -12,7 +12,7 @@ code <- "
           });
         }"
 
-server <- function(input, output){
+server <- function(input, output, session){
   
   txt <- reactive({ input$txt })
   
@@ -98,4 +98,15 @@ server <- function(input, output){
 
   })
   
+  
+   observeEvent(input$download_locally, {
+     print('File has been \'downloaded\'')
+   })
+   
+   observeEvent(input$upload_to_gdrive, {
+     name <- input$file1$name
+     turn_file_to_csv(uploaded_data$data, name)
+     upload_csv_file(uploaded_data$data, name)
+     print('File has been \'uploaded\'')
+   })
 }

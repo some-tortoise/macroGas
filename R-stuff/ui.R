@@ -5,12 +5,8 @@ library(htmlwidgets)
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-ui <- fluidPage(
-  tags$head(
-    tags$link(rel = 'stylesheet', type = 'text/css', href = '../styles.css')
-  ),
-  navbarPage("Salt Slugs",
-             tabPanel("Visualize",
+ui <- navbarPage("Salt Slugs", id = "inTabset",
+             tabPanel("Visualize", value = 'panel1',
                       useShinyjs(),
                       titlePanel("Salt Slug Visualizations"),
                       sidebarLayout(
@@ -31,7 +27,7 @@ ui <- fluidPage(
                           )
                         )
                       )),
-             tabPanel("Upload",
+             tabPanel("Upload", value = 'panel2',
                       sidebarLayout(
                         
                         # Sidebar panel for inputs ----
@@ -66,7 +62,13 @@ ui <- fluidPage(
                                                    "columns"),
                                        selected = "rows"),
                           
-                          actionButton('submit_delete', 'Delete selected')
+                          actionButton('submit_delete', 'Delete selected'),
+                          
+                          tags$hr(),
+                          
+                          actionButton('visualize_transfer', 'Transfer to visualization')
+                          # actionButton('download_locally', 'Download'),
+                          # actionButton('upload_to_gdrive', 'Upload to Google Drive')
                           
                         ),
                         
@@ -95,5 +97,4 @@ ui <- fluidPage(
                   )
                   
   )
-)
 
