@@ -5,29 +5,25 @@ library(htmlwidgets)
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-ui <- navbarPage("Salt Slugs", id = "inTabset",
-             tabPanel("Visualize", value = 'panel1',
-                      useShinyjs(),
-                      titlePanel("Salt Slug Visualizations"),
-                      sidebarLayout(
-                        sidebarPanel(
-                          selectInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
-                          radioButtons("variable_choice",label = helpText('Select variable to graph'),
-                                       choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
-                        ),
-                        mainPanel(
-                          tabsetPanel(type = 'tabs',
-                                      tabPanel('plot', 
-                                               plotlyOutput("plotOutput"),
-                                               dataTableOutput('clicked')
-                                      ),
-                                      tabPanel('table', 
-                                               dataTableOutput('df')
-                                      )
-                          )
-                        )
-                      )),
-             tabPanel("Upload", value = 'panel2',
+ui <- fluidPage(
+  tags$head(
+    tags$link(rel = 'stylesheet', type = 'text/css', href = '../styles.css')
+  ), 
+  navbarPage("Salt Slugs",
+             tabPanel("Home",          # at some point need to put this as the first tab #
+                      titlePanel(strong("Salt Slugs")),
+                      p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
+                      br(),
+                      p("To upload your data, visit the 'Upload' tab"),
+                      br(),
+                      h4(strong("Resources:")),
+                      p(HTML('Covino et al. 2011. (working on this link as well as the ones below)')),
+                      br(),
+                      p('Template for salt slug data upload'),
+                      p('Example salt slug data'),
+                      
+             ),
+             tabPanel("Upload",
                       sidebarLayout(
                         
                         # Sidebar panel for inputs ----
@@ -79,22 +75,32 @@ ui <- navbarPage("Salt Slugs", id = "inTabset",
                           DT::dataTableOutput('table1'),
                           DT::dataTableOutput("table2")
                           
-                        )
+                        ))),
                         
-                      )),
-             tabPanel("Home",          # at some point need to put this as the first tab #
-                      titlePanel(strong("Salt Slugs")),
-                      p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
-                      br(),
-                      p("To upload your data, visit the 'Upload' tab"),
-                      br(),
-                      h4(strong("Resources:")),
-                      p(HTML('Covino et al. 2011. (working on this link as well as the ones below)')),
-                      br(),
-                      p('Template for salt slug data upload'),
-                      p('Example salt slug data'),
-                      
-                  )
+                  
+             tabPanel("Visualize",
+                      useShinyjs(),
+                      titlePanel("Salt Slug Visualizations"),
+                      sidebarLayout(
+                        sidebarPanel(
+                          selectInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
+                          radioButtons("variable_choice",label = helpText('Select variable to graph'),
+                                       choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
+                        ),
+                        mainPanel(
+                          tabsetPanel(type = 'tabs',
+                                      tabPanel('plot', 
+                                               plotlyOutput("plotOutput"),
+                                               dataTableOutput('clicked')
+                                      ),
+                                      tabPanel('table', 
+                                               dataTableOutput('df')
+                                      )
+                          )
+                        )
+                      ))
+        
+            
                   
   )
 
