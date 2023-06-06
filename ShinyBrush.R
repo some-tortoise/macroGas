@@ -38,9 +38,9 @@ server <- function(input, output){
   
   output$plotOutput <- renderPlotly({
     df_plot = SharedData$new(data$df[data$df$station == as.numeric(input$station),])
-    p <- ggplot(data = df_plot, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
+    p <- ggplot(data = df_plot, aes(x = Date_Time, y = !!as.name(input$radioInput))) +
       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-      geom_point() +
+      #geom_point() +
       geom_line() +
       labs(x = 'Time', y = input$radioInput)
     highlight(ggplotly(p), 'plotly_selected')
