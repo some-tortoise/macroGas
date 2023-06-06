@@ -12,12 +12,12 @@ ui <- fluidPage(
     
     sidebarLayout(
       sidebarPanel(
-        selectInput('station', label = 'select the station', c(1, 2, 3, 4, 5)),
+        selectInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
         radioButtons('radioInput',label = helpText('Select variable to graph'),
                      c('Low Range' = 'Low_Range', 'Full Range' = 'Full_Range', 'Temp C' = 'Temp_C')),
-        actionButton('flag', label = 'flag bad points'),
-        actionButton('final',label = 'show final table'),
-        actionButton('reset_flag', label = 'reset the flag for the station')
+        actionButton('flag', label = 'Flag bad points'),
+        actionButton('final',label = 'Show final table'),
+        actionButton('reset_flag', label = 'Reset the flag for the station')
         
     ),
       
