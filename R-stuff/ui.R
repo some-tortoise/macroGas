@@ -6,7 +6,7 @@ library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage("",
-             tabPanel(strong('Home'), # at some point need to put this as the first tab #
+             tabPanel(strong('Home'),          # at some point need to put this as the first tab #
                       titlePanel(strong("Salt Slugs")),
                       p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
@@ -21,57 +21,36 @@ ui <- navbarPage("",
              ),
              tabPanel("Upload",
                       sidebarLayout(
-                        
-                        # Sidebar panel for inputs ----
                         sidebarPanel(
-                          
-                          # Input: Select a file ----
                           fileInput("file1", "Choose CSV File",
                                     multiple = TRUE,
                                     accept = c("text/csv",
                                                "text/comma-separated-values,text/plain",
                                                ".csv")),
-                          
-                          # Horizontal line ----
                           tags$hr(),
-                          
-                          # Input: Checkbox if file has header ----
                           checkboxInput("header", "Header", TRUE),
-                          
-                          # Input: Select separator ----
                           radioButtons("sep", "Separator",
                                        choices = c(Comma = ",",
                                                    Semicolon = ";",
                                                    Tab = "\t"),
                                        selected = ","),
-                          
-                          # Input: Select number of rows to display ----
-                          
                           tags$hr(),
-                          
                           radioButtons("row_and_col_select", "Choose which to edit",
                                        choices = c("rows",
                                                    "columns"),
                                        selected = "rows"),
-                          
                           actionButton('submit_delete', 'Delete selected'),
-                          
                           tags$hr(),
-                          
                           actionButton('visualize_transfer', 'Transfer to visualization')
                           # actionButton('download_locally', 'Download'),
                           # actionButton('upload_to_gdrive', 'Upload to Google Drive')
-                          
                         ),
-                        
-                        # Main panel for displaying outputs ----
                         mainPanel(
-                          
-                          # Output: Data file ----
                           DT::dataTableOutput('table1'),
                           DT::dataTableOutput("table2")
-                          
-                        ))),
+                        )
+                        )
+                      ),
                         
                   
              tabPanel("Visualize",
