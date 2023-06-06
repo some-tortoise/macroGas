@@ -47,7 +47,7 @@ server <- function(input, output){
     df_plot = SharedData$new(data$df[data$df$station == as.numeric(input$station),])
     data$p <- ggplot(data = df_plot, aes(x = Date_Time, y = !!as.name(input$radioInput), color = 'red')) +
       theme(panel.background = element_rect(fill = 'lightgray'), legend.position = 'None') +
-      #geom_point() +
+      geom_point() +
       geom_line() +
       labs(x = 'Time', y = input$radioInput)
   })
