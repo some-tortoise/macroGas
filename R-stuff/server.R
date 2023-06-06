@@ -10,8 +10,7 @@ code <- "
           el.on('plotly_click', function(d) { 
             Shiny.onInputChange('txt', d.points[0].text);
           });
-        }
-               "
+        }"
 
 server <- function(input, output){
   
@@ -37,8 +36,8 @@ server <- function(input, output){
   })
   
   output$plotOutput <- renderPlotly({
-    df = clean_dataframe_list[[as.numeric(input$station)]]
-    p <- ggplot(data = df, mapping = aes_string(x = 'Date_Time', y = input$variable_choice)) +
+    curr_df = clean_dataframe_list[[as.numeric(input$station)]]
+    p <- ggplot(data = curr_df, mapping = aes_string(x = 'Date_Time', y = input$variable_choice)) +
       theme(panel.background = element_rect(fill = '#e5ecf6'), legend.position = 'None') +
       geom_line() +
       labs(x = 'Time', y = input$variable_choice)
@@ -57,9 +56,58 @@ server <- function(input, output){
       pageLength = 5
     ), rownames = FALSE)
   }
-  
-  
-  
   )
   
+  observeEvent(input$file1, {
+    # Generate a temporary file name
+    temp_file <- tempfile()
+    
+    # Write data to the temporary file
+    writeLines("Hello, temporary file!", temp_file)
+    
+    # Read and modify the contents of the temporary file
+    file_content <- readLines(temp_file)
+    modified_content <- paste0(file_content, " It's been altered!")
+    
+    # Overwrite the contents of the temporary file
+    writeLines(modified_content, temp_file)
+    
+    # Print the modified contents
+    cat("Modified file content:\n")
+    cat(readLines(temp_file), "\n")
+    
+    # Cleanup: Remove the temporary file
+    unlink(temp_file)
+  })
+  
+  output$table1 <- DT::renderDataTable({
+    req(input$file1)
+    df <- read.csv(input$file1$datapath,
+                   header = input$header,
+                   sep = input$sep,
+                   quote = input$quote)
+    
+    targ <- switch(input$row_and_col_select,
+                   'rows' = 'row',
+                   'columns' = 'column')
+    
+    datatable(df, extensions = 'Select', selection = list(target = targ), options = list(ordering = FALSE, searching = FALSE, pageLength = 5))
+  })
+  
+  output$table2 <- DT::renderDataTable({
+    req(input$file1)
+    df <- read.csv(input$file1$datapath,
+                   header = input$header,
+                   sep = input$sep,
+                   quote = input$quote)
+    
+    if(!is.null(input$table1_rows_selected)){
+      req(input$table1_rows_selected)
+      subset_table <- df[, -input$table1_rows_selected, drop = F]
+    }else{
+      req(input$table1_columns_selected)
+      subset_table <- df[, -input$table1_columns_selected, drop = F]
+    }
+    datatable(subset_table)
+  })
 }
