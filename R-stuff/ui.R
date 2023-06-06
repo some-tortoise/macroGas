@@ -6,6 +6,9 @@ library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- fluidPage(
+  tags$head(
+    tags$link(rel = 'stylesheet', type = 'text/css', href = '../styles.css')
+  ),
   navbarPage("Salt Slugs",
              tabPanel("Visualize",
                       useShinyjs(),
@@ -63,7 +66,7 @@ ui <- fluidPage(
                                                    "columns"),
                                        selected = "rows"),
                           
-                          actionButton('submit-row-delete', 'Delete selected')
+                          actionButton('submit_delete', 'Delete selected')
                           
                         ),
                         

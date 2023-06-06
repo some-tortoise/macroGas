@@ -58,56 +58,44 @@ server <- function(input, output){
   }
   )
   
-  observeEvent(input$file1, {
-    # Generate a temporary file name
-    temp_file <- tempfile()
-    
-    # Write data to the temporary file
-    writeLines("Hello, temporary file!", temp_file)
-    
-    # Read and modify the contents of the temporary file
-    file_content <- readLines(temp_file)
-    modified_content <- paste0(file_content, " It's been altered!")
-    
-    # Overwrite the contents of the temporary file
-    writeLines(modified_content, temp_file)
-    
-    # Print the modified contents
-    cat("Modified file content:\n")
-    cat(readLines(temp_file), "\n")
-    
-    # Cleanup: Remove the temporary file
-    unlink(temp_file)
+  uploaded_data <- reactiveValues()
+  
+  observeEvent(c(input$file1, input$header), {
+    req(input$file1)
+    tryCatch({
+      data <- read.csv(input$file1$datapath,
+                       header = input$header,
+                       sep = input$sep,
+                       quote = input$quote)
+      if (ncol(data) > length(colnames(data))) {
+        print('more cols than col names')
+        stop("Number of columns is greater than the number of column names.")
+      }
+      uploaded_data$data <- data
+    }, error = function(e) {
+      uploaded_data$data <- NULL
+    })
+  })
+  
+  observeEvent(input$submit_delete, {
+    selected_rows <- as.integer(input$table1_rows_selected)
+    selected_cols <- as.integer(input$table1_columns_selected)
+    if (length(selected_rows) > 0) {
+      uploaded_data$data <- uploaded_data$data[-selected_rows, ]
+    }
+    if (length(selected_cols) > 0) {
+      uploaded_data$data <- uploaded_data$data[, -selected_cols]
+    }
   })
   
   output$table1 <- DT::renderDataTable({
     req(input$file1)
-    df <- read.csv(input$file1$datapath,
-                   header = input$header,
-                   sep = input$sep,
-                   quote = input$quote)
     
     targ <- switch(input$row_and_col_select,
                    'rows' = 'row',
                    'columns' = 'column')
-    
-    datatable(df, extensions = 'Select', selection = list(target = targ), options = list(ordering = FALSE, searching = FALSE, pageLength = 5))
+    datatable(uploaded_data$data, extensions = 'Select', selection = list(target = targ), options = list(ordering = FALSE, searching = FALSE, pageLength = 5)) 
+
   })
   
-  output$table2 <- DT::renderDataTable({
-    req(input$file1)
-    df <- read.csv(input$file1$datapath,
-                   header = input$header,
-                   sep = input$sep,
-                   quote = input$quote)
-    
-    if(!is.null(input$table1_rows_selected)){
-      req(input$table1_rows_selected)
-      subset_table <- df[, -input$table1_rows_selected, drop = F]
-    }else{
-      req(input$table1_columns_selected)
-      subset_table <- df[, -input$table1_columns_selected, drop = F]
-    }
-    datatable(subset_table)
-  })
 }
