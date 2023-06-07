@@ -7,23 +7,33 @@ source(
               output = tempfile(),
               quiet = TRUE))
 
-df_plot <- combined_df[combined_df$station == 2,]
+
 
 ui <- fluidPage(
-  plotlyOutput('myPlot'),
-  dataTableOutput('selectedData')
+  sidebarPanel(
+    selectInput('station', label = 'Select station', c('All',1, 2, 3, 4, 5)),
+    radioButtons("variable_choice",label = helpText('Select variable to graph'),
+                 choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
+  ),
+  mainPanel(
+    plotlyOutput('myPlot'),
+    dataTableOutput('selectedData')
+  )
 )
 
 server <- function(input, output, session){
   output$myPlot = renderPlotly({
-    plot_ly(data = df_plot, x = ~Date_Time, y = ~Low_Range, key = ~id, color = ~Temp_C, source = "imgLink") %>%
+    df_plot <- combined_df[combined_df$station == as.numeric(input$station),]
+    plot_ly(data = df_plot, x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~id, color = ~Temp_C, source = "imgLink") %>%
       layout(xaxis = list(
         range = c(min(df_plot$Date_Time), max(df_plot$Date_Time)),  # Set the desired range
         type = "date"  # Specify the x-axis type as date
       ), dragmode = 'select')
+    
   })
   
   output$selectedData <- renderDT({
+    df_plot <- combined_df[combined_df$station == as.numeric(input$station),]
     event.click.data <- event_data(event = "plotly_click", source = "imgLink")
     event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
     df_chosen <- df_plot[((df_plot$id %in% event.click.data$key) | (df_plot$id %in% event.selected.data$key)),]
