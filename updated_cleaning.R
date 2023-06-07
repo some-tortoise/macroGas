@@ -31,7 +31,8 @@ combined_df <- do.call(rbind, clean_dataframe_list) #combining all data frames -
 combined_df <- combined_df |>
   mutate(Low_Range_Flag = 'good',
          Full_Range_Flag = 'good',
-         Temp_C_Flag = 'good')
+         Temp_C_Flag = 'good',
+         station = as.character(station))
 
 view(combined_df)
 
