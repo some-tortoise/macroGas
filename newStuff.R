@@ -7,8 +7,6 @@ source(
               output = tempfile(),
               quiet = TRUE))
 
-
-
 ui <- fluidPage(
   sidebarPanel(
     checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
@@ -45,17 +43,11 @@ server <- function(input, output, session){
     
   })
   
-  output$selected_data_table <- renderDT({
-    df_plot <- data$df[data$df$station == input$station,]
-    event.click.data <- event_data(event = "plotly_click", source = "imgLink")
-    event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
-    df_chosen <- df_plot[((df_plot$id %in% event.click.data$key) | (df_plot$id %in% event.selected.data$key)),]
-    datatable(df_chosen)
-  })
+  output$selected_data_table <- renderDT(selectedData())
   
   observeEvent(input$flag_btn,{
     flag_name = paste0(input$variable_choice, "_Flag")
-    data$df[data$df$id %in% selectedData()$id,flag_name] <- input$flag_type
+    data$df[((data$df$id %in% selectedData()$id) & (data$df$station %in% selectedData()$station)),flag_name] <- input$flag_type
   })
   
 }
