@@ -36,8 +36,8 @@ server <- function(input, output, session){
   })
   
   output$main_plot = renderPlotly({
-    df_plot <- data$df[data$df$station == as.character(input$station),]
-    plot_ly(data = df_plot, x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~id, color = ~station, source = "imgLink") %>%
+    df_plot <- data$df[data$df$station == input$station,]
+    plot_ly(data = df_plot, x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~id, color = ~as.character(station), source = "imgLink") %>%
       layout(xaxis = list(
         range = c(min(df_plot$Date_Time), max(df_plot$Date_Time)),  # Set the desired range
         type = "date"  # Specify the x-axis type as date
@@ -46,7 +46,7 @@ server <- function(input, output, session){
   })
   
   output$selected_data_table <- renderDT({
-    df_plot <- data$df[data$df$station == as.character(input$station),]
+    df_plot <- data$df[data$df$station == input$station,]
     event.click.data <- event_data(event = "plotly_click", source = "imgLink")
     event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
     df_chosen <- df_plot[((df_plot$id %in% event.click.data$key) | (df_plot$id %in% event.selected.data$key)),]
