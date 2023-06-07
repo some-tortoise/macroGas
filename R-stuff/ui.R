@@ -22,39 +22,6 @@ ui <- navbarPage(strong("Salt Slugs"),
                       
                       
              ),
-             # tabPanel("Upload",
-             #          sidebarLayout(
-             #            sidebarPanel(
-             #              fileInput("file1", "Choose CSV File",
-             #                        multiple = TRUE,
-             #                        accept = c("text/csv",
-             #                                   "text/comma-separated-values,text/plain",
-             #                                   ".csv")),
-             #              tags$hr(),
-             #              checkboxInput("header", "Header", TRUE),
-             #              radioButtons("sep", "Separator",
-             #                           choices = c(Comma = ",",
-             #                                       Semicolon = ";",
-             #                                       Tab = "\t"),
-             #                           selected = ","),
-             #              tags$hr(),
-             #              radioButtons("row_and_col_select", "Choose which to edit",
-             #                           choices = c("rows",
-             #                                       "columns"),
-             #                           selected = "rows"),
-             #              actionButton('submit_delete', 'Delete selected'),
-             #              tags$hr(),
-             #              actionButton('visualize_transfer', 'Transfer to visualization')
-             #              # actionButton('download_locally', 'Download'),
-             #              # actionButton('upload_to_gdrive', 'Upload to Google Drive')
-             #            ),
-             #            mainPanel(
-             #              DT::dataTableOutput('table1'),
-             #              DT::dataTableOutput("table2")
-             #            )
-             #            )
-             #          ),
-                        
                   
              tabPanel("Visualize",
                       useShinyjs(),

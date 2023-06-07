@@ -44,7 +44,7 @@ server <- function(input, output, session){
     
     ggplotly(p) %>% 
       layout(showlegend = FALSE) %>% 
-      config(displayModeBar = FALSE) %>%
+      #config(displayModeBar = FALSE) %>%
       onRender(code)
     
   })
