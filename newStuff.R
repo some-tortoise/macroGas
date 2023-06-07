@@ -28,7 +28,7 @@ server <- function(input, output, session){
   data <- reactiveValues(df = combined_df)
   
   selectedData <- reactive({
-    df_plot <- combined_df[combined_df$station == as.numeric(input$station),]
+    df_plot <- data$df[data$df$station == as.numeric(input$station),]
     event.click.data <- event_data(event = "plotly_click", source = "imgLink")
     event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
     df_chosen <- df_plot[((df_plot$id %in% event.click.data$key) | (df_plot$id %in% event.selected.data$key)),]
@@ -36,13 +36,12 @@ server <- function(input, output, session){
   })
   
   output$main_plot = renderPlotly({
-    df_plot <- combined_df[combined_df$station == as.character(input$station),]
+    df_plot <- data$df[data$df$station == as.character(input$station),]
     plot_ly(data = df_plot, x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~id, color = ~station, source = "imgLink") %>%
       layout(xaxis = list(
         range = c(min(df_plot$Date_Time), max(df_plot$Date_Time)),  # Set the desired range
         type = "date"  # Specify the x-axis type as date
-      ), dragmode = 'select', 
-      legend = "Station"))
+      ), dragmode = 'select')
     
   })
   

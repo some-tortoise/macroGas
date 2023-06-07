@@ -34,6 +34,4 @@ combined_df <- combined_df |>
          Temp_C_Flag = 'good',
          station = as.character(station))
 
-view(combined_df)
-
 
