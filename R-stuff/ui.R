@@ -4,6 +4,7 @@ library(DT) # for datatables
 library(htmlwidgets)
 library(shinyjs)
 library(shinyFiles)
+library(shinyTime)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage(strong("Salt Slugs"),
@@ -23,9 +24,14 @@ ui <- navbarPage(strong("Salt Slugs"),
                       
              ),
                   
-             tabPanel("Visualize",
+             tabPanel("Upload and Visualize",
                       useShinyjs(),
-                      titlePanel("Salt Slug Visualizations"),
+                      div(id = 'upload_method',
+                        tags$h1('How do you want to upload?'),
+                        actionButton('gdrive_choice','Through Google Drive'),
+                        actionButton('manual_choice','Manually')
+                      ),
+                      div(id = 'manual_container',
                       fluidRow(
                         sidebarLayout(
                           sidebarPanel(
@@ -46,20 +52,26 @@ ui <- navbarPage(strong("Salt Slugs"),
                                          choices = c("rows",
                                                      "columns"),
                                          selected = "rows"),
-                            actionButton('submit_delete', 'Delete selected')
+                            actionButton('submit_delete', 'Delete selected'),
+                            tags$hr(),
+                            textInput('station_name','Enter station name'),
+                            actionButton('viz_btn','Visualize')
                           ),
                           mainPanel(
                             DT::dataTableOutput('table1'),
                             DT::dataTableOutput("table2")
                           )
                         )
-                      ),
+                      )),
+                      div(id = 'viz_container_div',
                       fluidRow(
                         sidebarLayout(
                           sidebarPanel(
                             checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
                             radioButtons("variable_choice",label = helpText('Select variable to graph'),
                                          choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
+                            dateInput('date1', 'Start of Slug Date:'),
+                            timeInput("time1", 'Start of Slug Time:'),
                             selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
                             actionButton('flag_btn', label = 'flag points')
                           ),
@@ -68,9 +80,6 @@ ui <- navbarPage(strong("Salt Slugs"),
                                         tabPanel('plot', 
                                                  plotlyOutput('main_plot'),
                                                  dataTableOutput('selected_data_table')
-                                        ),
-                                        tabPanel('table', 
-                                                 dataTableOutput('df')
                                         )
                             )
                           )
@@ -79,6 +88,7 @@ ui <- navbarPage(strong("Salt Slugs"),
                       fluidRow(
                         downloadButton('downloadBtn', 'Download'),
                         actionButton('upload_to_gdrive', 'Upload to Google Drive')
+                      )
                       )
                       
                     )
