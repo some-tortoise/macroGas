@@ -57,15 +57,17 @@ ui <- navbarPage(strong("Salt Slugs"),
                       fluidRow(
                         sidebarLayout(
                           sidebarPanel(
-                            selectInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
+                            checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
                             radioButtons("variable_choice",label = helpText('Select variable to graph'),
-                                         choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C'))
+                                         choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
+                            selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
+                            actionButton('flag_btn', label = 'flag points')
                           ),
                           mainPanel(
                             tabsetPanel(type = 'tabs',
                                         tabPanel('plot', 
-                                                 plotlyOutput("plotOutput"),
-                                                 dataTableOutput('clicked')
+                                                 plotlyOutput('main_plot'),
+                                                 dataTableOutput('selected_data_table')
                                         ),
                                         tabPanel('table', 
                                                  dataTableOutput('df')

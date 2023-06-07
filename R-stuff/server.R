@@ -5,48 +5,39 @@ library(htmlwidgets)
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-code <- "
-        function(el) { 
-          el.on('plotly_click', function(d) { 
-            Shiny.onInputChange('txt', d.points[0].text);
-          });
-        }"
-
 server <- function(input, output, session){
   
-  txt <- reactive({ input$txt })
+  #
+  # VISUALIZATION STUFF
+  #
   
-  output$choose_flag <- renderText({
-    hide("choose_flag")
-    return('')
+  data <- reactiveValues(df = combined_df)
+  
+  
+  selectedData <- reactive({
+    df_plot <- data$df[data$df$station == as.numeric(input$station),]
+    event.click.data <- event_data(event = "plotly_click", source = "imgLink")
+    event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
+    df_chosen <- df_plot[((df_plot$id %in% event.click.data$key) | (df_plot$id %in% event.selected.data$key)),]
+    return(df_chosen)
   })
   
-  output$clicked <- renderDT({
-    if(is.null(input$txt)){
-      return()
-    }else{
-      show("choose_flag")
-      point_clicked <- str_split_1(input$txt, ' ')
-      date_and_time_clicked <- paste(point_clicked[2], str_replace(point_clicked[3], '<br', ''))
-      data <- combined_df[combined_df$Date_Time == date_and_time_clicked & combined_df$station == as.numeric(input$station),]
-      data$Date_Time <- format(as.POSIXct(data$Date_Time), '%Y-%m-%d %H:%M:%S')
-      datatable(data, options = list(searching = FALSE, lengthChange = FALSE, paging = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
-      
-    }
+  output$main_plot = renderPlotly({
+    df_plot <- data$df[data$df$station == input$station,]
+    color_mapping <- c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple", "5" = "black")
+    plot_ly(data = df_plot, x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~id, color = ~as.character(station), colors = ~color_mapping, source = "imgLink") %>%
+      layout(xaxis = list(
+        range = c(min(df_plot$Date_Time), max(df_plot$Date_Time)),  # Set the desired range
+        type = "date"  # Specify the x-axis type as date
+      ), dragmode = 'select')
+    
   })
   
-  output$plotOutput <- renderPlotly({
-    curr_df = clean_dataframe_list[[as.numeric(input$station)]]
-    p <- ggplot(data = curr_df, mapping = aes_string(x = 'Date_Time', y = input$variable_choice)) +
-      theme(panel.background = element_rect(fill = '#e5ecf6'), legend.position = 'None') +
-      geom_line() +
-      labs(x = 'Time', y = input$variable_choice)
-    
-    ggplotly(p) %>% 
-      layout(showlegend = FALSE) %>% 
-      #config(displayModeBar = FALSE) %>%
-      onRender(code)
-    
+  output$selected_data_table <- renderDT(selectedData())
+  
+  observeEvent(input$flag_btn,{
+    flag_name = paste0(input$variable_choice, "_Flag")
+    data$df[((data$df$id %in% selectedData()$id) & (data$df$station %in% selectedData()$station)),flag_name] <- input$flag_type
   })
   
   output$df <- renderDT({
@@ -57,6 +48,10 @@ server <- function(input, output, session){
     ), rownames = FALSE)
   }
   )
+  
+  #
+  # LOAD IN STUFF
+  #
   
   uploaded_data <- reactiveValues()
   
@@ -96,6 +91,10 @@ server <- function(input, output, session){
                    'columns' = 'column')
     datatable(uploaded_data$data, extensions = 'Select', selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
   })
+  
+  #
+  #DOWNLOAD STUFF
+  #
   
   output$downloadBtn <- downloadHandler(
     filename = function() {
