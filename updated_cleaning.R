@@ -28,6 +28,11 @@ get_and_clean_data <- function(){
 
 clean_dataframe_list <- get_and_clean_data()
 combined_df <- do.call(rbind, clean_dataframe_list) #combining all data frames - function binding rows
+combined_df <- combined_df |>
+  mutate(Low_Range_Flag = 'good',
+         Full_Range_Flag = 'good',
+         Temp_C_Flag = 'good')
 
+view(combined_df)
 
 
