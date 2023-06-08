@@ -6,13 +6,13 @@ source(knitr::purl("updated_cleaning.R", output = tempfile(), quiet = TRUE)) #ge
 
 processed_folder <- 'https://drive.google.com/drive/u/0/folders/1oApNS0FhID95xUn0R0q9BMxe0LzqNSjs'
 
-upload_csv_file <- function(clean_df, name){
+upload_csv_file <- function(clean_df, name, folder_path){
   file <- paste('processed_',name, sep='')
   file <- drive_put(
     media = file,
     name = file,
     type = 'csv',
-    path = as_id(processed_folder))
+    path = as_id(folder_path))
 }
 
 turn_file_to_csv <- function(clean_df, name){
@@ -27,4 +27,4 @@ upload_files <- function(clean_dfs, names){
   }
 }
 
-upload_files(clean_dataframe_list, list_of_raw_csv_names)
+upload_files(clean_dataframe_list, list_of_raw_csv_names, processed_folder)
