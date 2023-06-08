@@ -2,71 +2,49 @@ library(shiny) # for webpage creation
 library(plotly) # for interactive graphs
 library(DT) # for datatables
 library(shinyjs)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
+library(htmlwidgets)
+library(shinyjs)
+library(shinyFiles)
+library(shinyTime)
 
-server <- function(input, output, session){
-  
-  #
-  # LOAD IN METHOD CHOICE
-  #
-  
-  hide("manual_container")
-  hide("viz_container_div")
-  
-  observeEvent(input$manual_choice, {
-    show("manual_container")
-    show("viz_container_div")
-  })
-  
-  observeEvent(input$gdrive_choice, {
-    #alert('This option is currently unavailable.')
-    show("viz_container_div")
-  })
-  
-  #
-  # LOAD IN STUFF
-  #
-  
-  uploaded_data <- reactiveValues()
-  
-  observeEvent(c(input$file1, input$header), {
-    req(input$file1)
-    tryCatch({
-      data <- read.csv(input$file1$datapath,
-                       header = input$header,
-                       sep = input$sep,
-                       quote = input$quote)
-      if (ncol(data) > length(colnames(data))) {
-        print('more cols than col names')
-        stop("Number of columns is greater than the number of column names.")
-      }
-      uploaded_data$data <- data
-    }, error = function(e) {
-      uploaded_data$data <- NULL
-    })
-  })
-  
-  observeEvent(input$submit_delete, {
-    selected_rows <- as.integer(input$table1_rows_selected)
-    selected_cols <- as.integer(input$table1_columns_selected)
-    if (length(selected_rows) > 0) {
-      uploaded_data$data <- uploaded_data$data[-selected_rows, ]
-    }
-    if (length(selected_cols) > 0) {
-      uploaded_data$data <- uploaded_data$data[, -selected_cols]
-    }
-  })
-  
-  output$table1 <- DT::renderDataTable({
-    req(input$file1)
-    
-    targ <- switch(input$row_and_col_select,
-                   'rows' = 'row',
-                   'columns' = 'column')
-    datatable(uploaded_data$data, extensions = 'Select', selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
-  })
-  
-  
+source(knitr::purl("updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
+
+ui <- navbarPage('',
+  tabPanel("Upload",
+           useShinyjs(),
+           
+           div(id = 'viz_container_div',
+               fluidRow(
+                 sidebarLayout(
+                   sidebarPanel(
+                     checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
+                     radioButtons("variable_choice",label = helpText('Select variable to graph'),
+                                  choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
+                     dateInput('date1', 'Start of Slug Date:'),
+                     timeInput("time1", 'Start of Slug Time:'),
+                     selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
+                     actionButton('flag_btn', label = 'flag points')
+                   ),
+                   mainPanel(
+                     tabsetPanel(type = 'tabs',
+                                 tabPanel('plot', 
+                                          plotlyOutput('main_plot'),
+                                          dataTableOutput('selected_data_table')
+                                 )
+                     )
+                   )
+                 )
+               ),
+               fluidRow(
+                 downloadButton('downloadBtn', 'Download'),
+                 actionButton('upload_to_gdrive', 'Upload to Google Drive')
+               )
+           )
+           
+  )
+)
+
+server <- function(input, output){
   #
   # VISUALIZATION STUFF
   #
@@ -108,7 +86,7 @@ server <- function(input, output, session){
   
   output$selected_data_table <- renderDT({
     datatable(selectedData(), options = list(searching = FALSE, lengthChange = FALSE, paging = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
-    })
+  })
   
   observeEvent(input$flag_btn,{
     flag_name = paste0(input$variable_choice, "_Flag")
@@ -133,11 +111,13 @@ server <- function(input, output, session){
       print('File has been \'downloaded\'')
     }
   )
-   
-   observeEvent(input$upload_to_gdrive, {
-     name <- input$file1$name
-     turn_file_to_csv(uploaded_data$data, name)
-     upload_csv_file(uploaded_data$data, name)
-     print('File has been \'uploaded\'')
-   })
+  
+  observeEvent(input$upload_to_gdrive, {
+    name <- input$file1$name
+    turn_file_to_csv(uploaded_data$data, name)
+    upload_csv_file(uploaded_data$data, name)
+    print('File has been \'uploaded\'')
+  })
 }
+
+shinyApp(ui = ui, server = server)

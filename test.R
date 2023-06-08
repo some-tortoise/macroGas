@@ -1,23 +1,31 @@
 library(shiny)
-library(shinyTime)
+library(data.table)
 
 ui <- fluidPage(
-  
-  titlePanel("shinyTime Example App"),
-  
+  titlePanel("Multiple file uploads"),
   sidebarLayout(
     sidebarPanel(
-      timeInput("time_input", "Enter time", value = strptime("12:34:56", "%T"))
+      fileInput("csvs",
+                label="Upload CSVs here",
+                multiple = TRUE)
     ),
-    
     mainPanel(
-      textOutput("time_output")
+      textOutput("count"),
+      textOutput(("Listnames"))
+      
     )
   )
 )
 
-server <- function(input, output, session) {
-  output$time_output <- renderText(strftime(input$time_input, "%T"))
+server <- function(input, output) {
+  mycsvs<-reactive({
+    tmp <- lapply(input$csvs$datapath, fread)
+    names(tmp) <- input$csvs$name
+    tmp
+    
+  })
+  output$count <- renderText(length(mycsvs()))
+  output$Listnames <- renderText(names(mycsvs()))
 }
 
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server)

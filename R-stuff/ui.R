@@ -20,17 +20,17 @@ ui <- navbarPage(strong("Salt Slugs"),
                       br(),
                       p('Template for salt slug data upload'),
                       p('Example salt slug data'),
+                      div(id = 'upload_method',
+                          tags$h1('How do you want to upload?'),
+                          actionButton('gdrive_choice','Through Google Drive'),
+                          actionButton('manual_choice','Manually')
+                      )
                       
                       
              ),
-                  
-             tabPanel("Upload and Visualize",
+             tabPanel('Visualize'),
+             tabPanel("Upload",
                       useShinyjs(),
-                      div(id = 'upload_method',
-                        tags$h1('How do you want to upload?'),
-                        actionButton('gdrive_choice','Through Google Drive'),
-                        actionButton('manual_choice','Manually')
-                      ),
                       div(id = 'manual_container',
                       fluidRow(
                         sidebarLayout(

@@ -12,6 +12,7 @@ get_and_clean_data <- function(){
   df = c() #creates an empty vector
   for(i in 1:length(list_of_raw_csv_names)){ #for each name in however many files we have, do the following:
     name <- list_of_raw_csv_names[i] #gets first name
+    station_name <- strsplit(name,'_')[[1]][4]
     file <- drive_get(name) #if there is a csv by this name, get it.
     drive_download(file, path = name, overwrite = TRUE) # downloads a particular file
     loaded = read.csv(name, header=F) #loads file into r environment
@@ -20,7 +21,7 @@ get_and_clean_data <- function(){
     loaded = loaded %>% #saves following code as loaded
       mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
       mutate(Date_Time = mdy_hms(Date_Time, tz='GMT'), #changes date_time to a mdy_hms format in gmt time zone
-             station = i) #FIX THIS- stations are not ordered by station number
+             station = station_name) #FIX THIS- stations are not ordered by station number
     df[[i]] = loaded #makes the ith element of the list equal to the data frame.
   }
   return(df)
@@ -32,5 +33,11 @@ combined_df <- combined_df |>
   mutate(Low_Range_Flag = 'good',
          Full_Range_Flag = 'good',
          Temp_C_Flag = 'good')
+
+
+
+
+
+
 
 
