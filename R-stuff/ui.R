@@ -8,7 +8,10 @@ library(shinyTime)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage(strong("Salt Slugs"),
-             {tabPanel(strong('Home'),
+                 tags$head(
+                   tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+                 ),
+             tabPanel(strong('Home'),
                       titlePanel(strong("Salt Slugs")),
                       p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
@@ -50,21 +53,24 @@ ui <- navbarPage(strong("Salt Slugs"),
                             downloadButton('downloadBtn', 'Download'),
                             actionButton('upload_to_gdrive', 'Upload to Google Drive')
                           )
-                      )
-                      )},#VISUALIZE
-             {tabPanel("Upload",
-                      useShinyjs(),
-                      div(id = 'manual_container',
-                      fluidRow(
-                        sidebarLayout(
-                          {sidebarPanel(
-                            fileInput("csvs",
-                                      label="Upload CSVs here",
-                                      multiple = TRUE,
-                                      accept = c("text/csv",
-                                                 "text/comma-separated-values,text/plain",
-                                                 ".csv")),
-                            textOutput(("Listnames")),
+                      )),
+           tabPanel("Upload",
+             fluidRow(
+               column(width = 3,
+                   fileInput("file1", "Choose CSV File",
+                             multiple = TRUE,
+                             accept = c("text/csv",
+                                        "text/comma-separated-values,text/plain",
+                                        ".csv")),
+                   tags$hr(),
+                   textInput('station_name','Enter station name'),
+                   actionButton('viz_btn','Visualize')
+                 ),
+                 column(width = 5,
+                   div(id = "", DT::dataTableOutput('table1'))
+                 ),
+               column(width = 3,
+                            strong("Edit Data"),
                             tags$hr(),
                             checkboxInput("header", "Header", TRUE),
                             radioButtons("sep", "Separator",
@@ -72,22 +78,13 @@ ui <- navbarPage(strong("Salt Slugs"),
                                                      Semicolon = ";",
                                                      Tab = "\t"),
                                          selected = ","),
-                            tags$hr(),
                             radioButtons("row_and_col_select", "Choose which to edit",
                                          choices = c("rows",
                                                      "columns"),
                                          selected = "rows"),
-                            actionButton('submit_delete', 'Delete selected'),
-                            tags$hr(),
-                            textInput('station_name','Enter station name'),
-                            actionButton('viz_btn','Visualize')
-                          )}, # LEFT SIDE PANEL
-                          mainPanel(
-                            DT::dataTableOutput('table1'),
-                            DT::dataTableOutput("table2")
-                          )
-                        )
-                      )
-                      )
-                    )} # UPLOAD
-             )
+                            actionButton('submit_delete', 'Delete selected'))
+             
+         )
+)
+)
+
