@@ -8,7 +8,7 @@ library(shinyTime)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage(strong("Salt Slugs"),
-             tabPanel(strong('Home'),
+             {tabPanel(strong('Home'),
                       titlePanel(strong("Salt Slugs")),
                       p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
@@ -27,8 +27,8 @@ ui <- navbarPage(strong("Salt Slugs"),
                       )
                       
                       
-             ),
-             tabPanel('Visualize',
+             )},#HOME
+             {tabPanel('Visualize',
                       div(id = 'viz_container_div',
                           fluidRow(
                             sidebarLayout(
@@ -55,13 +55,14 @@ ui <- navbarPage(strong("Salt Slugs"),
                             downloadButton('downloadBtn', 'Download'),
                             actionButton('upload_to_gdrive', 'Upload to Google Drive')
                           )
-                      )),
-             tabPanel("Upload",
+                      )
+                      )},#VISUALIZE
+             {tabPanel("Upload",
                       useShinyjs(),
                       div(id = 'manual_container',
                       fluidRow(
                         sidebarLayout(
-                          sidebarPanel(
+                          {sidebarPanel(
                             fileInput("file1", "Choose CSV File",
                                       multiple = TRUE,
                                       accept = c("text/csv",
@@ -83,14 +84,13 @@ ui <- navbarPage(strong("Salt Slugs"),
                             tags$hr(),
                             textInput('station_name','Enter station name'),
                             actionButton('viz_btn','Visualize')
-                          ),
+                          )}, # LEFT SIDE PANEL
                           mainPanel(
                             DT::dataTableOutput('table1'),
                             DT::dataTableOutput("table2")
                           )
                         )
-                      ))
-                      
-                      
-                    )
+                      )
+                      )
+                    )} # UPLOAD
              )
