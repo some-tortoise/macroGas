@@ -35,8 +35,7 @@ ui <- navbarPage(
   {tabPanel('Visualize',
                       div(id = 'viz_container_div',
                           fluidRow(
-                            sidebarLayout(
-                              sidebarPanel(
+                            column(width= 3,
                                 checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
                                 radioButtons("variable_choice",label = helpText('Select variable to graph'),
                                              choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
@@ -45,15 +44,18 @@ ui <- navbarPage(
                                 selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
                                 actionButton('flag_btn', label = 'flag points')
                               ),
-                              mainPanel(
+                              column(width= 7,
                                 plotlyOutput('main_plot')
-                              )
+                              ),
+                            column(width=1,
+                                   actionButton("do_math", "Do Math"))
                             )
-                          ),
+                          ,
                           fluidRow(
+                            column(width = 3, align = "center", offset = 5,
                             downloadButton('downloadBtn', 'Download'),
                             actionButton('upload_to_gdrive', 'Upload to Google Drive')
-                          )
+                          ))
                       ))}, #VISUALIZE
   {tabPanel("Upload",
              fluidRow(
