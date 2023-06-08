@@ -28,7 +28,34 @@ ui <- navbarPage(strong("Salt Slugs"),
                       
                       
              ),
-             tabPanel('Visualize'),
+             tabPanel('Visualize',
+                      div(id = 'viz_container_div',
+                          fluidRow(
+                            sidebarLayout(
+                              sidebarPanel(
+                                checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
+                                radioButtons("variable_choice",label = helpText('Select variable to graph'),
+                                             choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
+                                dateInput('date1', 'Start of Slug Date:'),
+                                timeInput("time1", 'Start of Slug Time:'),
+                                selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
+                                actionButton('flag_btn', label = 'flag points')
+                              ),
+                              mainPanel(
+                                tabsetPanel(type = 'tabs',
+                                            tabPanel('plot', 
+                                                     plotlyOutput('main_plot'),
+                                                     dataTableOutput('selected_data_table')
+                                            )
+                                )
+                              )
+                            )
+                          ),
+                          fluidRow(
+                            downloadButton('downloadBtn', 'Download'),
+                            actionButton('upload_to_gdrive', 'Upload to Google Drive')
+                          )
+                      )),
              tabPanel("Upload",
                       useShinyjs(),
                       div(id = 'manual_container',
@@ -62,34 +89,8 @@ ui <- navbarPage(strong("Salt Slugs"),
                             DT::dataTableOutput("table2")
                           )
                         )
-                      )),
-                      div(id = 'viz_container_div',
-                      fluidRow(
-                        sidebarLayout(
-                          sidebarPanel(
-                            checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
-                            radioButtons("variable_choice",label = helpText('Select variable to graph'),
-                                         choices = c("Low Range" = "Low_Range", "Full Range" = 'Full_Range', "Temp C" = 'Temp_C')),
-                            dateInput('date1', 'Start of Slug Date:'),
-                            timeInput("time1", 'Start of Slug Time:'),
-                            selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
-                            actionButton('flag_btn', label = 'flag points')
-                          ),
-                          mainPanel(
-                            tabsetPanel(type = 'tabs',
-                                        tabPanel('plot', 
-                                                 plotlyOutput('main_plot'),
-                                                 dataTableOutput('selected_data_table')
-                                        )
-                            )
-                          )
-                        )
-                      ),
-                      fluidRow(
-                        downloadButton('downloadBtn', 'Download'),
-                        actionButton('upload_to_gdrive', 'Upload to Google Drive')
-                      )
-                      )
+                      ))
+                      
                       
                     )
              )

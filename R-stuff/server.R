@@ -10,8 +10,8 @@ server <- function(input, output, session){
   # LOAD IN METHOD CHOICE
   #
   
-  hide("manual_container")
-  hide("viz_container_div")
+  #hide("manual_container")
+  #hide("viz_container_div")
   
   observeEvent(input$manual_choice, {
     show("manual_container")
