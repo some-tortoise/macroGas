@@ -42,12 +42,7 @@ ui <- navbarPage(strong("Salt Slugs"),
                                 actionButton('flag_btn', label = 'flag points')
                               ),
                               mainPanel(
-                                tabsetPanel(type = 'tabs',
-                                            tabPanel('plot', 
-                                                     plotlyOutput('main_plot'),
-                                                     dataTableOutput('selected_data_table')
-                                            )
-                                )
+                                plotlyOutput('main_plot')
                               )
                             )
                           ),
