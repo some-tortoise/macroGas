@@ -1,31 +1,35 @@
 library(shiny)
-library(data.table)
 
 ui <- fluidPage(
-  titlePanel("Multiple file uploads"),
   sidebarLayout(
     sidebarPanel(
-      fileInput("csvs",
-                label="Upload CSVs here",
-                multiple = TRUE)
+      fileInput("fileInput", "Select Files", multiple = TRUE),
+      #actionButton("addFiles", "Add Files"),
+      br(),
+      verbatimTextOutput("fileList")
     ),
     mainPanel(
-      textOutput("count"),
-      textOutput(("Listnames"))
-      
+      # Output or other UI elements
     )
   )
 )
 
-server <- function(input, output) {
-  mycsvs<-reactive({
-    tmp <- lapply(input$csvs$datapath, fread)
-    names(tmp) <- input$csvs$name
-    tmp
+server <- function(input, output, session) {
+  # Create a reactive variable to store the selected files
+  files <- reactiveValues(data = NULL)
+  
+  observeEvent(input$fileInput, {
+    # Read the selected files
+    selected_files <- input$fileInput$datapath
     
+    # Add the selected files to the existing list
+    files$data <- c(files$data, selected_files)
   })
-  output$count <- renderText(length(mycsvs()))
-  output$Listnames <- renderText(names(mycsvs()))
+  
+  output$fileList <- renderPrint({
+    # Render the list of selected files
+    files$data
+  })
 }
 
 shinyApp(ui = ui, server = server)

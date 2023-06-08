@@ -58,11 +58,13 @@ ui <- navbarPage(strong("Salt Slugs"),
                       fluidRow(
                         sidebarLayout(
                           {sidebarPanel(
-                            fileInput("file1", "Choose CSV File",
+                            fileInput("csvs",
+                                      label="Upload CSVs here",
                                       multiple = TRUE,
                                       accept = c("text/csv",
                                                  "text/comma-separated-values,text/plain",
                                                  ".csv")),
+                            textOutput(("Listnames")),
                             tags$hr(),
                             checkboxInput("header", "Header", TRUE),
                             radioButtons("sep", "Separator",
