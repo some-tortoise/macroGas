@@ -30,7 +30,7 @@ server <- function(input, output, session){
   {
     uploaded_data <- reactiveValues(data = NULL, names = NULL)
     
-    output$Listnames <- renderText(uploaded_data$names)
+    #output$Listnames <- renderText(uploaded_data$names)
     
     observeEvent(c(input$csvs, input$header), {
       req(input$csvs)
@@ -40,7 +40,7 @@ server <- function(input, output, session){
                          sep = input$sep,
                          quote = input$quote)
         
-        uploaded_data$names <- c(uploaded_data$names, input$csvs$datapath)
+        #uploaded_data$names <- c(uploaded_data$names, input$csvs$datapath)
         #print(uploaded_data$names)
         # print(uploaded_data$names)
         # print('banaan')

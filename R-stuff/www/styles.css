@@ -1,3 +1,6 @@
-tr.selected {
-    background-color: #2fd00a;
+body{
+}
+
+#upload_dt{
+  overflow-x: scroll;
 }
