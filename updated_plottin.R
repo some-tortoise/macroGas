@@ -10,6 +10,10 @@ library(shinyTime)
 source(knitr::purl("updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage('',
+                 tags$style(
+                   type = 'text/css',
+                   '.modal-dialog { width: fit-content !important; }'
+                 ),
   tabPanel("Upload",
            useShinyjs(),
            
@@ -23,7 +27,9 @@ ui <- navbarPage('',
                      dateInput('date1', 'Start of Slug Date:'),
                      timeInput("time1", 'Start of Slug Time:'),
                      selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
-                     actionButton('flag_btn', label = 'flag points')
+                     actionButton('flag_btn', label = 'flag points'),
+                     hr(),
+                     actionButton('Download', label = 'Download the flagged dataset')
                    ),
                    mainPanel(
                      tabsetPanel(type = 'tabs',
@@ -36,8 +42,8 @@ ui <- navbarPage('',
                  )
                ),
                fluidRow(
-                 downloadButton('downloadBtn', 'Download'),
-                 actionButton('upload_to_gdrive', 'Upload to Google Drive')
+                 #downloadButton('downloadBtn', 'Download'),
+                 #actionButton('upload_to_gdrive', 'Upload to Google Drive')
                )
            )
            
@@ -85,7 +91,7 @@ server <- function(input, output){
   })
   
   output$selected_data_table <- renderDT({
-    datatable(selectedData(), options = list(searching = FALSE, lengthChange = FALSE, paging = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
+    datatable(selectedData(), options = list(pageLength = 5, searching = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
   })
   
   observeEvent(input$flag_btn,{
@@ -99,24 +105,63 @@ server <- function(input, output){
   #DOWNLOAD STUFF
   #
   
+  observeEvent(input$Download, {
+    showModal(modalDialog(
+      title = 'Are you sure you want to download the dataset below:',
+      dataTableOutput('finalDT'),
+      downloadButton('downloadBtn', 'Download'),
+      actionButton('upload_to_gdrive', 'Upload to Google Drive'),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Close")
+      )
+    ))
+  })
+  
+  output$finalDT <- renderDT({
+    datatable(data$df, options = list(pageLength = 20))
+  })
+  
   output$downloadBtn <- downloadHandler(
     filename = function() {
       # Set the filename of the downloaded file
-      "my_file.csv"
+      "flagged_data.csv"
     },
     content = function(file) {
       # Generate the content of the file
-      # In this example, we create a simple CSV file with the Iris dataset
-      write.csv(uploaded_data$data, file, row.names = FALSE)
-      print('File has been \'downloaded\'')
+      write.csv(data$df, file, row.names = FALSE)
     }
   )
   
   observeEvent(input$upload_to_gdrive, {
-    name <- input$file1$name
-    turn_file_to_csv(uploaded_data$data, name)
-    upload_csv_file(uploaded_data$data, name)
-    print('File has been \'uploaded\'')
+    name <- 'flagged_data.csv'
+    showModal(modalDialog(
+      textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
+      actionButton('path_ok', 'OK')
+    ))
+  })
+  
+  observeEvent(input$path_ok,{
+    turn_file_to_csv(data$df, name)
+    upload_csv_file(data$df, name, input$drivePath)
+    if(paste0('processed_', name) %in% (drive_ls(input$drivePath)[['name']])){
+      showModal(modalDialog(
+        h3('File has been uploaded successfully!'),
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))
+    }
+    else{
+      showModal(modalDialog(
+        h3('File upload failed!'),
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))
+    }
   })
 }
 
