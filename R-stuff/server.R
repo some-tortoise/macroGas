@@ -49,10 +49,6 @@ server <- function(input, output, session){
     
     oldList <- reactiveValues(a = NULL)
     
-    observeEvent(input$dataFromJS, {
-      print('aaaa')
-    })
-    
     observeEvent(input$csvs, {
       uploaded_data$names <- unique(c(uploaded_data$names, input$csvs$name))
       session$sendCustomMessage("names", uploaded_data$names)

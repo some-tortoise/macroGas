@@ -1,28 +1,50 @@
 library(shiny)
+library(DT)
 
 ui <- fluidPage(
   fileInput(inputId = 'csvs', 
             label = 'Choose!',
-            multiple = TRUE)
+            multiple = TRUE),
+  selectInput(inputId = 'select',
+              label = 'Select',
+              choices = c()),
+  DT::dataTableOutput('dt')
 )
 
-server <- function(input, output){
+server <- function(input, output, session){
   
-  uploaded_data <- reactiveValues(data = NULL)
+  uploaded_data <- reactiveValues(names = NULL, data = NULL)
   
   observeEvent(input$csvs, {
     seq_csv <- seq(1, length(input$csvs$name))
+    prev_num_files <- length(uploaded_data$data)
+    in_file <- NULL
     for(i in seq_csv){
-      in_file <- read.csv(input$csvs$datapath[i])
+      tryCatch({
+        in_file <- read.csv(input$csvs$datapath[i],
+                            header = input$header,
+                            sep = input$sep,
+                            quote = input$quote)
+      }, error = function(e){
+        in_file <- NULL
+      })
       
-      uploaded_data$data <- c(uploaded_data$data, 
-                              c(input$csvs$name[i], 
-                                in_file)
-                              )
+      uploaded_data$names[[prev_num_files + i]] <- input$csvs$name[i]
+      uploaded_data$data[[prev_num_files + i]] <- as.data.frame(in_file)
     }
     
-    print(uploaded_data$data)
-    print('---------------------------------------')
+    updateSelectInput(session, 'select', choices = uploaded_data$names)
+  })
+  
+  output$dt <- renderDT({
+    val <- 1
+    for(i in seq(uploaded_data$names)){
+      if(input$select == uploaded_data$names[i]){
+        val <- i
+      }
+    }
+  
+  datatable(uploaded_data$data[[val]])
   })
 }
 
