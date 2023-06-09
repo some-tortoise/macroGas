@@ -63,8 +63,9 @@ ui <- navbarPage(
                              accept = c("text/csv",
                                         "text/comma-separated-values,text/plain",
                                         ".csv")),
+                   uiOutput("dynamicUI"),
                    tags$hr(),
-                   textInput('station_name','Enter station name'),
+                   numericInput('station_name','Enter station number', 0),
                    actionButton('viz_btn','Visualize')
                  ),
                  column(width = 7,
@@ -73,7 +74,7 @@ ui <- navbarPage(
                column(width = 2,
                             strong("Edit Data"),
                             tags$hr(),
-                            checkboxInput("header", "Header", TRUE),
+                            checkboxInput("header", "Header", FALSE),
                             radioButtons("sep", "Separator",
                                          choices = c(Comma = ",",
                                                      Semicolon = ";",
@@ -86,6 +87,7 @@ ui <- navbarPage(
                             actionButton('submit_delete', 'Delete selected'))
              
          )
-)} #UPLOAD
+)}, #UPLOAD
+  tags$head(tags$script(src="script.js"))
 )
 

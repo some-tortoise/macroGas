@@ -30,25 +30,52 @@ server <- function(input, output, session){
   {
     uploaded_data <- reactiveValues(data = NULL, names = NULL)
     
-    #output$Listnames <- renderText(uploaded_data$names)
-    
-    observeEvent(c(input$csvs, input$header), {
+    observeEvent(input$csvs, {
       req(input$csvs)
+      
       tryCatch({
         in_files <- read.csv(input$csvs$datapath,
                          header = input$header,
                          sep = input$sep,
                          quote = input$quote)
-        
-        #uploaded_data$names <- c(uploaded_data$names, input$csvs$datapath)
-        #print(uploaded_data$names)
-        # print(uploaded_data$names)
-        # print('banaan')
-        # a <- c(uploaded_data$data, in_files)
+        uploaded_data$names <- c(uploaded_data$names, input$csvs$name)
         uploaded_data$data <- in_files
       }, error = function(e) {
         uploaded_data$data <- NULL
       })
+    })
+    
+    dynamicElements <- reactiveVal(NULL)
+    
+    oldList <- reactiveValues(a = NULL)
+    
+    observeEvent(input$dataFromJS, {
+      print('aaaa')
+    })
+    
+    observeEvent(input$csvs, {
+      uploaded_data$names <- unique(c(uploaded_data$names, input$csvs$name))
+      session$sendCustomMessage("names", uploaded_data$names)
+      for(i in uploaded_data$names[!(uploaded_data$names %in% oldList$a)]){
+        newElement <- tagList(
+          div(class = 'created-div',
+              strong(i, class = "dynamic-h3"),
+              actionButton('remove_file',class = 'del-btn','X')
+          ),
+          # Add more UI components here as needed
+        )
+        
+        currentElements <- dynamicElements()
+        updatedElements <- tagList(currentElements, newElement)
+        
+        dynamicElements(updatedElements)
+      }
+      oldList$a <- uploaded_data$names
+      
+    })
+    
+    output$dynamicUI <- renderUI({
+      dynamicElements()
     })
     
     output$table1 <- DT::renderDataTable({
@@ -57,8 +84,6 @@ server <- function(input, output, session){
       targ <- switch(input$row_and_col_select,
                      'rows' = 'row',
                      'columns' = 'column')
-      #view(uploaded_data$data[[1]])
-      #print(uploaded_data$data)
       datatable(uploaded_data$data, selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
     })
     

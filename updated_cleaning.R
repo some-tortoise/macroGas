@@ -34,10 +34,3 @@ combined_df <- combined_df |>
          Full_Range_Flag = 'good',
          Temp_C_Flag = 'good')
 
-
-
-
-
-
-
-

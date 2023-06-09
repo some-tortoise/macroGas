@@ -1,34 +1,28 @@
 library(shiny)
 
 ui <- fluidPage(
-  sidebarLayout(
-    sidebarPanel(
-      fileInput("fileInput", "Select Files", multiple = TRUE),
-      #actionButton("addFiles", "Add Files"),
-      br(),
-      verbatimTextOutput("fileList")
-    ),
-    mainPanel(
-      # Output or other UI elements
-    )
-  )
+  fileInput(inputId = 'csvs', 
+            label = 'Choose!',
+            multiple = TRUE)
 )
 
-server <- function(input, output, session) {
-  # Create a reactive variable to store the selected files
-  files <- reactiveValues(data = NULL)
+server <- function(input, output){
   
-  observeEvent(input$fileInput, {
-    # Read the selected files
-    selected_files <- input$fileInput$datapath
+  uploaded_data <- reactiveValues(data = NULL)
+  
+  observeEvent(input$csvs, {
+    seq_csv <- seq(1, length(input$csvs$name))
+    for(i in seq_csv){
+      in_file <- read.csv(input$csvs$datapath[i])
+      
+      uploaded_data$data <- c(uploaded_data$data, 
+                              c(input$csvs$name[i], 
+                                in_file)
+                              )
+    }
     
-    # Add the selected files to the existing list
-    files$data <- c(files$data, selected_files)
-  })
-  
-  output$fileList <- renderPrint({
-    # Render the list of selected files
-    files$data
+    print(uploaded_data$data)
+    print('---------------------------------------')
   })
 }
 
