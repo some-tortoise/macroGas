@@ -13,6 +13,7 @@ upload_csv_file <- function(clean_df, name, folder_path){
     name = file,
     type = 'csv',
     path = as_id(folder_path))
+  return('success')
 }
 
 turn_file_to_csv <- function(clean_df, name){
