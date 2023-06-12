@@ -8,30 +8,48 @@ library(shinyTime)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- navbarPage(
-  strong("Salt Slugs"),
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
     tags$link(rel = "preconnect", href = "https://fonts.googleapis.com"),
     tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
     tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Roboto&display=swap")
     ),
-  {tabPanel(strong('Home'),
-                      titlePanel(strong("Salt Slugs")),
-                      p( "Placeholder text welcoming science people to the salt slug visualization/computation app"),
+  {tabPanel(('Home'),
+            div(
+            div(
+              id = "box_1",
+              style = "background-color: #FCF7E5 ;
+                width: 800px;
+                height: 200px;
+                padding: 10px;",
+                h1("Salt Slug App"),
+               p("Placeholder text welcoming science people to the salt slug visualization/computation app")
+            ),
                       br(),
                       br(),
-                      hr(),
-                      h4(strong("Resources:")),
-                      p("For more information:",
-                        tags$a(href = "http://dx.doi.org/10.1029/2011WR010942", "Covino et al. 2011. Stream-groundwater exchange and hydrologic turnover at the network scale.'")),
-                      br(),
-                      p('Template for salt slug data upload'),
-                      p('Example salt slug data'),
-                      div(id = 'upload_method',
-                          tags$h1('How do you want to upload?'),
-                          actionButton('gdrive_choice','Through Google Drive'),
-                          actionButton('manual_choice','Manually')
-                      )
+            div(id = "box_2",
+                style = " background-color: #FCF7E5 ;
+                width: 800px;
+                height: 200px;
+                padding: 10px;
+                float: right",
+                h2("Instructions and Resouces"),
+                p("For more information:",
+                  tags$a(href = "http://dx.doi.org/10.1029/2011WR010942", "Covino et al. 2011. Stream-groundwater exchange and hydrologic turnover at the network scale.'")),
+             p('Template for salt slug data upload'),
+              p('Example salt slug data')),
+            br(),
+            br(),
+          
+              div(id = 'upload_method',
+                  style = "
+width: 800px;
+                height: 200px;
+                padding: 10px",
+                   tags$h3('How do you want to upload?'),
+                   actionButton('gdrive_choice','Through Google Drive'),
+                   actionButton('manual_choice','Manually')
+                      ))
                       
                       
              )},#HOME
