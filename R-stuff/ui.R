@@ -17,7 +17,7 @@ ui <- navbarPage(
     ),
   {tabPanel('Home',
                       titlePanel(strong("Salt Slugs")),
-                      p(style="color:blue;", "Placeholder text welcoming science people to the salt slug visualization/computation app"),
+                      p( "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
                       br(),
                       hr(),
