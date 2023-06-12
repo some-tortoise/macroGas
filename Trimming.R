@@ -2,11 +2,9 @@
 ##Trimming##
 ############
 
-##get cleaned data via our other code## (this doesn't work and I don't know why I've just been running updated_cleaning.R manually)
-source(knitr::purl("updated_cleaning.R", output = tempfile(), quiet = TRUE)) 
-
+# !!!!need combined_df from updated_cleaning.R for it to work##
 #filter the data to just one station (in this case 1), and to within an hour on each side of the slug 
-station1_slug <- combined_df %>% filter(station == '5')
+station1_slug <- combined_df %>% filter(station == '1')
 station1_slug <- station1_slug %>%
   filter(substr(Date_Time, 12, 19) >= "13:20:00" & substr(Date_Time, 12, 19) <= "18:33:00") # gets only the time from the date time
 station1_slug <- station1_slug %>%
@@ -38,4 +36,5 @@ trimmed_station1_slug <- station1_slug[start_trim:end_trim, ]
 x <- trimmed_station1_slug$Date_Time
 y <- trimmed_station1_slug$Low_Range
 plot(x,y)
+
 
