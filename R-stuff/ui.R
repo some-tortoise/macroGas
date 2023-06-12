@@ -72,7 +72,8 @@ width: 800px;
                                 actionButton('Download', label = 'Download the flagged dataset')
                               ),
                               column(width= 7,
-                                plotlyOutput('main_plot')
+                                plotlyOutput('main_plot'),
+                                dataTableOutput('selected_data_table')
                               ),
                             column(width=1,
                                    actionButton("do_math", "Do Math"))

@@ -4,8 +4,6 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-combined_df <- NULL
-
 server <- function(input, output, session){
   
   #
@@ -104,7 +102,6 @@ server <- function(input, output, session){
   #
   {
     data <- reactiveValues(df = combined_df)
-    
     
     selectedData <- reactive({
       df_plot <- data$df[data$df$station %in% input$station,]
