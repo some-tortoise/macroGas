@@ -130,7 +130,8 @@ server <- function(input, output, session){
         layout(xaxis = list(
           range = c(min_date, max_date),  # Set the desired range
           type = "date"  # Specify the x-axis type as date
-        ), dragmode = 'select')
+        ), dragmode = 'select') |>
+        config(modeBarButtonsToRemove = list("zoom2d", "pan2d", "hoverCompareCartesian", "lasso2d"))  # Remove specific buttons
       
     })
     
