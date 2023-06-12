@@ -25,9 +25,6 @@ ui <- navbarPage(
                 h1("Salt Slug App"),
                p("Placeholder text welcoming science people to the salt slug visualization/computation app")
             ),
-  {tabPanel('Home',
-                      titlePanel(strong("Salt Slugs")),
-                      p( "Placeholder text welcoming science people to the salt slug visualization/computation app"),
                       br(),
                       br(),
             div(id = "box_2",
