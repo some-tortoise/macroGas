@@ -33,4 +33,3 @@ combined_df <- combined_df |>
   mutate(Low_Range_Flag = 'good',
          Full_Range_Flag = 'good',
          Temp_C_Flag = 'good')
-
