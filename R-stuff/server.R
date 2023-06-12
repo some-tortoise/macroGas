@@ -132,7 +132,7 @@ server <- function(input, output, session){
           range = c(min_date, max_date),  # Set the desired range
           type = "date"  # Specify the x-axis type as date
         ), dragmode = 'select') |>
-        config(modeBarButtonsToRemove = list("zoom2d", "pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian"))  # Remove specific buttons
+        config(modeBarButtonsToRemove = list( "pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian"))  # Remove specific buttons
       
     })
     
