@@ -14,7 +14,6 @@ ui <- navbarPage(
     tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
     tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Roboto&display=swap")
     ),
-<<<<<<< HEAD
   {tabPanel(('Home'),
             div(
             div(
@@ -29,7 +28,6 @@ ui <- navbarPage(
   {tabPanel('Home',
                       titlePanel(strong("Salt Slugs")),
                       p( "Placeholder text welcoming science people to the salt slug visualization/computation app"),
->>>>>>> 09824dd0605119f0a3bfa3e07ee2f9aefe36d613
                       br(),
                       br(),
             div(id = "box_2",
