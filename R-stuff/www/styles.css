@@ -1,42 +1,61 @@
 #upload_dt{
-  overflow-x: scroll;
+overflow-x: scroll;
 }
 
+
 body{
-    /*background-color: #ebe8db;*/
-    font-family: 'Roboto', sans-serif;
-    color: rgb(59, 59, 59);
-    
+/*background-color: #ebe8db;*/
+font-family: 'Roboto', sans-serif;
+color: rgb(59, 59, 59);
 }
+
+
+
 
 
 
 .navbar{
-    background-color: #bbc97a;   
+background-color: #012169;
+display: flex;
+justify-content: center;
+align-items: center;
+height: 100px
 }
+.navbar-default .navbar-nav > li > a {
+color: white;
+}
+
 
 .navbar-brand > strong{
-    color: rgb(32, 32, 32);
+color: black;
 }
 
 
-.dynamic-h3 { 
-    color: black; 
-    display: inline; 
-    padding-left: 5px;
-} 
-    
+
+
+.dynamic-h3 {
+color: black;
+display: inline;
+padding-left: 5px;
+}
 .created-div {
-    background-color: #f5f5f5;
-    margin: 5px;
-    border-radius: 5px;
+background-color: #f5f5f5;
+margin: 5px;
+border-radius: 5px;
 }
+
 
 .created-div:hover{
-    background-color: #d9d9d9;
+background-color: #f5f5f5;
 }
 
+
 .del-btn {
-    border: none;
-    background-color: #f5f5f5;
+border: none;
+background-color: #f5f5f5;
 }
+
+
+
+
+
