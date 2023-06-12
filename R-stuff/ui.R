@@ -71,10 +71,11 @@ ui <- navbarPage(
                              accept = c("text/csv",
                                         "text/comma-separated-values,text/plain",
                                         ".csv")),
-                   uiOutput("dynamicUI"),
+                   selectInput(inputId = 'select',
+                               label = 'Select',
+                               choices = c()),
                    tags$hr(),
-                   numericInput('station_name','Enter station number', 0),
-                   actionButton('viz_btn','Visualize')
+                   numericInput('station_name','Enter station number', 0)
                  ),
                  column(width = 7,
                    div(id = "upload_dt", DT::dataTableOutput('table1'))
@@ -94,6 +95,9 @@ ui <- navbarPage(
                                          selected = "rows"),
                             actionButton('submit_delete', 'Delete selected'))
              
+         ),
+         fluidRow(
+           actionButton('viz_btn','Visualize')
          )
 )}, #UPLOAD
   tags$head(tags$script(src="script.js"))
