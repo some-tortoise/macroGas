@@ -15,9 +15,17 @@ ui <- navbarPage(
     tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
     tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Roboto&display=swap")
     ),
-  {tabPanel('Home',
-                      titlePanel(strong("Salt Slugs")),
-                      p( "Placeholder text welcoming science people to the salt slug visualization/computation app"),
+  {tabPanel(('Home'),
+            div(
+            div(
+              id = "box_1",
+              style = "background-color: #FCF7E5 ;
+                width: 800px;
+                height: 200px;
+                padding: 10px;",
+                h1("Salt Slug App"),
+               p("Placeholder text welcoming science people to the salt slug visualization/computation app")
+            ),
                       br(),
                       br(),
                       hr(),
@@ -54,7 +62,8 @@ ui <- navbarPage(
                                 actionButton('Download', label = 'Download the flagged dataset')
                               ),
                               column(width= 7,
-                                plotlyOutput('main_plot')
+                                plotlyOutput('main_plot'),
+                                dataTableOutput('selected_data_table')
                               ),
                             column(width=1,
                                    actionButton("do_math", "Do Math"))
