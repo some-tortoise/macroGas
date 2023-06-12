@@ -28,70 +28,72 @@ server <- function(input, output, session){
   # UPLOAD STUFF
   #
   {
-    uploaded_data <- reactiveValues(data = NULL, names = NULL)
+    
+    uploaded_data <- reactiveValues(csv_names = NULL, 
+                                    data = NULL, 
+                                    station_names = NULL,
+                                    combined_df = NULL)
     
     observeEvent(input$csvs, {
-      req(input$csvs)
-      
-      tryCatch({
-        in_files <- read.csv(input$csvs$datapath,
-                         header = input$header,
-                         sep = input$sep,
-                         quote = input$quote)
-        uploaded_data$names <- c(uploaded_data$names, input$csvs$name)
-        uploaded_data$data <- in_files
-      }, error = function(e) {
-        uploaded_data$data <- NULL
-      })
-    })
-    
-    dynamicElements <- reactiveVal(NULL)
-    
-    oldList <- reactiveValues(a = NULL)
-    
-    observeEvent(input$csvs, {
-      uploaded_data$names <- unique(c(uploaded_data$names, input$csvs$name))
-      session$sendCustomMessage("names", uploaded_data$names)
-      for(i in uploaded_data$names[!(uploaded_data$names %in% oldList$a)]){
-        newElement <- tagList(
-          div(class = 'created-div',
-              strong(i, class = "dynamic-h3"),
-              actionButton('remove_file',class = 'del-btn','X')
-          ),
-          # Add more UI components here as needed
-        )
+      seq_csv <- seq(1, length(input$csvs$name))
+      prev_num_files <- length(uploaded_data$data)
+      in_file <- NULL
+      for(i in seq_csv){
+        tryCatch({
+          in_file <- read.csv(input$csvs$datapath[i],
+                              header = input$header,
+                              sep = input$sep,
+                              quote = input$quote)
+        }, error = function(e){
+          in_file <- NULL
+        })
         
-        currentElements <- dynamicElements()
-        updatedElements <- tagList(currentElements, newElement)
+        uploaded_data$csv_names[[prev_num_files + i]] <- input$csvs$name[i]
+        uploaded_data$data[[prev_num_files + i]] <- as.data.frame(in_file)
         
-        dynamicElements(updatedElements)
       }
-      oldList$a <- uploaded_data$names
       
+      updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
     })
     
-    output$dynamicUI <- renderUI({
-      dynamicElements()
-    })
-    
-    output$table1 <- DT::renderDataTable({
-      req(input$csvs)
+    output$table1 <- renderDT({
+      val <- 1
+      for(i in seq(uploaded_data$csv_names)){
+        if(input$select == uploaded_data$csv_names[i]){
+          val <- i
+        }
+      }
       
       targ <- switch(input$row_and_col_select,
                      'rows' = 'row',
                      'columns' = 'column')
-      datatable(uploaded_data$data, selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
+      
+      datatable(uploaded_data$data[[val]], selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
     })
     
     observeEvent(input$submit_delete, {
+      val <- 1
+      for(i in seq(uploaded_data$csv_names)){
+        if(input$select == uploaded_data$csv_names[i]){
+          val <- i
+        }
+      }
+      
       selected_rows <- as.integer(input$table1_rows_selected)
       selected_cols <- as.integer(input$table1_columns_selected)
       if (length(selected_rows) > 0) {
-        uploaded_data$data <- uploaded_data$data[-selected_rows, ]
+        uploaded_data$data[[val]] <- uploaded_data$data[[val]][-selected_rows, ]
       }
       if (length(selected_cols) > 0) {
-        uploaded_data$data <- uploaded_data$data[, -selected_cols]
+        uploaded_data$data[[val]] <- uploaded_data$data[[val]][, -selected_cols, drop = FALSE]
       }
+    })
+    
+    observeEvent(input$viz_btn, {
+      # combine all elements of uploaded$data
+      # add column with station names
+      uploaded_data$combined_df <- '\'visualized\''
+      print(uploaded_data$combined_df)
     })
   }
   

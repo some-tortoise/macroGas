@@ -21,16 +21,14 @@ server <- function(input, output, session){
     in_file <- NULL
     for(i in seq_csv){
       tryCatch({
-        in_file <- read.csv(input$csvs$datapath[i],
-                            header = input$header,
-                            sep = input$sep,
-                            quote = input$quote)
+        in_file <- read.csv(input$csvs$datapath[i])
       }, error = function(e){
         in_file <- NULL
       })
       
       uploaded_data$names[[prev_num_files + i]] <- input$csvs$name[i]
       uploaded_data$data[[prev_num_files + i]] <- as.data.frame(in_file)
+      
     }
     
     updateSelectInput(session, 'select', choices = uploaded_data$names)
@@ -43,9 +41,9 @@ server <- function(input, output, session){
         val <- i
       }
     }
-  
-  datatable(uploaded_data$data[[val]])
+    datatable(uploaded_data$data[[val]])
   })
+  
 }
 
 shinyApp(ui = ui, server = server)
