@@ -150,25 +150,74 @@ server <- function(input, output, session){
   #
   # EXPORT STUFF
   #
-  {
-    output$downloadBtn <- downloadHandler(
-      filename = function() {
-        # Set the filename of the downloaded file
-        "my_file.csv"
-      },
-      content = function(file) {
-        # Generate the content of the file
-        # In this example, we create a simple CSV file with the Iris dataset
-        write.csv(uploaded_data$data, file, row.names = FALSE)
-        print('File has been \'downloaded\'')
+  
+  observeEvent(input$Download, {
+    showModal(modalDialog(
+      title = 'Are you sure you want to download the dataset below:',
+      dataTableOutput('finalDT'),
+      downloadButton('downloadBtn', 'Download'),
+      actionButton('upload_to_gdrive', 'Upload to Google Drive'),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Close")
+      )
+    ))
+  })
+  
+  output$finalDT <- renderDT({
+    datatable(data$df, options = list(pageLength = 20))
+  })
+  
+  output$downloadBtn <- downloadHandler(
+    filename = function() {
+      # Set the filename of the downloaded file
+      "flagged_data.csv"
+    },
+    content = function(file) {
+      # Generate the content of the file
+      write.csv(data$df, file, row.names = FALSE)
+    }
+  )
+  
+  observeEvent(input$upload_to_gdrive, {
+    showModal(modalDialog(
+      textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
+      actionButton('path_ok', 'OK')
+    ))
+  })
+  
+  observeEvent(input$path_ok,{
+    name <- 'flagged_data.csv'
+    turn_file_to_csv(data$df, name)
+    res = tryCatch(upload_csv_file(data$df, name, input$drivePath), error = function(i) NA)
+    if(is.na(res)){
+      showModal(modalDialog(
+        h3('The path you entered is invalid!'),
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))      
+    }
+    else{
+      if(paste0('processed_', name) %in% (drive_ls(input$drivePath)[['name']])){
+        showModal(modalDialog(
+          h3('File has been uploaded successfully!'),
+          easyClose = FALSE,
+          footer = tagList(
+            modalButton('Back')
+          )
+        ))
       }
-    )
-     
-     observeEvent(input$upload_to_gdrive, {
-       name <- input$csvs$name
-       turn_file_to_csv(uploaded_data$data, name)
-       upload_csv_file(uploaded_data$data, name)
-       print('File has been \'uploaded\'')
-     })
-  }
+      else{
+        showModal(modalDialog(
+          h3('File upload failed!'),
+          easyClose = FALSE,
+          footer = tagList(
+            modalButton('Back')
+          )
+        ))
+      }
+    }
+  })
 }

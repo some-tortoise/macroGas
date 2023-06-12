@@ -33,6 +33,10 @@ ui <- navbarPage(
                       
              )},#HOME
   {tabPanel('Visualize',
+            tags$style(
+              type = 'text/css',
+              '.modal-dialog { width: fit-content !important; }'
+            ),
                       div(id = 'viz_container_div',
                           fluidRow(
                             column(width= 3,
@@ -42,7 +46,9 @@ ui <- navbarPage(
                                 dateInput('date1', 'Start of Slug Date:'),
                                 timeInput("time1", 'Start of Slug Time:'),
                                 selectInput('flag_type', label = 'Select flag type', c('good', 'QuEstionable', 'inTeresting!', 'bAd')),
-                                actionButton('flag_btn', label = 'flag points')
+                                actionButton('flag_btn', label = 'flag points'),
+                                hr(),
+                                actionButton('Download', label = 'Download the flagged dataset')
                               ),
                               column(width= 7,
                                 plotlyOutput('main_plot')
@@ -53,8 +59,8 @@ ui <- navbarPage(
                           ,
                           fluidRow(
                             column(width = 3, align = "center", offset = 5,
-                            downloadButton('downloadBtn', 'Download'),
-                            actionButton('upload_to_gdrive', 'Upload to Google Drive')
+                            #downloadButton('downloadBtn', 'Download'),
+                            #actionButton('upload_to_gdrive', 'Upload to Google Drive')
                           ))
                       ))}, #VISUALIZE
   {tabPanel("Upload",
