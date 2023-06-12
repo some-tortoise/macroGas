@@ -10,7 +10,10 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) 
 ui <- navbarPage(
   strong("Salt Slugs"),
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css"),
+    tags$link(rel = "preconnect", href = "https://fonts.googleapis.com"),
+    tags$link(rel = "preconnect", href = "https://fonts.gstatic.com"),
+    tags$link(rel = "stylesheet", href = "https://fonts.googleapis.com/css2?family=Nunito+Sans&family=Roboto&display=swap")
     ),
   {tabPanel(strong('Home'),
                       titlePanel(strong("Salt Slugs")),

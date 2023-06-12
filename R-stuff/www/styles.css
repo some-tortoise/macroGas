@@ -2,6 +2,20 @@
   overflow-x: scroll;
 }
 
+body{
+    /*background-color: #ebe8db;*/
+    font-family: 'Roboto', sans-serif;
+    color: rgb(59, 59, 59);
+}
+
+.navbar{
+    background-color: #bbc97a;   
+}
+
+.navbar-brand > strong{
+    color: rgb(32, 32, 32);
+}
+
 
 .dynamic-h3 { 
     color: black; 
