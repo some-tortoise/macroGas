@@ -7,7 +7,6 @@ library(shinyFiles)
 library(shinyTime)
 
 div(
-  div(
   column(width = 3,
          fileInput("csvs", "Choose CSV File",
                    multiple = TRUE,
@@ -18,28 +17,25 @@ div(
                      label = 'Select',
                      choices = c()),
          tags$hr(),
-         numericInput('station_name','Enter station number', 0)
-  ),
-  column(width = 7,
-         div(id = "upload_dt", DT::dataTableOutput('table1'))
-  ),
-  column(width = 2,
-         strong("Edit Data"),
+         numericInput('station_name','Enter station number', 0),
          tags$hr(),
-         checkboxInput("header", "Header", FALSE),
-         radioButtons("sep", "Separator",
-                      choices = c(Comma = ",",
-                                  Semicolon = ";",
-                                  Tab = "\t"),
-                      selected = ","),
+         # checkboxInput("header", "Header", FALSE),
+         #radioButtons("sep", "Separator",
+         #    choices = c(Comma = ",",
+         #      Semicolon = ";" ,
+         #     Tab = "\t"),
+         # selected = ","),
          radioButtons("row_and_col_select", "Choose which to edit",
                       choices = c("rows",
                                   "columns"),
                       selected = "rows"),
-         actionButton('submit_delete', 'Delete selected'))
+         actionButton('submit_delete', 'Delete selected')),
   
-),
-div(
-  actionButton('viz_btn','Visualize')
-))
+  column(width = 7,
+         div(id = "upload_dt", DT::dataTableOutput('table1'))
+         )#,
+  #,
+#div(
+ # actionButton('viz_btn','Visualize'))
+)
 

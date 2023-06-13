@@ -11,8 +11,9 @@ ui <- fluidPage(
   includeHTML("index.html"),
   tabsetPanel(
     tabPanel('Home', source("home.R")),
-    tabPanel('Visualize', source("visualize.R")),
-    tabPanel("Upload", source("upload.R"))
+    tabPanel("Upload", source("upload.R")),
+    tabPanel('Visualize', source("visualize.R"))
+    
   ),
   tags$head(tags$script(src="script.js"))
 )
