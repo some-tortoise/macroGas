@@ -4,7 +4,7 @@
 
 # !!!!need combined_df from updated_cleaning.R for it to work##
 #filter the data to just one station (in this case 1), and to within an hour on each side of the slug 
-station1_slug <- combined_df %>% filter(station == '1')
+station1_slug <- combined_df %>% filter(station == '3')
 station1_slug <- station1_slug %>%
   filter(substr(Date_Time, 12, 19) >= "13:20:00" & substr(Date_Time, 12, 19) <= "18:33:00") # gets only the time from the date time
 station1_slug <- station1_slug %>%
