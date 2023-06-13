@@ -12,6 +12,8 @@ ui <- fluidPage(
   tabsetPanel(
     tabPanel('Home', source("home.R")),
     tabPanel("Upload", source("upload.R")),
+    tabPanel('Flag', source("flag.R")),
+    tabPanel('Calculate', source("math.R")),
     tabPanel('Visualize', source("visualize.R"))
     
   ),
