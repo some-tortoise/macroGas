@@ -1,23 +1,19 @@
 library(shiny)
 
 ui <- fluidPage(
-  titlePanel("Tabbed Example"),
+  titlePanel("Vertical Tabset Example"),
   
-  # Create the tabsetPanel
-  tabsetPanel(
-    # First tab
+  # Create the vertical tabset
+  navbarPage(
+    position = "fixed-top",
     tabPanel("Tab 1",
              h2("Content for Tab 1"),
              # Add any UI elements specific to Tab 1
     ),
-    
-    # Second tab
     tabPanel("Tab 2",
              h2("Content for Tab 2"),
              # Add any UI elements specific to Tab 2
     ),
-    
-    # Third tab
     tabPanel("Tab 3",
              h2("Content for Tab 3"),
              # Add any UI elements specific to Tab 3
