@@ -28,56 +28,116 @@ server <- function(input, output, session){
   # UPLOAD STUFF
   #
   {
+    output$template <- renderUI({
+      HTML("<h4><b>The file you upload should have the following features:</b></h4> 
+           <li>A csv file</li>
+           <li>With columns: Date Time, Conductivity, Temparature, Station(optional)</li>")
+    })
+    
+    output$example <- renderUI({
+      HTML(paste0("<li>",actionLink("template", label = "Example of data format"), "</li>"))
+    })
+    
+    observeEvent(input$template,{
+      showModal(modalDialog(
+        title = "Example Format",
+        tableOutput("eg_table"),
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))
+    })
+    
+    # need to fill this
+    output$eg_table <- renderTable(
+      data.frame()
+    )
     
     uploaded_data <- reactiveValues(csv_names = NULL, 
-                                    data = NULL, 
+                                    data = NULL,
+                                    index = 1,
                                     station_names = NULL,
                                     combined_df = NULL)
     
     observeEvent(input$csvs, {
-      seq_csv <- seq(1, length(input$csvs$name))
-      prev_num_files <- length(uploaded_data$data)
       in_file <- NULL
-      for(i in seq_csv){
-        tryCatch({
-          in_file <- read.csv(input$csvs$datapath[i],
-                              header = input$header,
-                              sep = input$sep,
-                              quote = input$quote)
-        }, error = function(e){
-          in_file <- NULL
-        })
-        
-        uploaded_data$csv_names[[prev_num_files + i]] <- input$csvs$name[i]
-        uploaded_data$data[[prev_num_files + i]] <- as.data.frame(in_file)
-        
-      }
+      success <- FALSE
+      tryCatch({
+        in_file <- read.csv(input$csvs$datapath,
+                            header = TRUE,
+                            sep = ",")
+      }, error = function(e){
+        in_file <- NULL
+      })
       
+      if(!is.null(in_file)){
+        names <- colnames(in_file)
+        if("station" %in% names){
+          if(identical(sort(names), sort(c("Date_Time", "Low_Range", "Full_Range", "Temp_C", "station"))))
+            success <- TRUE
+        }
+        else{
+          if(identical(sort(names), sort(c("Date_Time", "Low_Range", "Full_Range", "Temp_C"))))
+            success <- TRUE
+        }
+      }
+        
+      if(success){
+        showModal(modalDialog(
+          h3("Your file is uploaded successfully!"),
+          footer = tagList(
+            modalButton('OK')
+          )
+        ))
+        seq_csv <- seq(length(input$csvs$name))
+        prev_num_files <- length(uploaded_data$data)
+          
+        uploaded_data$csv_names[[prev_num_files + 1]] <- input$csvs$name
+        uploaded_data$data[[prev_num_files + 1]] <- as.data.frame(in_file)
+        updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
+      }
+      else{
+        showModal(modalDialog(
+          h3("Your file upload failed! Please check the format of your file!"),
+          footer = tagList(
+            modalButton('OK')
+          )
+        ))
+      }
+    })
+    
+    observe({
+      if(length(uploaded_data$csv_names) > 1){
+        for(i in 1:length(uploaded_data$csv_names)){
+          if(input$select == uploaded_data$csv_names[i]){
+            uploaded_data$index <- i
+          }
+        } 
+      }
+      else
+        uploaded_data$index <- 1
+    })
+
+    observeEvent(input$Del,{
+      index = uploaded_data$index
+      uploaded_data$data <- uploaded_data$data[-index]
+      uploaded_data$csv_names <- uploaded_data$csv_names[-index]
       updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
     })
     
     output$table1 <- renderDT({
-      val <- 1
-      for(i in seq(uploaded_data$csv_names)){
-        if(input$select == uploaded_data$csv_names[i]){
-          val <- i
-        }
+      if(length(uploaded_data$data)>0){
+        targ <- switch(input$row_and_col_select,
+                       'rows' = 'row',
+                       'columns' = 'column')
+        
+        datatable(uploaded_data$data[[uploaded_data$index]], selection = list(target = targ),
+                  options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5)) 
       }
-      
-      targ <- switch(input$row_and_col_select,
-                     'rows' = 'row',
-                     'columns' = 'column')
-      
-      datatable(uploaded_data$data[[val]], selection = list(target = targ), options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
     })
     
     observeEvent(input$submit_delete, {
-      val <- 1
-      for(i in seq(uploaded_data$csv_names)){
-        if(input$select == uploaded_data$csv_names[i]){
-          val <- i
-        }
-      }
+      val <- uploaded_data$index
       
       selected_rows <- as.integer(input$table1_rows_selected)
       selected_cols <- as.integer(input$table1_columns_selected)
@@ -101,7 +161,7 @@ server <- function(input, output, session){
   # VISUALIZATION STUFF
   #
   {
-    data <- reactiveValues(df = combined_df)
+    data <- reactiveValues(df = NULL)
     
     selectedData <- reactive({
       df_plot <- data$df[data$df$station %in% input$station,]
