@@ -10,13 +10,20 @@ server <- function(input, output, session){
   # LOAD IN METHOD CHOICE
   #
   {
-    #hide("manual_container")
-    #hide("viz_container_div")
+    output$downloadFile <- downloadHandler(
+      filename = "saltslug_exampledata.csv",
+      content = function(file) {
+        file_path <- "saltslug_exampledata.csv"  
+        file.copy(file_path, file)})
+  
     
     observeEvent(input$manual_choice, {
       show("manual_container")
       show("viz_container_div")
     })
+    
+    #hide("manual_container")
+    #hide("viz_container_div")
     
     observeEvent(input$gdrive_choice, {
       #alert('This option is currently unavailable.')
@@ -28,30 +35,6 @@ server <- function(input, output, session){
   # UPLOAD STUFF
   #
   {
-    output$template <- renderUI({
-      HTML("<h4><b>The file you upload should have the following features:</b></h4> 
-           <li>A csv file</li>
-           <li>With columns: Date Time, Conductivity, Temparature, Station(optional)</li>")
-    })
-    
-    output$example <- renderUI({
-      HTML(paste0("<li>",actionLink("template", label = "Example of data format"), "</li>"))
-    })
-    
-    observeEvent(input$template,{
-      showModal(modalDialog(
-        title = "Example Format",
-        tableOutput("eg_table"),
-        footer = tagList(
-          modalButton('Back')
-        )
-      ))
-    })
-    
-    # need to fill this
-    output$eg_table <- renderTable(
-      data.frame()
-    )
     
     uploaded_data <- reactiveValues(csv_names = NULL, 
                                     data = NULL,

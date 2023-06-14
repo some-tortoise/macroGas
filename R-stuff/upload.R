@@ -8,8 +8,8 @@ library(shinyTime)
 
 div(
   column(width = 3,
-         htmlOutput("template"),
-         htmlOutput("example"),
+         h4("Here is the correct format to upload data:"),
+         downloadButton("downloadFile", "Download File"),
          fileInput("csvs", "Choose CSV File",
                    multiple = FALSE,
                    accept = c("text/csv",
