@@ -1,36 +1,5 @@
- let BUTTON_CLICK_COUNT = 0;
-// Check for if one of the file close buttons were clicked
-$(document).on('click', 'button', function(e) {
-    e.stopPropagation()
-    if(typeof BUTTON_CLICK_COUNT == "undefined") {
-        BUTTON_CLICK_COUNT = 1; 
-    } else {
-        BUTTON_CLICK_COUNT ++;
-    }
-    if($(this).hasClass('del-btn')){
-        console.log('finally');
-        $(this).parent().remove();
-    }
-    Shiny.onInputChange("js.button_clicked", 
-        e.target.id + "_" + BUTTON_CLICK_COUNT);
-});
-
-// Receive the custom variable from the server
-Shiny.addCustomMessageHandler("names", function(message) {
-    var myVariableValue = message;
-    Shiny.onInputChange("dataFromJS", message[0]);
-    console.log(myVariableValue); // Output the variable value to the console
-});
-
-
-
-
-
-
-
 //navbar code
 function openTab(evt, name) {
-    //alert('a');
     tablinks = document.getElementsByClassName("nav-el-circle");
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active-nav-el", "");
@@ -40,6 +9,34 @@ function openTab(evt, name) {
       tablinks[i].className = tablinks[i].className.replace(" active-nav-text", "");
     }
     evt.currentTarget.className += " active-nav-el";
+    var children = evt.currentTarget.parentElement.children
+    for(i = 0; i < children.length; i++){
+        if(children[i].className == 'nav-text'){
+            evt.currentTarget.parentElement.children[i].className += " active-nav-text";
+        }
+    }
+    evt.currentTarget.parentElement.children.className += " active-nav-text";
+
+
+    tabcontent = document.getElementsByClassName("panel-container");
+    for (i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+      if(tabcontent[i].classList.contains('home-panel-container') && evt.currentTarget.parentElement.classList.contains('home-nav-el')){
+        tabcontent[i].style.display = "block";
+      }
+      if(tabcontent[i].classList.contains('upload-panel-container') && evt.currentTarget.parentElement.classList.contains('upload-nav-el')){
+        tabcontent[i].style.display = "block";
+      }
+      if(tabcontent[i].classList.contains('flag-panel-container') && evt.currentTarget.parentElement.classList.contains('flag-nav-el')){
+        tabcontent[i].style.display = "block";
+      }
+      if(tabcontent[i].classList.contains('calculate-panel-container') && evt.currentTarget.parentElement.classList.contains('calculate-nav-el')){
+        tabcontent[i].style.display = "block";
+      }
+      if(tabcontent[i].classList.contains('visualization-panel-container') && evt.currentTarget.parentElement.classList.contains('visualization-nav-el')){
+        tabcontent[i].style.display = "block";
+      }
+    }
     /*var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
