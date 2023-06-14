@@ -9,7 +9,7 @@ ui <- fluidPage(
     tabPanel('Home', source("home.R")),
     tabPanel("Upload", source("upload.R")),
     tabPanel('Flag', source("flag.R")),
-    tabPanel('Calculate', source("math.R")),
+    tabPanel('Calculate', source("calculate.R")),
     tabPanel('Visualize', source("visualize.R"))
     
   ),
