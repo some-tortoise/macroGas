@@ -1,40 +1,29 @@
 library(shiny)
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(htmlwidgets)
-library(shinyjs)
-library(shinyFiles)
-library(shinyTime)
 
 div(
-  div(class = "tab",
-      actionButton(inputId = 'defaultOpen',
-                   class = "tablinks",
-                   onclick = "openCity(event, 'London')",
-                   label = "Upload"),
-      actionButton(inputId = 'a',
-                   class = "tablinks",
-                   onclick = "openCity(event, 'Paris')",
-                   label = "Flag"),
-      actionButton(inputId = 'a',
-                   class = "tablinks",
-                   onclick = "openCity(event, 'Tokyo')",
-                   label = "Calculate")
-  ),
-  div(inputId = 'a',
-      id = "Londfon",
-      class = "tabcontent",
-      h3("London"),
-      p("London is the capital city of England.")),
-  div(inputId = 'a',
-      id = "Parifs",
-      class = "tabcontent",
-      h3("Paris"),
-      p("Paris is the capital city of England.")),
-  div(inputId = 'a',
-      id = "Tokyfo",
-      class = "tabcontent",
-      h3("Tokyo"),
-      p("Tokyo is the capital city of England."))
+  div(class = 'navbar-container',
+      div(class = 'block-thing'),
+      div(class = 'nav-el upload-nav-el',
+          div(class = 'nav-el-circle',
+              onclick="openCity(event, 'upload')",
+              id = 'open-nav-el'
+              )
+          ),
+      div(class = 'nav-el flag-nav-el',
+          div(class = 'nav-el-circle',
+              onclick="openCity(event, 'flag')"
+              )
+          ),
+      div(class = 'nav-el calculate-nav-el',
+          div(class = 'nav-el-circle',
+              onclick="openCity(event, 'calculate')"
+              )
+          ),
+      div(class = 'nav-el visualize-nav-el',
+          div(class = 'nav-el-circle',
+              onclick="openCity(event, 'visualize')"
+              )
+          )
+      )
 )
 
