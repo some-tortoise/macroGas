@@ -6,7 +6,7 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
 
- div(
+div(class = 'calculate-panel-container panel-container',
  column(width= 5,
         selectInput("station_picker", label = "Choose A Station", c(1, 2, 3, 4, 5)),
       numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1)

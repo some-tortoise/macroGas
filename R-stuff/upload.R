@@ -6,7 +6,7 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
 
-div(
+div(class = 'upload-panel-container panel-container',
   column(width = 3,
          h4("Here is the correct format to upload data:"),
          downloadButton("downloadFile", "Download File"),

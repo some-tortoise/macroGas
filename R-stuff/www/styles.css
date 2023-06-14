@@ -48,7 +48,7 @@ color: black;
 }
 
 .tabbable{
-  margin-left: 70px;
+  margin-left: 150px;
 }
 
 .navbar-container{
@@ -111,3 +111,10 @@ color: black;
   color: rgb(0, 19, 36);
 }
 
+.panel-container{
+  display: none;
+}
+
+.active-panel{
+  display: block;
+}

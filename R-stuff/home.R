@@ -5,7 +5,7 @@ library(htmlwidgets)
 library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
-div(
+div(class = 'home-panel-container panel-container active-panel',
   div(
     id = "box_1",
     style = "background-color: white ;

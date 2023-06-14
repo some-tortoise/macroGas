@@ -10,7 +10,7 @@ tags$style(
   type = 'text/css',
   '.modal-dialog { width: fit-content !important; }'
 )
-div(id = 'viz_container_div',
+div(class = 'flag-panel-container panel-container',
     fluidRow(
       column(width= 3,
              checkboxGroupInput('station', label = 'Select station', c(1, 2, 3, 4, 5)),
