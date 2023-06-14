@@ -8,16 +8,28 @@ library(shinyTime)
 
 div(
   column(width = 3,
+         htmlOutput("template"),
+         htmlOutput("example"),
          fileInput("csvs", "Choose CSV File",
-                   multiple = TRUE,
+                   multiple = FALSE,
                    accept = c("text/csv",
                               "text/comma-separated-values,text/plain",
                               ".csv")),
          selectInput(inputId = 'select',
                      label = 'Select',
                      choices = c()),
+         actionButton("Del", "Delete the current dataset"),
          tags$hr(),
-         numericInput('station_name','Enter station number', 0),
+         checkboxInput("Edit_upload", "Edit", value = FALSE),
+         conditionalPanel(
+           condition = "input.Edit_upload",
+           # numericInput('station_name','Enter station number', 0),
+           radioButtons("row_and_col_select", "Choose which to edit",
+                        choices = c("rows",
+                                    "columns"),
+                        selected = "rows"),
+           actionButton('submit_delete', 'Delete selected'))
+         ),
          tags$hr(),
          # checkboxInput("header", "Header", FALSE),
          #radioButtons("sep", "Separator",
@@ -25,11 +37,6 @@ div(
          #      Semicolon = ";" ,
          #     Tab = "\t"),
          # selected = ","),
-         radioButtons("row_and_col_select", "Choose which to edit",
-                      choices = c("rows",
-                                  "columns"),
-                      selected = "rows"),
-         actionButton('submit_delete', 'Delete selected')),
   
   column(width = 7,
          div(id = "upload_dt", DT::dataTableOutput('table1'))
