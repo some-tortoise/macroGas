@@ -25,11 +25,21 @@ Shiny.addCustomMessageHandler("names", function(message) {
 
 
 
-//$(window).load(function(){ alert('wee'); })
+
+
 
 //navbar code
 function openTab(evt, name) {
-    alert('a');
+    //alert('a');
+    tablinks = document.getElementsByClassName("nav-el-circle");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active-nav-el", "");
+    }
+    tablinks = document.getElementsByClassName("nav-text");
+    for (i = 0; i < tablinks.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" active-nav-text", "");
+    }
+    evt.currentTarget.className += " active-nav-el";
     /*var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {

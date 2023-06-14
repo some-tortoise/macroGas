@@ -8,7 +8,7 @@ library(shinyTime)
 div(
   div(
     id = "box_1",
-    style = "background-color: #FCF7E5 ;
+    style = "background-color: white ;
                 width: 800px;
                 height: 200px;
                 padding: 10px;",
@@ -18,7 +18,7 @@ div(
   br(),
   br(),
   div(id = "box_2",
-      style = " background-color: #FCF7E5 ;
+      style = " background-color: white ;
                 width: 800px;
                 height: 200px;
                 padding: 10px;

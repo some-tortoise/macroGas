@@ -2,16 +2,16 @@ library(shiny) # for webpage creation
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
 ui <- fluidPage(
-  includeHTML("index.html"),
-  tags$head(tags$script(src="script.js")),
-  source('navbar.R'),
-  tabsetPanel(
-    tabPanel('Home', source("home.R")),
-    tabPanel("Upload", source("upload.R")),
-    tabPanel('Flag', source("flag.R")),
-    tabPanel('Calculate', source("calculate.R")),
-    tabPanel('Visualize', source("visualize.R"))
-    
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  tags$head(tags$script(src="script.js"))
+  source('navbar.R')[1],
+  tabsetPanel(
+    tabPanel('Home', source("home.R")[1]),
+    tabPanel("Upload", source("upload.R")[1]),
+    tabPanel('Flag', source("flag.R")[1]),
+    tabPanel('Calculate', source("calculate.R")[1]),
+    tabPanel('Visualize', source("visualize.R")[1])
+  ),
+  includeScript(path = "www/script.js")
 )
