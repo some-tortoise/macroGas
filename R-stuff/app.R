@@ -29,10 +29,15 @@ ui <- fluidPage(
   )
 
 
-source("server/mainserver.R")
+source("server/homeserver.R")
+source("server/uploadserver.R")
+source("server/flagserver.R")
 server <-  function(input, output, session) {
     # Call the server functions from the included files
-    mainserver(input, output, session)}
+    homeserver(input, output, session)
+    uploadserver(input, output, session)
+    flagserver(input, output, session)
+  }
 
 
 shinyApp(ui = ui, server = server)
