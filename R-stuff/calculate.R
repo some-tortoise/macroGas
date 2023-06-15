@@ -1,15 +1,22 @@
 library(shiny) # for webpage creation
 library(plotly) # for interactive graphs
 library(DT) # for datatables
-library(htmlwidgets)
-library(shinyjs)
-library(shinyFiles)
-library(shinyTime)
 
 div(class = 'calculate-panel-container panel-container',
- column(width= 5,
-        selectInput("station_picker", label = "Choose A Station", c(1, 2, 3, 4, 5)),
-      numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1)
-
-  )
+    fluidRow(class = 'calculate-top-container',
+          column(width = 5,
+                 class = 'calculate-input-container',
+                 selectInput("station_picker", label = "Choose A Station", c(1, 2, 3, 4, 5)),
+                 numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1)
+                 ),
+          column(width = 5,
+                 class = 'calculate-graph-container',
+                 p('abb')
+                 )
+          ),
+    fluidRow(class = 'calculate-output-dt-container',
+             'HELLO'
+             )
+    
 )
+

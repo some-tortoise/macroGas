@@ -13,13 +13,5 @@ ui <- fluidPage(
       source("calculate.R")[1],
       source("visualize.R")[1]
       ),
-  
-  # tabsetPanel(
-  #   tabPanel('Home', source("home.R")[1]),
-  #   tabPanel("Upload", source("upload.R")[1]),
-  #   tabPanel('Flag', source("flag.R")[1]),
-  #   tabPanel('Calculate', source("calculate.R")[1]),
-  #   tabPanel('Visualize', source("visualize.R")[1])
-  # ),
   includeScript(path = "www/script.js")
 )

@@ -10,26 +10,6 @@ body{
 }
 
 
-/*
-.navbar{
-  position: absolute;
-background-color: #012169;
-display: flex;
-justify-content: center;
-align-items: center;
-height: 100px
-}
-.navbar-default .navbar-nav > li > a {
-color: white;
-}
-
-
-.navbar-brand > strong{
-color: black;
-}
-*/
-
-
 
 
 
@@ -48,6 +28,7 @@ color: black;
 }
 
 .tabbable{
+  margin-top: 20px;
   margin-left: 150px;
 }
 
@@ -117,4 +98,38 @@ color: black;
 
 .active-panel{
   display: block;
+}
+
+/*CALCULATE PANEL*/
+
+.calculate-top-container{
+  margin: 0;
+  padding: 0;
+  height: 55vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calculate-input-container{
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  width: 340px;
+  height: 400px;
+  padding: 20px;
+}
+
+.calculate-graph-container{
+  background-color: violet;
+  flex-grow: 5;
+  width: 400px;
+  height: 400px;
+}
+
+.calculate-output-dt-container{
+  background-color: aqua;
+  margin: 0;
+  padding: 0;
+  height: 35vh;
 }
