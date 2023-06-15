@@ -4,7 +4,7 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-server <- function(input, output, session){
+mainserver <- function(input, output, session){
   
   #
   # LOAD IN METHOD CHOICE

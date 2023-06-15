@@ -1,7 +1,8 @@
 library(shiny) # for webpage creation
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-ui <- fluidPage(
+mainUI <- function(){
+  fluidPage(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
@@ -15,3 +16,4 @@ ui <- fluidPage(
       ),
   includeScript(path = "www/script.js")
 )
+}
