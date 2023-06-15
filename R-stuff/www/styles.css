@@ -5,8 +5,10 @@ overflow-x: scroll;
 body{
   font-family: 'Roboto', sans-serif;
   color: rgb(59, 59, 59);
+  height: 100vh;
   margin: 0;
   padding: 0;
+  overscroll-behavior: contain;
 }
 
 
@@ -29,7 +31,10 @@ body{
 
 .tabbable{
   margin-top: 20px;
-  margin-left: 150px;
+  padding-left: 150px;
+  height: 100vh;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
 }
 
 .navbar-container{
@@ -93,11 +98,9 @@ body{
 }
 
 .panel-container{
-  display: none;
-}
-
-.active-panel{
-  display: block;
+  height: 100vh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 /*CALCULATE PANEL*/
