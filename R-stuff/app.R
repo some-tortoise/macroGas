@@ -32,6 +32,8 @@ ui <- fluidPage(
 source("server/homeserver.R")
 source("server/uploadserver.R")
 source("server/flagserver.R")
+source("server/calculateserver.R")
+source("server/visualizeserver.R")
 server <-  function(input, output, session) {
     # Call the server functions from the included files
     homeserver(input, output, session)
