@@ -6,7 +6,8 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
 
-div(class = 'upload-panel-container panel-container',
+fluidPage(
+  div(class = 'upload-panel-container panel-container',
   column(width = 3,
          h4("Here is the correct format to upload data:"),
          downloadButton("downloadFile", "Download File"),
@@ -44,5 +45,6 @@ div(class = 'upload-panel-container panel-container',
   #,
 #div(
  # actionButton('viz_btn','Visualize'))
+)
 )
 
