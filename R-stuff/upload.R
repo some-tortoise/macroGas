@@ -6,7 +6,6 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
 
-fluidPage(
   div(class = 'upload-panel-container panel-container',
   column(width = 3,
          h4("Here is the correct format to upload data:"),
@@ -21,7 +20,7 @@ fluidPage(
                      choices = c()),
          actionButton("Del", "Delete the current dataset"),
          tags$hr(),
-         checkboxInput("Edit_upload", "Edit", value = FALSE),
+         checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
          conditionalPanel(
            condition = "input.Edit_upload",
            # numericInput('station_name','Enter station number', 0),
@@ -45,6 +44,5 @@ fluidPage(
   #,
 #div(
  # actionButton('viz_btn','Visualize'))
-)
 )
 
