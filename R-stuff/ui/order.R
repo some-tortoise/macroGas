@@ -6,5 +6,5 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
 
-div(class = 'compare-panel-container panel-container'
+div(class = 'order-panel-container panel-container'
 )
