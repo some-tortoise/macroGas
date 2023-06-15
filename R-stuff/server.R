@@ -55,7 +55,7 @@ server <- function(input, output, session){
       
       if(!is.null(in_file)){
         names <- colnames(in_file)
-        if("station" %in% names){
+        if("Station" %in% names){
           if(identical(sort(names), sort(c("Date_Time", "Station", "Low_Range", "Full_Range", "High_Range", "Temp_C"))))
             success <- TRUE
         }
