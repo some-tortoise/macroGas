@@ -33,11 +33,11 @@ div(
           ),
           div(class = 'nav-text', 'Calculate')
       ),
-      div(class = 'nav-el visualize-nav-el',
+      div(class = 'nav-el compare-nav-el',
           div(class = 'nav-el-circle',
-              onclick="openTab(event, 'visualize')"
+              onclick="openTab(event, 'compare')"
           ),
-          div(class = 'nav-text', 'Visualize')
+          div(class = 'nav-text', 'Compare')
       )
   )
 )

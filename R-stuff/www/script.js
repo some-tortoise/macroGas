@@ -20,50 +20,37 @@ function openTab(evt, name) {
 
     tabcontent = document.getElementsByClassName("panel-container");
     var content_div = document.getElementsByClassName("tabbable")[0];
-    for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "block";
-      if(tabcontent[i].classList.contains('home-panel-container') && evt.currentTarget.parentElement.classList.contains('home-nav-el')){
-        tabcontent[i].style.display = "block";
-        content_div.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-      }
-      if(tabcontent[i].classList.contains('upload-panel-container') && evt.currentTarget.parentElement.classList.contains('upload-nav-el')){
-        tabcontent[i].style.display = "block";
-        content_div.scrollTo({
-            top: 740,
-            behavior: 'smooth'
-        });
-      }
-      if(tabcontent[i].classList.contains('flag-panel-container') && evt.currentTarget.parentElement.classList.contains('flag-nav-el')){
-        tabcontent[i].style.display = "block";
-        content_div.scrollTo({
-            top: 1520,
-            behavior: 'smooth'
-        });
-      }
-      if(tabcontent[i].classList.contains('calculate-panel-container') && evt.currentTarget.parentElement.classList.contains('calculate-nav-el')){
-        tabcontent[i].style.display = "block";
-        content_div.scrollTo({
-            top: 2277,
-            behavior: 'smooth'
-        });
-      }
-      if(tabcontent[i].classList.contains('visualize-panel-container') && evt.currentTarget.parentElement.classList.contains('visualize-nav-el')){
-        tabcontent[i].style.display = "block";
-        content_div.scrollTo({
-            top: 3032,
-            behavior: 'smooth'
-        });
-      }
-    }  
+
+    
+    let classList = evt.currentTarget.parentElement.classList;
+    let topDist = 0;
+    let screenSize = screen.height - 50;
+    console.log(screenSize);
+    if(classList.contains('home-nav-el')){
+        topDist = 0;
+    }else if(classList.contains('upload-nav-el')){
+        topDist = screenSize;
+    }else if(classList.contains('order-nav-el')){
+        topDist = 2*screenSize;
+    }else if(classList.contains('flag-nav-el')){
+        topDist = 3*screenSize;
+    }else if(classList.contains('calculate-nav-el')){
+        topDist = 4*screenSize;
+    }else if(classList.contains('compare-nav-el')){
+        topDist = 5*screenSize;
+    }else{
+        console.log('Weird navbar behavior occured.');
+    }
+    content_div.scrollTo({
+        top: topDist,
+        behavior: 'smooth'
+    });
+
 }
 
 document.getElementsByClassName("tabbable")[0].addEventListener("scroll", scrollOpenTab);
 
 function scrollOpenTab() {
-  //document.getElementById("demo").innerHTML = "You scrolled in div.";
   var x = document.getElementsByClassName("tabbable")[0].scrollTop;
   let dist = document.getElementsByClassName("tabbable")[0].scrollTop;
   var nav_show = '';
@@ -73,8 +60,8 @@ function scrollOpenTab() {
   else if (dist < 3*screenSize) { nav_show = 'order-nav-el'; }
   else if(dist < 4*screenSize){ nav_show = 'flag-nav-el'; }
   else if(dist < 5*screenSize){ nav_show = 'calculate-nav-el'; }
-  else if(dist >= 5*screenSize){ nav_show = 'visualize-nav-el'; }
-  
+  else if(dist >= 5*screenSize){ nav_show = 'compare-nav-el'; }
+
   tablinks = document.getElementsByClassName("nav-el-circle");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active-nav-el", "");
