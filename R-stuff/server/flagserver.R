@@ -1,4 +1,8 @@
-
+library(shiny) # for webpage creation
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(shinyjs)
+source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 flagserver <- function(input, output, session){
   data <- reactiveValues(df = NULL)

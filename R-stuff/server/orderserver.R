@@ -1,22 +1,36 @@
-library(shiny)
+library(shiny) # for webpage creation
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(shinyjs)
 library(sortable)
+source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 
 orderserver <- function(input, output, session) {
   
-rank_list_swap <- rank_list(
-    text = "Reorder your stations, earliest to latest",
-    labels = c("Station A", "Station B", "Station C", "Station D", "Station E"),
-    input_id = "rank_list_swap",
-    options = sortable_options(swap = TRUE))
+  observeEvent(input$station_reorder, {
+    ordered_labels <- unlist(input[["rank_list_swap"]])
+    ordered_values <- c("1", "2", "3", "4", "5")
+    ordered_values <- ordered_values[match(ordered_labels, c("Station A", "Station B", "Station C", "Station D", "Station E"))]
+    print(ordered_values)
   
-output$results_swap <- renderPrint(
-  input$rank_list_swap) # This matches the input_id of the rank list
-observe(
-  update_rank_list(
-    "rank_list_swap",
-      session = session
-      )
-    ) %>%
-      bindEvent(input$station_reorder)
-}
+    curNum <- 0
+    curVal <- 0
+    #(length(combined_df$station))
+  for (i in 1:length(combined_df$station)) {
+    if(combined_df[i, 'station'] != curVal){
+      curVal <- combined_df[i, 'station']
+      curNum <- curNum + 1
+      #print(ordered_values[curNum])
+    }
+    
+    combined_df[i, 'station'] <- ordered_values[curNum]
+      
+      }
+  output$ordered_plot <- renderPlot({
+      ggplot(combined_df, aes(x = Date_Time, y = Full_Range)) +
+              geom_line(color = station)
+             })
+    })
+} 
+
