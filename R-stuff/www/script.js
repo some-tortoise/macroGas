@@ -24,7 +24,7 @@ function openTab(evt, name) {
     
     let classList = evt.currentTarget.parentElement.classList;
     let topDist = 0;
-    let screenSize = screen.height - 50;
+    let screenSize = document.getElementsByClassName("tabbable")[0].clientHeight;
     console.log(screenSize);
     if(classList.contains('home-nav-el')){
         topDist = 0;
@@ -54,7 +54,7 @@ function scrollOpenTab() {
   var x = document.getElementsByClassName("tabbable")[0].scrollTop;
   let dist = document.getElementsByClassName("tabbable")[0].scrollTop;
   var nav_show = '';
-  let screenSize = 740;
+  let screenSize = document.getElementsByClassName("tabbable")[0].clientHeight;
   if(dist < screenSize){ nav_show = 'home-nav-el'; }
   else if (dist < 2*screenSize) { nav_show = 'upload-nav-el'; }
   else if (dist < 3*screenSize) { nav_show = 'order-nav-el'; }
