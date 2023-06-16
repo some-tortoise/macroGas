@@ -35,6 +35,7 @@ server <-  function(input, output, session) {
     uploadserver(input, output, session)
     orderserver(input, output, session)
     flagserver(input, output, session)
+    calculateserver(input, output, session)
     #law_and_order_server(input, output, session)
   }
 

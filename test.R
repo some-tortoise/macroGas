@@ -1,28 +1,29 @@
 library(shiny)
+library(ggplot2)
+library(hrbrthemes)
 
 ui <- fluidPage(
-  titlePanel("Vertical Tabset Example"),
-  
-  # Create the vertical tabset
-  navbarPage(
-    position = "fixed-top",
-    tabPanel("Tab 1",
-             h2("Content for Tab 1"),
-             # Add any UI elements specific to Tab 1
-    ),
-    tabPanel("Tab 2",
-             h2("Content for Tab 2"),
-             # Add any UI elements specific to Tab 2
-    ),
-    tabPanel("Tab 3",
-             h2("Content for Tab 3"),
-             # Add any UI elements specific to Tab 3
-    )
-  )
+  plotOutput('plot')
 )
 
+
 server <- function(input, output) {
-  # Server logic goes here
+  output$plot <- renderPlot({
+    leftBound <- 2
+    rightBound <- 6
+    
+    xValue <- 1:10
+    yValue <- abs(cumsum(rnorm(10)))
+    data <- data.frame(xValue,yValue,xfill = ifelse(xValue > leftBound & xValue < rightBound, xValue, NA))
+    
+    # Plot
+    ggplot(data, aes(x=xValue, y=yValue)) +
+      geom_area(aes(x=xfill), fill="#69b3a2", alpha=0.4) +
+      geom_line(color="#69b3a2", size=2) +
+      geom_point(size=3, color="#69b3a2") +
+      theme_ipsum() +
+      ggtitle("Graph")
+  })
 }
 
 shinyApp(ui = ui, server = server)
