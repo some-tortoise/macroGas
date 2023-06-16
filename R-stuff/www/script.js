@@ -65,18 +65,16 @@ document.getElementsByClassName("tabbable")[0].addEventListener("scroll", scroll
 function scrollOpenTab() {
   //document.getElementById("demo").innerHTML = "You scrolled in div.";
   var x = document.getElementsByClassName("tabbable")[0].scrollTop;
+  let dist = document.getElementsByClassName("tabbable")[0].scrollTop;
   var nav_show = '';
-  if(x >= 0 && x < 740){
-    nav_show = 'home-nav-el';
-  }else if (x >= 740 && x < 1520) {
-    nav_show = 'upload-nav-el';
-  } else if(x >= 1520 && x < 2277){
-    nav_show = 'flag-nav-el';
-  }else if(x >= 2277 && x < 3032){
-    nav_show = 'calculate-nav-el';
-  }else if(x >= 3032){
-    nav_show = 'visualize-nav-el';
-  } 
+  let screenSize = 740;
+  if(dist < screenSize){ nav_show = 'home-nav-el'; }
+  else if (dist < 2*screenSize) { nav_show = 'upload-nav-el'; }
+  else if (dist < 3*screenSize) { nav_show = 'order-nav-el'; }
+  else if(dist < 4*screenSize){ nav_show = 'flag-nav-el'; }
+  else if(dist < 5*screenSize){ nav_show = 'calculate-nav-el'; }
+  else if(dist >= 5*screenSize){ nav_show = 'visualize-nav-el'; }
+  
   tablinks = document.getElementsByClassName("nav-el-circle");
   for (i = 0; i < tablinks.length; i++) {
     tablinks[i].className = tablinks[i].className.replace(" active-nav-el", "");

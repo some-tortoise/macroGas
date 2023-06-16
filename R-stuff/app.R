@@ -13,18 +13,11 @@ ui <- fluidPage(
     div(class = 'tabbable',
         source("ui/home.R")[1],
         source("ui/upload.R")[1],
+        source("ui/law_and_order.R")[1],
         source("ui/flag.R")[1],
         source("ui/calculate.R")[1],
         source("ui/visualize.R")[1]
     ),
-    
-    # tabsetPanel(
-    #   tabPanel('Home', source("home.R")[1]),
-    #   tabPanel("Upload", source("upload.R")[1]),
-    #   tabPanel('Flag', source("flag.R")[1]),
-    #   tabPanel('Calculate', source("calculate.R")[1]),
-    #   tabPanel('Visualize', source("visualize.R")[1])
-    # ),
     includeScript(path = "www/script.js")
   )
 
@@ -32,11 +25,13 @@ ui <- fluidPage(
 source("server/homeserver.R")
 source("server/uploadserver.R")
 source("server/flagserver.R")
+#source("server/law_and_order_server.R")
 server <-  function(input, output, session) {
     # Call the server functions from the included files
     homeserver(input, output, session)
     uploadserver(input, output, session)
     flagserver(input, output, session)
+    #law_and_order_server(input, output, session)
   }
 
 

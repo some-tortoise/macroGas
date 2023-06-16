@@ -15,6 +15,12 @@ div(
           ),
           div(class = 'nav-text', 'Upload')
       ),
+      div(class = 'nav-el order-nav-el',
+          div(class = 'nav-el-circle',
+              onclick="openTab(event, 'order')"
+          ),
+          div(class = 'nav-text', 'Order')
+      ),
       div(class = 'nav-el flag-nav-el',
           div(class = 'nav-el-circle',
               onclick="openTab(event, 'flag')"
