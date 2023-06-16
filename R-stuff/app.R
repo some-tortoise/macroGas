@@ -13,19 +13,22 @@ ui <- fluidPage(
     div(class = 'tabbable',
         source("ui/home.R")[1],
         source("ui/upload.R")[1],
-        source("ui/law_and_order.R")[1],
+        source("ui/order.R")[1],
         source("ui/flag.R")[1],
         source("ui/calculate.R")[1],
-        source("ui/visualize.R")[1]
+        source("ui/compare.R")[1]
     ),
+    
     includeScript(path = "www/script.js")
   )
 
 
 source("server/homeserver.R")
 source("server/uploadserver.R")
+source("server/orderserver.R")
 source("server/flagserver.R")
-#source("server/law_and_order_server.R")
+source("server/calculateserver.R")
+source("server/compareserver.R")
 server <-  function(input, output, session) {
     # Call the server functions from the included files
     homeserver(input, output, session)
