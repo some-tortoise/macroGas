@@ -11,12 +11,12 @@ div(class = 'calculate-panel-container panel-container',
                  #textOutput("dischargeOutput")
                  ),
           column(width = 5,
-                 class = 'calculate-graph-container'
-                 #plotOutput("dischargecalcplot"),
+                 class = 'calculate-graph-container',
+                 plotOutput("dischargecalcplot"),
                  )
           ),
-    fluidRow(class = 'calculate-output-dt-container'#,
-             #dataTableOutput("dischargetable")
+    fluidRow(class = 'calculate-output-dt-container',
+             dataTableOutput("dischargetable")
              )
     
 )
