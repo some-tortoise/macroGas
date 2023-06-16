@@ -33,6 +33,7 @@ server <-  function(input, output, session) {
     # Call the server functions from the included files
     homeserver(input, output, session)
     uploadserver(input, output, session)
+    orderserver(input, output, session)
     flagserver(input, output, session)
     #law_and_order_server(input, output, session)
   }
