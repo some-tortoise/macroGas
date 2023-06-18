@@ -6,11 +6,34 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) 
 
 uploadserver <- function(input, output, session){
   
+  templateCSV <- data.frame(
+    "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
+    "Station" = c(1, 2, 3),
+    "Low Range μS/cm" = c(1, 2, 3),
+    "Full Range μS/cm" = c(1, 2, 3),
+    "High Range μS/cm" = c(1, 2, 3),
+    stringsAsFactors = FALSE
+  )
+  
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
                                   station_names = NULL,
                                   combined_df = NULL)
+  
+  observeEvent(input$uploadinstructions, { 
+    showModal(modalDialog(
+      title = "Instructions",
+      "Upload page instructions placeholder text..."
+    ))
+  }) #instructions button function
+  
+  output$downloadFile <- downloadHandler(
+    filename = "slugtemplate.csv",
+    content = function(file) {
+      write.csv(templateCSV, file, row.names = FALSE)
+    }
+  )
   
   observeEvent(input$csvs, {
     in_file <- NULL
