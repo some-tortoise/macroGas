@@ -4,7 +4,7 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-uploadserver <- function(input, output, session){
+#uploadserver <- function(input, output, session){
   
   templateCSV <- data.frame(
     "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
@@ -131,4 +131,4 @@ uploadserver <- function(input, output, session){
     uploaded_data$combined_df <- '\'visualized\''
     print(uploaded_data$combined_df)
   })
-}
+#}

@@ -6,7 +6,7 @@ library(sortable)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 
-orderserver <- function(input, output, session) {
+#orderserver <- function(input, output, session) {
   output$orig_plot <- renderPlot({
     ggplot(combined_df, aes(x = Date_Time, y = Full_Range, color = station)) +
       geom_line()
@@ -35,5 +35,5 @@ orderserver <- function(input, output, session) {
               geom_line()
              })
     })
-} 
+#} 
 

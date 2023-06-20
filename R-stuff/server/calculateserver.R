@@ -2,7 +2,7 @@ library(shiny)
 library(DT)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-calculateserver <- function(input, output, session){
+#calculateserver <- function(input, output, session){
   output$dischargecalcplot <- renderPlot({
     leftBound <- 2
     rightBound <- 6
@@ -19,4 +19,4 @@ calculateserver <- function(input, output, session){
       theme_ipsum() +
       ggtitle("Graph")
   })
-}
+#}

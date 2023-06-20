@@ -22,22 +22,17 @@ ui <- fluidPage(
     includeScript(path = "www/script.js")
   )
 
-
-source("server/homeserver.R")
-source("server/uploadserver.R")
-source("server/orderserver.R")
-source("server/flagserver.R")
-source("server/calculateserver.R")
-source("server/compareserver.R")
 server <-  function(input, output, session) {
+  
+    goop <- reactiveValues()
     # Call the server functions from the included files
-    homeserver(input, output, session)
-    uploadserver(input, output, session)
-    orderserver(input, output, session)
-    flagserver(input, output, session)
-    calculateserver(input, output, session)
-    #law_and_order_server(input, output, session)
-  }
+    source("server/homeserver.R", local = TRUE)
+    source("server/uploadserver.R", local = TRUE)
+    source("server/orderserver.R", local = TRUE)
+    source("server/flagserver.R", local = TRUE)
+    source("server/calculateserver.R", local = TRUE)
+    source("server/compareserver.R", local = TRUE)
+}
 
 
 shinyApp(ui = ui, server = server)

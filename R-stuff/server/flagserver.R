@@ -4,7 +4,7 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
-flagserver <- function(input, output, session){
+#flagserver <- function(input, output, session){
   data <- reactiveValues(df = NULL)
   
   selectedData <- reactive({
@@ -124,4 +124,5 @@ observeEvent(input$path_ok,{
     }
   }
 }
-)}
+)
+#}
