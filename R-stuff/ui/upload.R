@@ -5,15 +5,29 @@ library(htmlwidgets)
 library(shinyjs)
 library(shinyFiles)
 library(shinyTime)
+library(shinyBS)
 
   div(class = 'upload-panel-container panel-container',
   column(width = 3,
-         actionButton("uploadinstruction", "?"),
+         actionButton("uploadinstruction",label = "?"),
+         h4("Instruction",
+            bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+         bsPopover(id = "q1", title = "Instruction",
+                   content = paste0("Click the \\'Download File\\' button to see the required format.",
+                                    "Select your CSV file by clicking \\'Choose CSV File\\' and then Open to upload it.",
+                                    "The uploaded file will be displayed in the table below.",
+                                    "To delete a file, click the \\'Delete\\' button.",
+                                    "For futher editing here, click the \\'Advanced Editing\\' botton.",
+                                    "Click the ? icon for help anytime!"),
+                   placement = "right", 
+                   trigger = "focus",
+                   options = list(container = "body")
+         ),
          hr(),
          h4("Data Template:"),
          downloadButton("downloadFile", "Download File"),
          hr(),
-         fileInput("csvs", "Choose CSV File",
+         fileInput("csvs", label = "Choose CSV File",
                    multiple = FALSE,
                    accept = c("text/csv",
                               "text/comma-separated-values,text/plain",

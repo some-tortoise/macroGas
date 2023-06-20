@@ -6,6 +6,10 @@ reactlog_enable()
 
 
 ui <- fluidPage(
+    tags$style(
+      type = 'text/css',
+      '.modal-dialog { width: fit-content !important; }'
+    ),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
     ),

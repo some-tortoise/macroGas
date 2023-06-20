@@ -5,7 +5,8 @@ library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 #flagserver <- function(input, output, session){
-  data <- reactiveValues(df = NULL)
+  df = read.csv("processed_mgas_erwin_station.csv",header = T)
+  data <- reactiveValues(df = df)
   
   selectedData <- reactive({
     df_plot <- data$df[data$df$station %in% input$station,]
@@ -41,7 +42,7 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
   })
   
   output$selected_data_table <- renderDT({
-    datatable(selectedData(), options = list(searching = FALSE, lengthChange = FALSE, paging = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
+    datatable(selectedData(), options = list(pageLength=10, searching = FALSE, info = FALSE, ordering = FALSE), rownames = FALSE)
   })
   
   observeEvent(input$flag_btn,{

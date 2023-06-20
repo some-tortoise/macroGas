@@ -2,6 +2,7 @@ library(shiny) # for webpage creation
 library(plotly) # for interactive graphs
 library(DT) # for datatables
 library(shinyjs)
+library(shinyhelper)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
   
 templateCSV <- data.frame(
@@ -14,33 +15,21 @@ templateCSV <- data.frame(
 )
 #uploadserver <- function(input, output, session){
   
-  templateCSV <- data.frame(
-    "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
-    "Station" = c(1, 2, 3),
-    "Low Range μS/cm" = c(1, 2, 3),
-    "Full Range μS/cm" = c(1, 2, 3),
-    "High Range μS/cm" = c(1, 2, 3),
-    stringsAsFactors = FALSE
-  )
+templateCSV <- data.frame(
+  "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
+  "Station" = c(1, 2, 3),
+  "Low Range μS/cm" = c(1, 2, 3),
+  "Full Range μS/cm" = c(1, 2, 3),
+  "High Range μS/cm" = c(1, 2, 3),
+  stringsAsFactors = FALSE
+)
   
-  uploaded_data <- reactiveValues(csv_names = NULL, 
-                                  data = NULL,
-                                  index = 1,
-                                  station_names = NULL,
-                                  combined_df = NULL)
-  
-observeEvent(input$uploadinstruction, { 
-    showModal(modalDialog(
-      title = "Instructions",
-      "Download the data template using the 'Download File' button to see the required format. 
-      Select your CSV file by clicking 'Choose CSV File' and then 'Open' to upload it.
-      The uploaded file will be displayed in the table below.
-      To delete a file, click the 'Delete' button next to it.
-      For futher editing here, click the 'Advanced Editing' botton.
-      Click the ? icon for help anytime!", 
-      easyClose = TRUE
-    ))
-  }) #instructions button function"
+uploaded_data <- reactiveValues(csv_names = NULL, 
+                                data = NULL,
+                                index = 1,
+                                station_names = NULL,
+                                combined_df = NULL)
+
 
   output$downloadFile <- downloadHandler(
     filename = "slugtemplate.csv",
