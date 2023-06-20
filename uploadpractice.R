@@ -9,6 +9,7 @@ library(shinyTime)
 ######### UI############
 
 ui <- fluidPage(
+  useShinyjs(),
   # navbar 
   sidebarLayout(
     sidebarPanel(
@@ -48,10 +49,16 @@ ui <- fluidPage(
       )
     ),
     mainPanel(
-      DTOutput("contents")
+      DTOutput("contents"),
+      #conditional panel that should only show if the data frame has been rendered
+      mainPanel(id = "conditional",
+        h4("Let's move on to ordering."),
+        actionButton("moveon_button", "Move on")
+      )
     )
   )
 )
+  
 
 
 ###########server#############
@@ -67,6 +74,8 @@ server <- function(input, output, session){
     "Temp_C" = c(1, 2, 3),
     stringsAsFactors = FALSE
   )
+  
+  dtRendered <- reactiveVal(FALSE)
   
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
@@ -105,11 +114,22 @@ server <- function(input, output, session){
     } else {
       # Store uploaded data in the reactive uploaded_data value
       uploaded_data$data <- df
+      dtRendered(TRUE)
       output$contents <- renderDT({
         datatable(df)
       })
     }
-    })
-  }
-
+  })
+  
+  observe({
+    if (dtRendered()) {
+      shinyjs::show("conditional")
+    } else {
+      shinyjs::hide("conditional")
+    }
+  })  
+  
+  
+}
+  
 shinyApp(ui = ui, server = server)
