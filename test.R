@@ -1,26 +1,37 @@
 library(shiny)
-library(ggplot2)
-library(hrbrthemes)
+
+df <- data.frame(
+  station = c(1,1,1,2,2,2,3,3,3),
+       x = c(1,2,3,1,2,3,1,2,3),
+       y = c(1,2,3,5,5,5,9,8,7)
+  )
+
+color_mapping <- c('1' = 'red', '2' = 'blue', '3' = 'green')
 
 ui <- fluidPage(
-  plotOutput('plot')
+  plotOutput('plot'),
+  actionButton('b', 'change station order')
 )
 
-
-server <- function(input, output) {
+server <- function(input, output, session) {
+  
+  data <- reactiveValues(df = df)
+  
   output$plot <- renderPlot({
-    leftBound <- 2
-    rightBound <- 6
-    
-    xValue <- 1:10
-    yValue <- abs(cumsum(rnorm(10)))
-    data <- data.frame(xValue,yValue,xfill = ifelse(xValue > leftBound & xValue < rightBound, xValue, NA))
-    
-    # Plot
-    ggplot(data, aes(x=xValue, y=yValue)) +
-      geom_area(aes(x=xfill), fill="#69b3a2", alpha=0.4) +
-      geom_line(color="#69b3a2", size=2)
+    ggplot(data$df, aes(x = x, y = y, color = as.character(station))) + 
+      geom_line() + 
+      scale_color_manual(values = color_mapping)
+  })
+  
+  observeEvent(input$b, {
+    print('DF Before: ')
+    print(data$df)
+    data$df$station = c(3,3,3,1,1,1,2,2,2)
+    print('')
+    print('')
+    print('DF After: ')
+    print(data$df)
   })
 }
 
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
