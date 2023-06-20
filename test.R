@@ -19,10 +19,7 @@ server <- function(input, output) {
     # Plot
     ggplot(data, aes(x=xValue, y=yValue)) +
       geom_area(aes(x=xfill), fill="#69b3a2", alpha=0.4) +
-      geom_line(color="#69b3a2", size=2) +
-      geom_point(size=3, color="#69b3a2") +
-      theme_ipsum() +
-      ggtitle("Graph")
+      geom_line(color="#69b3a2", size=2)
   })
 }
 

@@ -129,4 +129,3 @@ observeEvent(input$viz_btn, {
   uploaded_data$combined_df <- '\'visualized\''
   print(uploaded_data$combined_df)
 })
-#}
