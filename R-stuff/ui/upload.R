@@ -8,7 +8,7 @@ library(shinyTime)
 
   div(class = 'upload-panel-container panel-container',
   column(width = 3,
-         actionButton("uploadinstruction", "Instructions"),
+         actionButton("uploadinstruction", "?"),
          hr(),
          h4("Data Template:"),
          downloadButton("downloadFile", "Download File"),
