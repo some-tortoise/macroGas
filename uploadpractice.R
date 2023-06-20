@@ -40,7 +40,7 @@ ui <- fluidPage(
         condition = "input.Edit_upload",
         # numericInput('station_name','Enter station number', 0),
         radioButtons(
-          "row_and_col_select", "Remove:",
+          "row_select", "Remove:",
           choices = c("Row(s)", "Column(s)"),
           selected = "rows"
         ),
@@ -90,28 +90,26 @@ server <- function(input, output, session){
   
   observeEvent(input$upload, {
     req(input$upload)
-    display <- read.csv(input$upload$datapath)
+    df <- read.csv(input$upload$datapath)
     
-    if (!identical(colnames(display), colnames(templateCSV))) {
+    if (!identical(colnames(df), colnames(templateCSV))) {
       showModal(modalDialog(
         title = "Error",
-        "Uploaded CSV must have identical columns to the given template."
+        "Uploaded CSV must have identical columns to the given template. If you do not have certain data such as full range conductivity measurements, please leave that respective column blank."
       ))
-    } else if (length(colnames(display)) != length(colnames(templateCSV))) {
+    } else if (length(colnames(df)) > length(colnames(templateCSV))) {
       showModal(modalDialog(
         title = "Error",
-        "Uploaded CSV has a different number of columns than given template."
+        "Uploaded CSV has more columns than given template."
       ))
     } else {
       # Store uploaded data in the reactive uploaded_data value
-      uploaded_data$data <- display
+      uploaded_data$data <- df
+      output$contents <- renderDT({
+        datatable(df)
+      })
     }
-  }) #displays the data table if the formatting is identical to template
-  
-  output$contents <- renderDT({
-    uploaded_data$data
-  })
-  
-}
+    })
+  }
 
 shinyApp(ui = ui, server = server)
