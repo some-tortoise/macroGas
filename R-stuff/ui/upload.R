@@ -8,8 +8,11 @@ library(shinyTime)
 
   div(class = 'upload-panel-container panel-container',
   column(width = 3,
-         h4("Here is the correct format to upload data:"),
+         actionButton("uploadinstruction", "Instructions"),
+         hr(),
+         h4("Data Template:"),
          downloadButton("downloadFile", "Download File"),
+         hr(),
          fileInput("csvs", "Choose CSV File",
                    multiple = FALSE,
                    accept = c("text/csv",
