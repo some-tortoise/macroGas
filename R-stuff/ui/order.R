@@ -1,17 +1,19 @@
 library(shiny)
 library(plotly) # for interactive graphs
 library(sortable)
+source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
-div(class = 'order-panel-container panel-container',
+div(class = 'order-panel-container panel-container', 
     column(width = 5,
            rank_list(
-             text = "Reorder your stations, earliest to latest",
-             labels = c("Station A", "Station B", "Station C", "Station D", "Station E"),
-             input_id = "rank_list_swap",
-             options = sortable_options(swap = TRUE)
+             text = "Reorder your stations as peaks appear earliest to latest on the graph",
+             labels = c("Station 1", "Station 2", "Station 3", "Station 4", "Station 5"),
+             input_id = "rank_list",
+             options = sortable_options(swap = FALSE)
            ),
            actionButton("station_reorder", label = "Submit Station Reorder")
 ),
 column(width=7,
+       plotOutput("orig_plot"),
        plotOutput("ordered_plot"))
 )
