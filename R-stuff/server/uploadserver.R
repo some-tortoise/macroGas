@@ -1,4 +1,3 @@
-```{r}
 library(shiny) # for webpage creation
 library(plotly) # for interactive graphs
 library(DT) # for datatables
@@ -13,8 +12,6 @@ templateCSV <- data.frame(
   "High Range μS/cm" = c(1, 2, 3),
   stringsAsFactors = FALSE
 )
-
-<<<<<<< HEAD
 #uploadserver <- function(input, output, session){
   
   templateCSV <- data.frame(
@@ -52,13 +49,13 @@ observeEvent(input$uploadinstruction, {
     }
   )
   
-  observeEvent(input$csvs, {
-=======
+observeEvent(input$csvs, {
 uploaded_data <- reactiveValues(csv_names = NULL, 
                                 data = NULL,
                                 index = 1,
                                 station_names = NULL,
                                 combined_df = NULL)
+})
 
 observeEvent(input$uploadinstruction, { 
   showModal(modalDialog(
@@ -69,7 +66,7 @@ observeEvent(input$uploadinstruction, {
       To delete a file, click the 'Delete' button.
       For futher editing here, click the 'Advanced Editing' botton.
       Click the ? icon for help anytime!"
-  )),        
+  ))        
   easyClose = TRUE
 }) #instructions button function
 
@@ -88,7 +85,6 @@ observeEvent(input$csvs, {
                         header = TRUE,
                         sep = ",")
   }, error = function(e){
->>>>>>> 30cb7d3d959d5817388781889ec9b78e9aa25991
     in_file <- NULL
   })
   
@@ -178,4 +174,3 @@ observeEvent(input$viz_btn, {
   print(uploaded_data$combined_df)
 })
 #}
-```
