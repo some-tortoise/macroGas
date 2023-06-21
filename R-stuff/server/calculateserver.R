@@ -25,10 +25,15 @@ output$dischargecalcplot <- renderPlotly({
 observeEvent(event_data("plotly_relayout"), {
   ed <- event_data("plotly_relayout")
   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+  print(substring(names(ed)[1],1,6))
+  if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
   barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
+  if(is.na(barNum)){ return() }
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
   pts <- as.numeric(shape_anchors)
   goop$data$x[row_index] <- pts[1]
+  
+  
   if(barNum == 0){
     calcBars$xLeft <- NA
     calcBars$xLeft <- goop$data$x[row_index]
