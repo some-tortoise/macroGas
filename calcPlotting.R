@@ -1,9 +1,12 @@
 library(shiny)
 library(plotly)
 library(tidyverse)
+source(knitr::purl("updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 
-xValue <- 1:50
-yValue <- abs(cumsum(rnorm(50)))
+eggs <- combined_df[combined_df$station %in% 1,]
+eggs$Date_Time <- as.numeric(eggs$Date_Time)
+xValue <- eggs['Date_Time'][,1]
+yValue <- eggs['Low_Range'][,1]
 data <- data.frame(xValue,yValue)
 
 ui <- fluidPage(
@@ -12,15 +15,15 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  calcBars = reactiveValues(xLeft = 10, xRight = 30)
+  calcBars = reactiveValues(xLeft = xValue[500], xRight = xValue[2000])
   
   output$p <- renderPlotly({
     
-    data$xfill = ifelse(xValue > calcBars$xLeft & xValue < calcBars$xRight, xValue, NA)
+    eggs$xfill = ifelse(xValue > calcBars$xLeft & xValue < calcBars$xRight, xValue, NA)
     
-    plot_ly(data, x = ~xValue, y = ~yValue, 
+    plot_ly(eggs, x = ~Date_Time, y = ~Low_Range, 
             type = 'scatter', mode = 'lines') %>%
-      add_trace(x = ~xfill, y = ~yValue, fill = 'tozeroy') %>%
+      add_trace(x = ~xfill, y = ~Low_Range, fill = 'tozeroy') %>%
       layout(shapes = list(
         # left line
         list(type = "line", x0 = calcBars$xLeft, x1 = calcBars$xLeft,
@@ -40,7 +43,7 @@ server <- function(input, output, session) {
     row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
     pts <- as.numeric(shape_anchors)
     data$x[row_index] <- pts[1]
-    
+
     if(barNum == 0){
       calcBars$xLeft <- NA
       calcBars$xLeft <- data$x[row_index]
