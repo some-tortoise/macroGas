@@ -12,7 +12,7 @@ div(class = 'calculate-panel-container panel-container',
                  ),
           column(width = 5,
                  class = 'calculate-graph-container',
-                 plotOutput("dischargecalcplot"),
+                 plotlyOutput("dischargecalcplot"),
                  )
           ),
     fluidRow(class = 'calculate-output-dt-container',

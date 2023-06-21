@@ -39,6 +39,9 @@ server <- function(input, output, session) {
     row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
     pts <- as.numeric(shape_anchors)
     data$x[row_index] <- pts[1]
+    if(is.null(barNum)){
+      return()
+    }
     if(barNum == 0){
       calcBars$xLeft <- NA
       calcBars$xLeft <- data$x[row_index]

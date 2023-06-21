@@ -25,6 +25,8 @@ ui <- fluidPage(
 server <-  function(input, output, session) {
   
     goop <- reactiveValues()
+    goop$combined_df <- combined_df
+    
     # Call the server functions from the included files
     source("server/homeserver.R", local = TRUE)
     source("server/uploadserver.R", local = TRUE)

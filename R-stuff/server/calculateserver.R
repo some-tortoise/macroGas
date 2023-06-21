@@ -1,22 +1,39 @@
-library(shiny)
-library(DT)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
+xValue <- 1:50
+yValue <- abs(cumsum(rnorm(50)))
+goop$data <- data.frame(xValue,yValue)
 
-#calculateserver <- function(input, output, session){
-  output$dischargecalcplot <- renderPlot({
-    leftBound <- 2
-    rightBound <- 6
-    
-    xValue <- 1:10
-    yValue <- abs(cumsum(rnorm(10)))
-    data <- data.frame(xValue,yValue,xfill = ifelse(xValue > leftBound & xValue < rightBound, xValue, NA))
-    
-    # Plot
-    ggplot(data, aes(x=xValue, y=yValue)) +
-      geom_area(aes(x=xfill), fill="#69b3a2", alpha=0.4) +
-      geom_line(color="#69b3a2", size=2) +
-      geom_point(size=3, color="#69b3a2") +
-      theme_ipsum() +
-      ggtitle("Graph")
-  })
-#}
+calcBars <- reactiveValues(xLeft = 10, xRight = 30)
+
+output$dischargecalcplot <- renderPlotly({
+  goop$data$xfill = ifelse(xValue > calcBars$xLeft & xValue < calcBars$xRight, xValue, NA)
+  
+  plot_ly(goop$data, x = ~xValue, y = ~yValue, 
+          type = 'scatter', mode = 'lines') %>%
+    add_trace(x = ~xfill, y = ~yValue, fill = 'tozeroy') %>%
+    layout(shapes = list(
+      # left line
+      list(type = "line", x0 = calcBars$xLeft, x1 = calcBars$xLeft,
+           y0 = 0, y1 = 1, yref = "paper"),
+      # right line
+      list(type = "line", x0 = calcBars$xRight, x1 = calcBars$xRight,
+           y0 = 0, y1 = 1, yref = "paper")
+    )) %>%
+    config(edits = list(shapePosition = TRUE))
+})
+
+
+observeEvent(event_data("plotly_relayout"), {
+  ed <- event_data("plotly_relayout")
+  shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+  barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
+  row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)
+  pts <- as.numeric(shape_anchors)
+  goop$data$x[row_index] <- pts[1]
+  if(barNum == 0){
+    calcBars$xLeft <- NA
+    calcBars$xLeft <- goop$data$x[row_index]
+  }else{
+    calcBars$xRight <- NA
+    calcBars$xRight <- goop$data$x[row_index]
+  }
+})
