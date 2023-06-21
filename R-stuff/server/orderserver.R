@@ -12,13 +12,7 @@ color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "
   output$orig_plot <- renderPlot({
     ggplot(combined_df, aes(x = Date_Time, y = Full_Range, color = station)) +
       geom_line(size = 1.1) +
-      scale_color_manual(values = color_mapping)  +
-      theme_bw() +
-      labs(
-        x = "Date Time",
-        y = "Full Range",
-        color = "Station"
-      )
+      scale_color_manual(values = color_mapping) 
   })
   
   observeEvent(input$station_reorder, {
