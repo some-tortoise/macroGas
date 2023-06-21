@@ -14,6 +14,7 @@ div(class = 'order-panel-container panel-container',
            actionButton("station_reorder", label = "Submit Station Reorder")
 ),
 column(width=7,
-       plotOutput("orig_plot")
+       plotOutput("orig_plot"),
+       textOutput("reorder_complete")
        )
 )
