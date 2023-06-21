@@ -8,20 +8,32 @@ library(shinyTime)
 
   div(class = 'upload-panel-container panel-container',
   column(width = 3,
-         actionButton("uploadinstruction", "?"),
+         actionButton("uploadinstructions", "?"),
          hr(),
-         h4("Data Template:"),
+         h5("Data Template:"),
          downloadButton("downloadFile", "Download File"),
+         br(),
          hr(),
-         fileInput("csvs", "Choose CSV File",
+         #two upload choices
+         h5("Import data from:"),
+         actionButton("gdrive_choice", "Through Google Drive"),
+         actionButton("manual_choice", "Manually"),
+         tags$hr(),
+         conditionalPanel(
+           condition = "input.gdrive_choice",
+           textInput('gdrive_link', 'Google Drive Link:')
+         ),
+         conditionalPanel(
+           condition = "input.manual_choice",
+           fileInput("upload", "Choose CSV File",
                    multiple = FALSE,
                    accept = c("text/csv",
                               "text/comma-separated-values,text/plain",
-                              ".csv")),
-         selectInput(inputId = 'select',
-                     label = 'Select',
-                     choices = c()),
-         actionButton("Del", "Delete the current dataset"),
+                              ".csv"))),
+        
+         uiOutput("selectfiles"),
+         
+         actionButton("delete", "Remove selected dataset."),
          tags$hr(),
          checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
          conditionalPanel(
@@ -34,6 +46,7 @@ library(shinyTime)
            actionButton('submit_delete', 'Delete selected'))
          ),
          tags$hr(),
+  )
          # checkboxInput("header", "Header", FALSE),
          #radioButtons("sep", "Separator",
          #    choices = c(Comma = ",",
@@ -42,10 +55,17 @@ library(shinyTime)
          # selected = ","),
   
   column(width = 7,
-         div(id = "upload_dt", DT::dataTableOutput('table1'))
-         )#,
+         div(DTOutput("contents"),
+             conditional panel under table that should only show if the data frame has been rendered
+            div(id = "conditional",
+             p("Once you're happy with the uploaded files, click below to move on to ordering your statiosn."),
+             actionButton("continue_button", "Continue")
+            )
+         )
+  )
+  
   #,
 #div(
  # actionButton('viz_btn','Visualize'))
-)
+#)
 
