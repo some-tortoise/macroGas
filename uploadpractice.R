@@ -11,17 +11,16 @@ library(shinyTime)
 ui <- fluidPage(
   useShinyjs(),
   # navbar 
+  titlePanel("Upload"),
   sidebarLayout(
     sidebarPanel(
-      "", width = 4,
       actionButton("uploadinstructions", "Instructions"),
       hr(),
-      h4("Data Template:"),
+      h5("Data Template:"),
       downloadButton("downloadFile", "Download File"),
-      br(),
-      hr(),
+      helpText("Download above data template for correct formatting."),
       fileInput(
-        "upload", "Choose CSV File",
+        "upload", h5("Choose CSV File"),
         multiple = FALSE,
         accept = c(
           "text/csv",
@@ -29,12 +28,8 @@ ui <- fluidPage(
           ".csv"
         )
       ),
-      selectInput(
-        inputId = 'select',
-        label = 'Select',
-        choices = c()
-      ),
-      actionButton("Del", "Delete the current dataset"),
+      uiOutput("selectfiles"),
+      actionButton("delete", "Remove selected dataset"),
       tags$hr(),
       checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
       conditionalPanel(
@@ -52,8 +47,8 @@ ui <- fluidPage(
       DTOutput("contents"),
       #conditional panel that should only show if the data frame has been rendered
       mainPanel(id = "conditional",
-        h4("Let's move on to ordering."),
-        actionButton("moveon_button", "Move on")
+        p("Once you're happy with the uploaded files, click below to move on to ordering."),
+        actionButton("continue_button", "Continue")
       )
     )
   )
@@ -90,7 +85,7 @@ server <- function(input, output, session){
     ))
   }) #instructions button 
   
-  output$downloadFile <- downloadHandler(  
+  output$downloadFile <- downloadHandler( #data template download button
     filename = "slugtemplate.csv",
     content = function(file) {
       write.csv(templateCSV, file, row.names = FALSE)
@@ -104,7 +99,7 @@ server <- function(input, output, session){
     if (!identical(colnames(df), colnames(templateCSV))) {
       showModal(modalDialog(
         title = "Error",
-        "Uploaded CSV must have identical columns to the given template. If you do not have certain data such as full range conductivity measurements, please leave that respective column blank."
+        "Uploaded CSV must have identical columns to the given template. If you do not have certain data, please leave that respective column blank."
       ))
     } else if (length(colnames(df)) > length(colnames(templateCSV))) {
       showModal(modalDialog(
@@ -114,21 +109,49 @@ server <- function(input, output, session){
     } else {
       # Store uploaded data in the reactive uploaded_data value
       uploaded_data$data <- df
-      dtRendered(TRUE)
+      dtRendered(TRUE) #set to TRUE as a condition for displaying continue actionbutton
       output$contents <- renderDT({
         datatable(df)
       })
     }
+
+  ##naming conventions for stored data
+  seq_csv <- seq_along(input$upload$name) # Generate a sequence of numbers
+  prev_num_files <- length(uploaded_data$data)
+  uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name)
+
+  output$selectfiles <- renderUI({  
+    if(is.null(input$upload)) {return()}
+    selectInput("select", "Select Files", choices = uploaded_data$csv_names)
   })
+  }) #all the code to upload, validate, display, and select user-uploaded CSVs
+
+  observe({
+    if(length(uploaded_data$csv_names) > 1){
+      for(i in 1:length(uploaded_data$csv_names)){
+        if(input$select == uploaded_data$csv_names[i]){
+          uploaded_data$index <- i
+        }
+      } 
+    }
+    else
+      uploaded_data$index <- 1
+  }) #updates the uploaded_data$index based on how many CSVs are uploaded
+  
+  observeEvent(input$delete,{
+    index = uploaded_data$index
+    uploaded_data$data <- uploaded_data$data[-index]
+    uploaded_data$csv_names <- uploaded_data$csv_names[-index]
+    updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
+  }) #deleting unwanted files
   
   observe({
-    if (dtRendered()) {
+    if (dtRendered()) { #dtRendered is a reactive value that's set to TRUE once df is displayed
       shinyjs::show("conditional")
     } else {
       shinyjs::hide("conditional")
     }
-  })  
-  
+  }) #shinyJS code to to show/hide actionbutton to continue on to ordering
   
 }
   
