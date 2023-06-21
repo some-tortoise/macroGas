@@ -36,7 +36,8 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
         range = c(min_date, max_date),  # Set the desired range
         type = "date"  # Specify the x-axis type as date
       ), dragmode = 'select') |>
-      config(modeBarButtonsToRemove = list( "pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian"))  # Remove specific buttons
+      config(modeBarButtonsToRemove = list( "pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |> # Remove specific buttons
+      layout(plot_bgcolor='white')
     
   })
   
