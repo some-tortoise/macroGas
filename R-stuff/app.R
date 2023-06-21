@@ -18,6 +18,7 @@ ui <- fluidPage(
         source("ui/calculate.R")[1],
         source("ui/compare.R")[1]
     ),
+    
     includeScript(path = "www/script.js")
   )
 

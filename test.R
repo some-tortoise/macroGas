@@ -15,7 +15,7 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   
-  data <- reactiveValues(df = combined_df)
+  data <- reactiveValues(df = df)
   
   output$plot <- renderPlot({
     ggplot(data$df, aes(x = x, y = y, color = as.character(station))) + 
