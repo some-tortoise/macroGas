@@ -1,11 +1,3 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
-library(sortable)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
-
-
 color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "5" = "purple")
 
 #orderserver <- function(input, output, session) {

@@ -1,5 +1,3 @@
-
-
 div(class = 'upload-panel-container panel-container blue-panel',
     #column for sidebar options
     column(width = 3,
