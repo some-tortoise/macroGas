@@ -20,7 +20,7 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
   
   output$main_plot = renderPlotly({
     df_plot <- data$df[data$df$station %in% input$station,]
-    color_mapping <- c("1" = "red", "2" = "blue", "3" = "green", "4" = "purple", "5" = "black")
+    color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "5" = "purple")
     
     # Get the minimum and maximum values of Date_Time vector
     if(length(df_plot$Date_Time) > 0){
