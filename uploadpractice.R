@@ -9,6 +9,7 @@ library(shinyTime)
 ######### UI############
 
 ui <- fluidPage(
+  useShinyjs(),
   # navbar 
   sidebarLayout(
     sidebarPanel(
@@ -19,15 +20,25 @@ ui <- fluidPage(
       downloadButton("downloadFile", "Download File"),
       br(),
       hr(),
-      fileInput(
-        "upload", "Choose CSV File",
-        multiple = FALSE,
-        accept = c(
-          "text/csv",
-          "text/comma-separated-values,text/plain",
-          ".csv"
-        )
+      #Two upload choices
+      h5("Where would you like to import data from:"),
+      actionButton('gdrive_choice', 'Through Google Drive'),
+      actionButton('manual_choice', 'Manually'),
+      tags$hr(),
+      conditionalPanel(
+        condition = "input.gdrive_choice",
+        textInput('gdrive_link', 'Google Drive Link')
       ),
+      conditionalPanel(
+        condition = "input.manual_choice",
+        fileInput(
+          "upload", "Choose CSV File",
+          multiple = FALSE,
+          accept = c(
+            "text/csv",
+            "text/comma-separated-values,text/plain",
+            ".csv"
+          ))),
       selectInput(
         inputId = 'select',
         label = 'Select',
@@ -48,10 +59,16 @@ ui <- fluidPage(
       )
     ),
     mainPanel(
-      DTOutput("contents")
+      DTOutput("contents"),
+      #conditional panel that should only show if the data frame has been rendered
+      mainPanel(id = "conditional",
+                h4("Let's move on to ordering."),
+                actionButton("moveon_button", "Move on")
+      )
     )
   )
 )
+
 
 
 ###########server#############
@@ -68,6 +85,8 @@ server <- function(input, output, session){
     stringsAsFactors = FALSE
   )
   
+  dtRendered <- reactiveVal(FALSE)
+  
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
@@ -77,8 +96,13 @@ server <- function(input, output, session){
   observeEvent(input$uploadinstructions, { 
     showModal(modalDialog(
       title = "Instructions",
-      "Upload page instructions placeholder text..."
-    ))
+      "Check if your file is CSV;
+       Check if the data matches the format (See template by clicking 'Download File’);
+       Choose how would you like to import file(s) - from Google Drive or from your local computer;
+       The uploaded file will be displayed in the table below if it is correctly formatted;
+       You can also futher edit your file here by using 'Advanced Editing';
+       Go to 'Instruction' for help anytime!",
+      easyClose = TRUE))
   }) #instructions button 
   
   output$downloadFile <- downloadHandler(  
@@ -105,11 +129,21 @@ server <- function(input, output, session){
     } else {
       # Store uploaded data in the reactive uploaded_data value
       uploaded_data$data <- df
+      dtRendered(TRUE)
       output$contents <- renderDT({
         datatable(df)
       })
     }
     })
+  
+  observe({
+    if(dtRendered()){
+      shinyjs::show("conditional")
+    } else {
+      shinyjs::hide("conditional")
+    }
+    })
+  
   }
 
 shinyApp(ui = ui, server = server)

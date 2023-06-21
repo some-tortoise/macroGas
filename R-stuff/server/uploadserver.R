@@ -3,18 +3,8 @@ library(plotly) # for interactive graphs
 library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
-  
+
 templateCSV <- data.frame(
-  "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
-  "Station" = c(1, 2, 3),
-  "Low Range μS/cm" = c(1, 2, 3),
-  "Full Range μS/cm" = c(1, 2, 3),
-  "High Range μS/cm" = c(1, 2, 3),
-  stringsAsFactors = FALSE
-)
-#uploadserver <- function(input, output, session){
-  
-  templateCSV <- data.frame(
     "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
     "Station" = c(1, 2, 3),
     "Low Range μS/cm" = c(1, 2, 3),
@@ -173,3 +163,4 @@ observeEvent(input$viz_btn, {
   uploaded_data$combined_df <- '\'visualized\''
   print(uploaded_data$combined_df)
 })
+
