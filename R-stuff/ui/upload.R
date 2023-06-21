@@ -7,7 +7,8 @@ library(shinyFiles)
 library(shinyTime)
 
   div(class = 'upload-panel-container panel-container',
-  column(width = 3,
+      #column for sidebar options
+      column(width = 3,
          actionButton("uploadinstructions", "?"),
          hr(),
          h5("Data Template:"),
@@ -30,9 +31,7 @@ library(shinyTime)
                    accept = c("text/csv",
                               "text/comma-separated-values,text/plain",
                               ".csv"))),
-        
          uiOutput("selectfiles"),
-         
          actionButton("delete", "Remove selected dataset."),
          tags$hr(),
          checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
@@ -43,9 +42,19 @@ library(shinyTime)
                         choices = c("rows",
                                     "columns"),
                         selected = "rows"),
-           actionButton('submit_delete', 'Delete selected'))
-         ),
-         tags$hr(),
+           actionButton('submit_delete', 'Delete selected'))),
+      
+        #column for the output table
+        column(width = 7,
+          div(
+            DTOutput("contents"),
+              div(
+                 id = "conditional",
+                 p("Once you're happy with the uploaded files, click below to move on to ordering your stations"),
+                 actionButton("continue_button", "Continue")
+             )
+         )
+        )
   )
          # checkboxInput("header", "Header", FALSE),
          #radioButtons("sep", "Separator",
@@ -54,15 +63,8 @@ library(shinyTime)
          #     Tab = "\t"),
          # selected = ","),
   
-  column(width = 7,
-         div(DTOutput("contents"),
-             conditional panel under table that should only show if the data frame has been rendered
-            div(id = "conditional",
-             p("Once you're happy with the uploaded files, click below to move on to ordering your statiosn."),
-             actionButton("continue_button", "Continue")
-            )
-         )
-  )
+  
+  
   
   #,
 #div(
