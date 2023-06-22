@@ -1,10 +1,19 @@
 library(shiny) # for webpage creation
 library(reactlog)
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(htmlwidgets)
+library(shinyjs)
+library(shinyFiles)
+library(shinyTime) 
+library(sortable)
+
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 # tell shiny to log all reactivity
 reactlog_enable()
 
 ui <- fluidPage(
+    useShinyjs(),
     tags$head(
       tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
     ),

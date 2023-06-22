@@ -1,18 +1,16 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
-library(sortable)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
-
-
 color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "5" = "purple")
 
 #orderserver <- function(input, output, session) {
   output$orig_plot <- renderPlot({
     ggplot(combined_df, aes(x = Date_Time, y = Full_Range, color = station)) +
       geom_line(size = 1.1) +
-      scale_color_manual(values = color_mapping) 
+      scale_color_manual(values = color_mapping)  +
+      theme_bw() +
+      labs(
+        x = "Date Time",
+        y = "Full Range",
+        color = "Station"
+      )
   })
   
   observeEvent(input$station_reorder, {

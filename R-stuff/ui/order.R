@@ -1,8 +1,3 @@
-library(shiny)
-library(plotly) # for interactive graphs
-library(sortable)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
-
 div(class = 'order-panel-container panel-container', 
     column(width = 5,
            rank_list(
