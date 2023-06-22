@@ -7,8 +7,8 @@ div(class = 'calculate-panel-container panel-container',
           column(width = 5,
                  class = 'calculate-input-container',
                  selectInput("calc_station_picker", label = "Choose A Station", c(1, 2, 3, 4, 5)),
-                 numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1)
-                 #textOutput("dischargeOutput")
+                 numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1),
+                 textOutput("dischargeOutput")
                  ),
           column(width = 5,
                  class = 'calculate-graph-container',

@@ -15,6 +15,32 @@ observe({
 observe({
   goop$calc_xLeft <- goop$calc_xValue[500]
   goop$calc_xRight <- goop$calc_xValue[2000]
+  goop$calc_xOne <- as.numeric(goop$calc_xValue[1])
+})
+
+observe({
+  goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xLeft) - goop$calc_xOne):(as.numeric(goop$calc_xRight) - goop$calc_xOne), ]
+})
+
+output$dischargeOutput <- renderText({
+  station_slug <- goop$trimmed_slug
+  
+  station_slug <- station_slug %>%
+    mutate(NaCl_Conc = NA) %>%
+    relocate(NaCl_Conc, .after = Low_Range)
+  station_slug <- station_slug %>%
+    mutate(Area = NA) %>%
+    relocate(Area, .after = NaCl_Conc)
+  
+  background_cond <- as.numeric(station_slug$Low_Range[1]) #this is a value that I want inputtable on Shiny
+  station_slug <- station_slug %>%
+    mutate(NaCl_Conc = (Low_Range - background_cond) * 0.00047) %>%
+    mutate(Area = NaCl_Conc * 5)
+  
+  Area <- sum(station_slug$Area)
+  Mass_NaCl <- input$salt_mass
+  Discharge <- Mass_NaCl/Area
+  return(paste0('Discharge: ',Discharge))
 })
 
 observeEvent(event_data("plotly_relayout"), {
