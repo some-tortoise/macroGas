@@ -31,8 +31,8 @@ observeEvent(event_data("plotly_relayout"), {
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
   pts <- as.numeric(shape_anchors)
   goop$data$x[row_index] <- pts[1]
-  
-  
+  print(pts[1])
+  print('a')
   if(barNum == 0){
     calcBars$xLeft <- NA
     calcBars$xLeft <- goop$data$x[row_index]
