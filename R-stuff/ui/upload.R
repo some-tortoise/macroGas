@@ -1,4 +1,4 @@
-div(class = 'upload-panel-container panel-container blue-panel',
+ div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
        actionButton("uploadinstructions", "?"),
