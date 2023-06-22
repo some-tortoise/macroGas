@@ -75,11 +75,13 @@ observeEvent(input$upload, {
       uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
       
       output$contents <- renderDT({ #table displayed only shows the last-uploaded dataset (need to make it reactive to show whichever is selected :(( )))
-        datatable(correct_df)
+        selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
+        datatable(selected_file)
     })
     }
   }
-}) # all the code to upload, validate, display, and select user-uploaded CSVs
+})
+  # all the code to upload, validate, display, and select user-uploaded CSVs
   
   output$selectfiles <- renderUI({  
     if(is.null(input$upload)) {return()} #list is blank if no input$upload -- need to fix so only successful ones show up
