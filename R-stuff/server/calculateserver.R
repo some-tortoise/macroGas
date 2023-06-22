@@ -22,6 +22,10 @@ observe({
   goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xLeft) - goop$calc_xOne):(as.numeric(goop$calc_xRight) - goop$calc_xOne), ]
 })
 
+observe({
+  goop$calc_discharge_table <- NULL
+})
+
 output$dischargeOutput <- renderText({
   station_slug <- goop$trimmed_slug
   

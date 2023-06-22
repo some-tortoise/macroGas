@@ -115,6 +115,12 @@ observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering 
   }
 })
 
+observeEvent(input$continue_button,{
+  comb_df <- do.call(rbind, uploaded_data$data)
+  view(comb_df)
+  goop$combined_df <- comb_df
+})
+
 # writing my own code to combine them into combined_df
 # uploaded_data$data is where all of the correctly formatted CSVs are now, each file also given indexes
 
