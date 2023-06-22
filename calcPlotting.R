@@ -50,7 +50,7 @@ server <- function(input, output, session) {
     xLeft <- as.POSIXct(xLeft, tz = 'GMT')
     xRight <- as.POSIXct(xRight, tz = 'GMT')
     
-    plot_ly(goop$curr_station_df, x = ~as.POSIXct(Date_Time, tz = 'GMT'), y = ~Low_Range, 
+    plot_ly(goop$curr_station_df, x = ~Date_Time, y = ~Low_Range, 
             type = 'scatter', mode = 'lines') %>%
       add_trace(x = ~as.POSIXct(goop$curr_station_df$xfill, tz = 'GMT'), y = ~Low_Range, fill = 'tozeroy') %>%
       layout(shapes = list(

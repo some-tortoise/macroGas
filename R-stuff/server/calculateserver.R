@@ -1,26 +1,21 @@
-xValue <- 1:50
-yValue <- abs(cumsum(rnorm(50)))
-goop$data <- data.frame(xValue,yValue)
 
-calcBars <- reactiveValues(xLeft = 10, xRight = 30)
-
-output$dischargecalcplot <- renderPlotly({
-  goop$data$xfill = ifelse(xValue > calcBars$xLeft & xValue < calcBars$xRight, xValue, NA)
-  
-  plot_ly(goop$data, x = ~xValue, y = ~yValue, 
-          type = 'scatter', mode = 'lines') %>%
-    add_trace(x = ~xfill, y = ~yValue, fill = 'tozeroy') %>%
-    layout(shapes = list(
-      # left line
-      list(type = "line", x0 = calcBars$xLeft, x1 = calcBars$xLeft,
-           y0 = 0, y1 = 1, yref = "paper"),
-      # right line
-      list(type = "line", x0 = calcBars$xRight, x1 = calcBars$xRight,
-           y0 = 0, y1 = 1, yref = "paper")
-    )) %>%
-    config(edits = list(shapePosition = TRUE))
+observe({
+  goop$curr_station_df <- combined_df[combined_df$station %in% 1, ]
 })
 
+observe({
+  goop$curr_station_df$Date_Time <- goop$curr_station_df$Date_Time
+})
+
+observe({
+  goop$calc_xValue <- goop$curr_station_df$Date_Time
+  goop$calc_yValue <- goop$curr_station_df$Low_Range
+})
+
+observe({
+  goop$calc_xLeft <- goop$calc_xValue[500]
+  goop$calc_xRight <- goop$calc_xValue[2000]
+})
 
 observeEvent(event_data("plotly_relayout"), {
   ed <- event_data("plotly_relayout")
@@ -29,15 +24,49 @@ observeEvent(event_data("plotly_relayout"), {
   barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
   if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
-  pts <- as.numeric(shape_anchors)
-  goop$data$x[row_index] <- pts[1]
-  print(pts[1])
-  print('a')
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT')
+  
   if(barNum == 0){
-    calcBars$xLeft <- NA
-    calcBars$xLeft <- goop$data$x[row_index]
+    goop$calc_xLeft <- 0
+    goop$calc_xLeft <- pts[1]
   }else{
-    calcBars$xRight <- NA
-    calcBars$xRight <- goop$data$x[row_index]
+    goop$calc_xRight <- 0
+    goop$calc_xRight <- pts[1]
   }
+})
+
+output$dischargecalcplot <- renderPlotly({
+  
+  req(goop$curr_station_df)
+  req(goop$calc_xLeft)
+  req(goop$calc_xRight)
+  xVal <- goop$curr_station_df$Date_Time
+  yVal <- goop$curr_station_df$Low_Range
+  xLeft <- goop$calc_xLeft
+  xRight <- goop$calc_xRight
+  #print(xVal)
+  #print(goop$curr_station_df$Date_Time)
+  print(goop$curr_station_df$Date_Time[500])
+  goop$curr_station_df$xfill <- ifelse(
+    as.numeric(xVal) > as.numeric(xLeft) & as.numeric(xVal) < as.numeric(xRight),
+    xVal,
+    NA
+  )
+  
+  xLeft <- as.POSIXct(xLeft, tz = 'GMT')
+  xRight <- as.POSIXct(xRight, tz = 'GMT')
+  
+  plot_ly(goop$curr_station_df, x = ~Date_Time, y = ~Low_Range, 
+          type = 'scatter', mode = 'lines') %>%
+    add_trace(x = ~as.POSIXct(goop$curr_station_df$xfill, tz = 'GMT'), y = ~Low_Range, fill = 'tozeroy') %>%
+    layout(shapes = list(
+      # left line
+      list(type = "line", x0 = xLeft, x1 = xLeft,
+           y0 = 0, y1 = 1, yref = "paper"),
+      # right line
+      list(type = "line", x0 = xRight, x1 = xRight,
+           y0 = 0, y1 = 1, yref = "paper")
+    )) %>%
+    config(edits = list(shapePosition = TRUE))
+  
 })
