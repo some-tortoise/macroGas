@@ -4,10 +4,6 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
-df <- reactive(data.frame(
-  Date_Time = seq(from = as.POSIXct("2023-01-01 00:00:00"), to = as.POSIXct("2023-01-10 23:59:59"), by = "5 secs"),
-  Value = rnorm(nrow(goop$combined_df))
-))
 
 selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]
@@ -20,10 +16,10 @@ selectedData <- reactive({
 
 # Reactive expression for filtered data based on start and end date and time
 filteredData <- reactive({
-  start_datetime <- as.POSIXct(input$start_datetime)
-  end_datetime <- as.POSIXct(input$end_datetime)
+ # start_datetime <- as.POSIXct(input$start_datetime)
+  #end_datetime <- as.POSIXct(input$end_datetime)
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
-  df_plot[df_plot$Date_Time >= start_datetime & df_plot$Date_Time <= end_datetime, ]
+ # df_plot[df_plot$Date_Time >= start_datetime & df_plot$Date_Time <= end_datetime, ]
 })
 
 # Render the Plotly graph with updated start and end date and time
