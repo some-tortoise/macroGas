@@ -14,9 +14,28 @@ selectedData <- reactive({
   return(df_chosen)
 }) 
 
-# Reactive expression for filtered data based on start and end date and time
+
+# Reactive expression for filtered data
 filteredData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
+})
+
+output$start_datetime_input <- renderUI({
+  if (nrow(goop$combined_df) > 0) {
+    default_value <- as.character(goop$combined_df$Date_Time[1])
+  } else {
+    default_value <- ""
+  }
+  textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+})
+
+output$end_datetime_input <- renderUI({
+  if (nrow(goop$combined_df) > 0) {
+    default_value <- as.character(goop$combined_df$Date_Time[1])
+  } else {
+    default_value <- ""
+  }
+  textInput("end_datetime", "End Date and Time", value = default_value)
 })
 
 # Render the Plotly graph with updated start and end date and time
