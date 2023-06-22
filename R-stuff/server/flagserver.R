@@ -3,51 +3,55 @@ library(plotly) # for interactive graphs
 library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
-  
+ 
+ 
+library(shiny) # for webpage creation
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(shinyjs)
+source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
+
+df <- reactive(data.frame(
+  Date_Time = seq(from = as.POSIXct("2023-01-01 00:00:00"), to = as.POSIXct("2023-01-10 23:59:59"), by = "5 secs"),
+  Value = rnorm(nrow(goop$combined_df))
+))
+
 selectedData <- reactive({
-  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]  # Subset the combined dataframe based on selected station
-  event.click.data <- event_data(event = "plotly_click", source = "imgLink")  # Get the clicked data from a plotly plot
-  event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")  # Get the selected data from a plotly plot
+  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]
+  event.click.data <- event_data(event = "plotly_click", source = "imgLink")
+  event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
   df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$station) %in% event.click.data$key) | 
-                          (paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key)),]  # Filter df_plot based on clicked and selected keys
-  return(df_chosen)  # Return the filtered data
+                          (paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key)),]
+  return(df_chosen)
+}) 
+
+# Reactive expression for filtered data based on start and end date and time
+filteredData <- reactive({
+  start_datetime <- as.POSIXct(input$start_datetime)
+  end_datetime <- as.POSIXct(input$end_datetime)
+  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
+  df_plot[df_plot$Date_Time >= start_datetime & df_plot$Date_Time <= end_datetime, ]
 })
-  
-  
-output$main_plot = renderPlotly({
-  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]  # Subset the combined dataframe based on selected station
-  color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "5" = "purple")  # Define a color mapping
-  
-  # Get the minimum and maximum values of Date_Time vector
-  if(length(df_plot$Date_Time) > 0){
-    min_date <- min(df_plot$Date_Time)  # Calculate the minimum value of Date_Time
-    max_date <- max(df_plot$Date_Time)  # Calculate the maximum value of Date_Time
-  }else{
-    min_date <- Sys.Date()  # Set minimum date as current system date
-    max_date <- Sys.Date()  # Set maximum date as current system date
-  }
-  
-  plot_ly(data = df_plot, type = 'scatter', mode = 'markers', x = ~Date_Time, y = as.formula(paste0('~',input$variable_choice)), key = ~(paste0(id,"_",station)), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") %>%
+
+# Render the Plotly graph with updated start and end date and time
+output$main_plot <- renderPlotly({
+  plot_ly(data = filteredData(), type = 'scatter', mode = 'markers', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(id,"_",station)), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") %>%
     layout(xaxis = list(
-      range = c(min_date, max_date),  # Set the desired range
+      range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>
-    config(modeBarButtonsToRemove = list( "pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>  # Remove specific buttons from the plot
-    layout(plot_bgcolor='white', 
-           xaxis = list(title = 'Date Time'))  # Set the plot background color and x-axis title
+    config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
+    layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'))
 })
-  
-output$selected_data_table <- renderDT({
-  datatable(selectedData(), options = list(pageLength = 5, searching = FALSE, lengthChange = FALSE, paging = TRUE, info = FALSE, ordering = FALSE), rownames = FALSE)  # Render a datatable with the selected data
-})
-  
-observeEvent(input$flag_btn,{
-  flag_name = paste0(input$variable_choice, "_Flag")  # Create a flag name based on the selected variable
-  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)),flag_name] <- input$flag_type  # Set the flag
-  selectedData <- reactive({
-    goop$combined_df })
-  })
 
+output$selected_data_table <- renderDT({
+  datatable(selectedData(), options = list(pageLength = 5, searching = FALSE, lengthChange = FALSE, paging = TRUE, info = FALSE, ordering = FALSE), rownames = FALSE)
+})
+
+observeEvent(input$flag_btn, {
+  flag_name <- paste0(input$variable_choice, "_Flag")
+  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)), flag_name] <- input$flag_type  # Set the flag
+})
 
 #
 # EXPORT STUFF
