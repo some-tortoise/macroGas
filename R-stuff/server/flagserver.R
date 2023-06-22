@@ -16,10 +16,7 @@ selectedData <- reactive({
 
 # Reactive expression for filtered data based on start and end date and time
 filteredData <- reactive({
- # start_datetime <- as.POSIXct(input$start_datetime)
-  #end_datetime <- as.POSIXct(input$end_datetime)
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
- # df_plot[df_plot$Date_Time >= start_datetime & df_plot$Date_Time <= end_datetime, ]
 })
 
 # Render the Plotly graph with updated start and end date and time
