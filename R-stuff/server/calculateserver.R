@@ -1,15 +1,15 @@
 
 observe({
-  goop$curr_station_df <- combined_df[combined_df$station %in% 1, ]
+  goop$calc_curr_station_df <- combined_df[combined_df$station %in% 1, ]
 })
 
 observe({
-  goop$curr_station_df$Date_Time <- goop$curr_station_df$Date_Time
+  goop$calc_curr_station_df$Date_Time <- goop$calc_curr_station_df$Date_Time
 })
 
 observe({
-  goop$calc_xValue <- goop$curr_station_df$Date_Time
-  goop$calc_yValue <- goop$curr_station_df$Low_Range
+  goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
+  goop$calc_yValue <- goop$calc_curr_station_df$Low_Range
 })
 
 observe({
@@ -37,17 +37,15 @@ observeEvent(event_data("plotly_relayout"), {
 
 output$dischargecalcplot <- renderPlotly({
   
-  req(goop$curr_station_df)
+  req(goop$calc_curr_station_df)
   req(goop$calc_xLeft)
   req(goop$calc_xRight)
-  xVal <- goop$curr_station_df$Date_Time
-  yVal <- goop$curr_station_df$Low_Range
+  xVal <- goop$calc_curr_station_df$Date_Time
+  yVal <- goop$calc_curr_station_df$Low_Range
   xLeft <- goop$calc_xLeft
   xRight <- goop$calc_xRight
-  #print(xVal)
-  #print(goop$curr_station_df$Date_Time)
-  print(goop$curr_station_df$Date_Time[500])
-  goop$curr_station_df$xfill <- ifelse(
+  
+  goop$calc_curr_station_df$xfill <- ifelse(
     as.numeric(xVal) > as.numeric(xLeft) & as.numeric(xVal) < as.numeric(xRight),
     xVal,
     NA
@@ -56,9 +54,9 @@ output$dischargecalcplot <- renderPlotly({
   xLeft <- as.POSIXct(xLeft, tz = 'GMT')
   xRight <- as.POSIXct(xRight, tz = 'GMT')
   
-  plot_ly(goop$curr_station_df, x = ~Date_Time, y = ~Low_Range, 
+  plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines') %>%
-    add_trace(x = ~as.POSIXct(goop$curr_station_df$xfill, tz = 'GMT'), y = ~Low_Range, fill = 'tozeroy') %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT'), y = ~Low_Range, fill = 'tozeroy') %>%
     layout(shapes = list(
       # left line
       list(type = "line", x0 = xLeft, x1 = xLeft,

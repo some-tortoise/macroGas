@@ -110,13 +110,13 @@ body{
 .calculate-input-container{
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
-  width: 340px;
+  width: 150px;
+  flex-grow: 1.5;
   height: 400px;
   padding: 20px;
 }
 
 .calculate-graph-container{
-  background-color: violet;
   flex-grow: 5;
   width: 400px;
   height: 400px;
