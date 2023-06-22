@@ -1,10 +1,10 @@
 templateCSV <- data.frame(
     "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
-    "Station" = c(1, 2, 3),
+    "Station" = c(1, 1, 1),
     "Low Range μS/cm" = c(1, 2, 3),
     "Full Range μS/cm" = c(1, 2, 3),
     "High Range μS/cm" = c(1, 2, 3),
-    stringsAsFactors = FALSE)
+    stringsAsFactors = FALSE) 
   
   dtRendered <- reactiveVal(FALSE)
 
@@ -32,7 +32,7 @@ output$downloadFile <- downloadHandler( #data template download button
       write.csv(templateCSV, file, row.names = FALSE)
     })
 
-observeEvent(input$csvs, {
+observeEvent(input$upload, { #reactivevalues for the CSVs the user uploads
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
@@ -48,38 +48,43 @@ output$downloadFile <- downloadHandler( #data template download button
 
 observeEvent(input$upload, {
   req(input$upload)
-  df <- read.csv(input$upload$datapath)
+  df <- read.csv(input$upload$datapath) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+  success <- FALSE
   
   if (!identical(colnames(df), colnames(templateCSV))) {
+    success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV must have identical columns to the given template. If you do not have certain data, please leave that respective column blank."
+      "Uploaded CSV must have identical columns to the given template. If you do not have certain data, please leave that respective column blank.",
+       
     ))
   } else if (length(colnames(df)) > length(colnames(templateCSV))) {
+    success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV has more columns than given template."
+      "Uploaded CSV has more columns than given template.",
     ))
   } else {
+    success <- TRUE
+    
     # Store uploaded data in the reactive uploaded_data value
-    uploaded_data$data <- df
-    dtRendered(TRUE)
-    output$contents <- renderDT({
-      datatable(df)
+    if(success) {
+      dtRendered(TRUE)
+      correct_df <- read.csv(input$upload$datapath) #new variable that stores only correctly formatted data
+      uploaded_data$data[[length(uploaded_data$data) + 1]] <- correct_df #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
+      uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
+      
+      output$contents <- renderDT({ #table displayed only shows the last-uploaded dataset (need to make it reactive to show whichever is selected :(( )))
+        datatable(correct_df)
     })
+    }
   }
-  
-  # naming conventions for stored data
-  seq_csv <- seq_along(input$upload$name)
-  prev_num_files <- length(uploaded_data$data)
-  uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name)
+}) # all the code to upload, validate, display, and select user-uploaded CSVs
   
   output$selectfiles <- renderUI({  
-    if(is.null(input$upload)) {return()}
+    if(is.null(input$upload)) {return()} #list is blank if no input$upload -- need to fix so only successful ones show up
     selectInput("select", "Select Files", choices = uploaded_data$csv_names)
   })
-  
-}) # all the code to upload, validate, display, and select user-uploaded
 
 observe({
   if(length(uploaded_data$csv_names) > 1){
@@ -91,14 +96,14 @@ observe({
   }
   else
     uploaded_data$index <- 1
-}) #updates the uploaded_data$index based on how many CSVs are uplaoded
+}) #updates the uploaded_data$index based on how many CSVs are uplaoded, works for any file naming convention
 
 observeEvent(input$delete,{
   index = uploaded_data$index
   uploaded_data$data <- uploaded_data$data[-index]
   uploaded_data$csv_names <- uploaded_data$csv_names[-index]
   updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
-}) #deleting unwanted files
+}) #deleting unwanted files with the select dropdown and removes them from the index
 
 observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering page
   if(dtRendered()){ #dtRendered is a reactive value that's set to TRUE once table is displayed
@@ -108,6 +113,8 @@ observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering 
   }
 })
 
+# writing my own code to combine them into combined_df
+# uploaded_data$data is where all of the correctly formatted CSVs are now, each file also given indexes
 
 
 ##old stuff to save for later##

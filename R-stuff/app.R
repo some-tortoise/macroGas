@@ -12,7 +12,6 @@ source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) 
 # tell shiny to log all reactivity
 reactlog_enable()
 
-
 ui <- fluidPage(
     useShinyjs(),
     tags$head(
@@ -44,6 +43,5 @@ server <-  function(input, output, session) {
     source("server/calculateserver.R", local = TRUE)
     source("server/compareserver.R", local = TRUE)
 }
-
 
 shinyApp(ui = ui, server = server)
