@@ -3,13 +3,6 @@ library(plotly) # for interactive graphs
 library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
- 
- 
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 df <- reactive(data.frame(
   Date_Time = seq(from = as.POSIXct("2023-01-01 00:00:00"), to = as.POSIXct("2023-01-10 23:59:59"), by = "5 secs"),
