@@ -1,6 +1,6 @@
 
 observe({
-  goop$calc_curr_station_df <- combined_df[combined_df$station %in% 1, ]
+  goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
 })
 
 observe({
