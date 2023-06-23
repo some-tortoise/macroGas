@@ -1,5 +1,5 @@
 templateCSV <- data.frame(
-    "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
+    "Date_Time" = c("2023-05-25 12:00:00", "2023-05-25 12:00:05", "2023-05-25 12:00:10"),
     "Station" = c(1, 1, 1),
     "Low_Range_μS_cm" = c(1, 2, 3),
     "Full_Range_μS_cm" = c(1, 2, 3),
@@ -187,7 +187,11 @@ observeEvent(input$submit_delete, {
 
 observeEvent(input$continue_button,{ 
   comb_df <- do.call(rbind, uploaded_data$data)
-  view(comb_df)
+  colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
+  comb_df <- comb_df %>% #saves following code as loaded
+    mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
+    mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
+  View(comb_df)
   goop$combined_df <- comb_df
 }) #rbind all the uploaded data frames
 

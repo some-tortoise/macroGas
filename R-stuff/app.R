@@ -7,6 +7,9 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime) 
 library(sortable)
+library(tidyverse)
+library(lubridate)
+library(readr)
 library(googledrive)
 library(readr)
 library(shinyBS)
@@ -14,6 +17,7 @@ library(shinyBS)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 # tell shiny to log all reactivity
 reactlog_enable()
+
 
 ui <- fluidPage(
     useShinyjs(),
