@@ -1,12 +1,9 @@
 
-library(googledrive)
-library(readr)
-
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-       actionButton("uploadinstruction",label = "?"),
-       h4("Instruction",
+       
+       h4("Upload Instruction",
           bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
        bsPopover(id = "q1", title = "Instruction",
                  content = paste0("Use \\'Download File\\' button to download the template.",
