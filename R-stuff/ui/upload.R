@@ -2,7 +2,6 @@
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-
        actionButton("uploadinstructions", "?"),
        h4("Instruction",
           bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
@@ -17,11 +16,9 @@ div(class = 'upload-panel-container panel-container',
                  trigger = "focus",
                  options = list(container = "body")
        ),
-       hr(),
        h5("Data Template:"),
        downloadButton("downloadFile", "Download File"),
        br(),
-       hr(),
        #two upload choices
        h5("Import data from:"),
        radioButtons("upload_m", "Choose how to upload data", c("Google Drive", "Manually")),
@@ -40,8 +37,8 @@ div(class = 'upload-panel-container panel-container',
                             ".csv")
                  )
          ),
-       uiOutput("selectfiles"),
-       actionButton("delete", "Remove selected dataset."),
+       selectInput("select", "Select Files", choices = NULL),
+       actionButton("delete", "Remove Selected Dataset"),
        tags$hr(),
        checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
        conditionalPanel(

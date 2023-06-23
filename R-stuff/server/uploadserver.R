@@ -21,13 +21,13 @@ output$downloadFile <- downloadHandler( #data template download button
       write.csv(templateCSV, file, row.names = FALSE)
     })
 
-observeEvent(input$upload, { #reactivevalues for the CSVs the user uploads
-  uploaded_data <- reactiveValues(csv_names = NULL, 
-                                  data = NULL,
-                                  index = 1,
-                                  station_names = NULL,
-                                  combined_df = NULL)
-})
+#observeEvent(input$upload, { #reactivevalues for the CSVs the user uploads
+#  uploaded_data <- reactiveValues(csv_names = NULL, 
+#                                  data = NULL,
+#                                  index = 1,
+#                                  station_names = NULL,
+#                                  combined_df = NULL)
+#})
 
 output$downloadFile <- downloadHandler( #data template download button
   filename = "slugtemplate.csv",
@@ -43,26 +43,40 @@ import_from_drive <- function(gdrive_link) {
     showModal(
       modalDialog(
         title = "Error",
-        "Invalid Google Drive link. Please provide a valid link to the CSV file."
+        p("Invalid Google Drive link. Please provide a valid link to the CSV file.")
       )
     )
     return(NULL)
   }
   
-  temp_file <- tempfile(fileext = ".csv")
-  drive_download(as_id(file_id), path = temp_file)
-  data <- read.csv(temp_file)
-  unlink(temp_file)
-  return(data)
+  file_name = drive_get(as_id(file_id))[["name"]]
+  file_type = tail(unlist(strsplit(file_name, "\\.")),n=1)
+  if(file_type=="csv"){
+    temp_file <- tempfile(fileext = ".csv")
+    drive_download(as_id(file_id), path = temp_file)
+    tryCatch({data <- read.csv(temp_file)}, error = function(e) data<-NULL)
+    unlink(temp_file)
+    return(list(data, file_name)) 
+  }
+  else{
+    showModal(
+      modalDialog(
+        title = "Error",
+        p("The file you want to upload is not a csv file. Please choose the correct file to upload!")
+      )
+    )
+    return(NULL)
+  }
 }
 
 
  observeEvent(input$import_button, {
     if (!is.null(input$gdrive_link) && input$gdrive_link != "") {
-      data <- import_from_drive(input$gdrive_link)
+      data <- import_from_drive(input$gdrive_link)[[1]]
       if (!is.null(data)) {
+        file_name <- import_from_drive(input$gdrive_link)[[2]]
         uploaded_data$data[[length(uploaded_data$data) + 1]] <- data
-        uploaded_data$csv_names <- c(uploaded_data$csv_names, input$gdrive_link)
+        uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name)
         showModal(
           modalDialog(
             title = "Success",
@@ -124,9 +138,10 @@ observeEvent(input$upload, {
       uploaded_data$data[[length(uploaded_data$data) + 1]] <- correct_df #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
       uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
       
+      updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
       output$contents <- renderDT({ #displays the DT and allows to select rows/columns
         if (length(uploaded_data$data) > 0) {
-          selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
+          selected_file <- uploaded_data$data[[uploaded_data$index]]
           targ <- switch(input$row_and_col_select,
                          'rows' = 'row',
                          'columns' = 'column')
@@ -140,10 +155,6 @@ observeEvent(input$upload, {
 })
   # all the code to upload, validate, display, and select user-uploaded CSVs
   
-  output$selectfiles <- renderUI({  
-    if(is.null(input$upload)) {return()} #list is blank if no input$upload -- need to fix so only successful ones show up
-    selectInput("select", "Select Files", choices = uploaded_data$csv_names)
-  })
 
 observe({
   if(length(uploaded_data$csv_names) > 1){
