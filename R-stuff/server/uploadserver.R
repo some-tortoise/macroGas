@@ -8,24 +8,12 @@ templateCSV <- data.frame(
     stringsAsFactors = FALSE) 
   
   dtRendered <- reactiveVal(FALSE)
-
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
                                   station_names = NULL,
                                   combined_df = NULL)
   
-observeEvent(input$uploadinstructions, { 
-    showModal(modalDialog(
-      title = "Instructions",
-      "Download the data template using the 'Download File' button to see the required format. 
-      Select your CSV file by clicking 'Choose CSV File' and then 'Open' to upload it.
-      The uploaded file will be displayed in the table below.
-      To delete a file, click the 'Delete' button next to it.
-      For futher editing here, click the 'Advanced Editing' botton.
-      Click the ? icon for help anytime!", 
-      easyClose = TRUE))
-  }) #instructions button
 
 output$downloadFile <- downloadHandler( #data template download button
     filename = "slugtemplate.csv",
@@ -47,23 +35,84 @@ output$downloadFile <- downloadHandler( #data template download button
     write.csv(templateCSV, file, row.names = FALSE)
   })
 
+
+#import data with correct format from gdrive
+import_from_drive <- function(gdrive_link) {
+  file_id <- sub('.*\\/d\\/([^\\/]+).*', '\\1', gdrive_link)
+  if (file_id == gdrive_link) {
+    showModal(
+      modalDialog(
+        title = "Error",
+        "Invalid Google Drive link. Please provide a valid link to the CSV file."
+      )
+    )
+    return(NULL)
+  }
+  
+  temp_file <- tempfile(fileext = ".csv")
+  drive_download(as_id(file_id), path = temp_file)
+  data <- read.csv(temp_file)
+  unlink(temp_file)
+  return(data)
+}
+
+
+ observeEvent(input$import_button, {
+    if (!is.null(input$gdrive_link) && input$gdrive_link != "") {
+      data <- import_from_drive(input$gdrive_link)
+      if (!is.null(data)) {
+        uploaded_data$data[[length(uploaded_data$data) + 1]] <- data
+        uploaded_data$csv_names <- c(uploaded_data$csv_names, input$gdrive_link)
+        showModal(
+          modalDialog(
+            title = "Success",
+            "Data imported successfully from Google Drive!"
+          )
+        )
+      } else {
+        showModal(
+          modalDialog(
+            title = "Error",
+            "Failed to import data from Google Drive. Please make sure the link is valid and accessible."
+          )
+        )
+      }
+    } else {
+      showModal(
+        modalDialog(
+          title = "Error",
+          "Please enter a valid Google Drive link."
+        )
+      )
+    }
+  })
+
+
 observeEvent(input$upload, {
   req(input$upload)
-  df <- read.csv(input$upload$datapath) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+  tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
   success <- FALSE
   
   if (!identical(colnames(df), colnames(templateCSV))) {
     success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV must have identical columns to the given template. If you do not have certain data, please leave that respective column blank.",
-       
+      p("Uploaded CSV must have identical columns (same column names and sequence) to the given template.
+      If you do not have certain data, please leave that respective column blank."),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Back")
+      )
     ))
   } else if (length(colnames(df)) > length(colnames(templateCSV))) {
     success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV has more columns than given template.",
+      p("Uploaded CSV has more columns than given template."),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Back")
+      )
     ))
   } else {
     success <- TRUE
@@ -75,10 +124,17 @@ observeEvent(input$upload, {
       uploaded_data$data[[length(uploaded_data$data) + 1]] <- correct_df #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
       uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
       
-      output$contents <- renderDT({ #table displayed only shows the last-uploaded dataset (need to make it reactive to show whichever is selected :(( )))
-        selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
-        datatable(selected_file)
-    })
+      output$contents <- renderDT({ #displays the DT and allows to select rows/columns
+        if (length(uploaded_data$data) > 0) {
+          selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
+          targ <- switch(input$row_and_col_select,
+                         'rows' = 'row',
+                         'columns' = 'column')
+          
+          datatable(selected_file, selection = list(target = targ),
+                    options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
+        }
+      })
     }
   }
 })
@@ -116,7 +172,20 @@ observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering 
   }
 })
 
-observeEvent(input$continue_button,{
+observeEvent(input$submit_delete, {
+  val <- uploaded_data$index
+  
+  selected_rows <- as.integer(input$contents_rows_selected)
+  selected_cols <- as.integer(input$contents_columns_selected)
+  if (length(selected_rows) > 0) {
+    uploaded_data$data[[val]] <- uploaded_data$data[[val]][-selected_rows, ]
+  }
+  if (length(selected_cols) > 0) {
+    uploaded_data$data[[val]] <- uploaded_data$data[[val]][, -selected_cols, drop = FALSE]
+  }
+}) #code to delete rows/columns
+
+observeEvent(input$continue_button,{ 
   comb_df <- do.call(rbind, uploaded_data$data)
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
   comb_df <- comb_df %>% #saves following code as loaded
@@ -124,10 +193,8 @@ observeEvent(input$continue_button,{
     mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
   View(comb_df)
   goop$combined_df <- comb_df
-})
+}) #rbind all the uploaded data frames
 
-# writing my own code to combine them into combined_df
-# uploaded_data$data is where all of the correctly formatted CSVs are now, each file also given indexes
 
 
 ##old stuff to save for later##
@@ -141,20 +208,9 @@ observeEvent(input$continue_button,{
 #     datatable(uploaded_data$data[[uploaded_data$index]], selection = list(target = targ),
 #               options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
 #   }
-# })
+# }) #able to switch between editing rows and columns
 # 
-# observeEvent(input$submit_delete, {
-#   val <- uploaded_data$index
-#   
-#   selected_rows <- as.integer(input$table1_rows_selected)
-#   selected_cols <- as.integer(input$table1_columns_selected)
-#   if (length(selected_rows) > 0) {
-#     uploaded_data$data[[val]] <- uploaded_data$data[[val]][-selected_rows, ]
-#   }
-#   if (length(selected_cols) > 0) {
-#     uploaded_data$data[[val]] <- uploaded_data$data[[val]][, -selected_cols, drop = FALSE]
-#   }
-# })
+
 # 
 # observeEvent(input$viz_btn, {
 #   # combine all elements of uploaded$data

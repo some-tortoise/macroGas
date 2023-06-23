@@ -1,7 +1,22 @@
- div(class = 'upload-panel-container panel-container',
+
+div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
+
        actionButton("uploadinstructions", "?"),
+       h4("Instruction",
+          bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+       bsPopover(id = "q1", title = "Instruction",
+                 content = paste0("Click the \\'Download File\\' button to see the required format.",
+                                  "Select your CSV file by clicking \\'Choose CSV File\\' and then Open to upload it.",
+                                  "The uploaded file will be displayed in the table below.",
+                                  "To delete a file, click the \\'Delete\\' button.",
+                                  "For futher editing here, click the \\'Advanced Editing\\' botton.",
+                                  "Click the ? icon for help anytime!"),
+                 placement = "right", 
+                 trigger = "focus",
+                 options = list(container = "body")
+       ),
        hr(),
        h5("Data Template:"),
        downloadButton("downloadFile", "Download File"),
@@ -9,15 +24,15 @@
        hr(),
        #two upload choices
        h5("Import data from:"),
-       actionButton("gdrive_choice", "Through Google Drive"),
-       actionButton("manual_choice", "Manually"),
+       radioButtons("upload_m", "Choose how to upload data", c("Google Drive", "Manually")),
        tags$hr(),
        conditionalPanel(
-         condition = "input.gdrive_choice",
-         textInput('gdrive_link', 'Google Drive Link:')
+         condition = "input.upload_m == 'Google Drive'",
+         textInput('gdrive_link', 'Google Drive Link:'),
+         actionButton("import_button", "Import Data")
        ),
        conditionalPanel(
-         condition = "input.manual_choice",
+         condition = "input.upload_m == 'Manually'",
          fileInput("upload", "Choose CSV File",
                  multiple = FALSE,
                  accept = c("text/csv",
