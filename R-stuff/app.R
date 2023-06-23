@@ -44,7 +44,7 @@ server <-  function(input, output, session) {
     source("server/uploadserver.R", local = TRUE)
     source("server/orderserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
-    #source("server/calculateserver.R", local = TRUE)
+    source("server/calculateserver.R", local = TRUE)
     source("server/compareserver.R", local = TRUE)
 }
 
