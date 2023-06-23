@@ -1,11 +1,21 @@
 
-library(googledrive)
-library(readr)
-
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-       actionButton("uploadinstructions", "?"),
+       
+       h4("Upload Instruction",
+          bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+       bsPopover(id = "q1", title = "Instruction",
+                 content = paste0("Use \\'Download File\\' button to download the template.",
+                                  "Select your CSV file by clicking \\'Choose CSV File\\' and then Open to upload it.",
+                                  "The uploaded file will be displayed in the table below.",
+                                  "To delete a file, click the \\'Delete\\' button next to it.",
+                                  "For futher editing here, click the \\'Advanced Editing\\' botton.",
+                                  "Click the \\?\\ icon for help anytime!"),
+                 placement = "right", 
+                 trigger = "focus",
+                 options = list(container = "body")
+       ),
        hr(),
        h5("Data Template:"),
        downloadButton("downloadFile", "Download File"),
@@ -23,7 +33,7 @@ div(class = 'upload-panel-container panel-container',
        ),
        conditionalPanel(
          condition = "input.manual_choice",
-         fileInput("upload", "Choose CSV File",
+         fileInput("upload", label = "Choose CSV File",
                  multiple = FALSE,
                  accept = c("text/csv",
                             "text/comma-separated-values,text/plain",

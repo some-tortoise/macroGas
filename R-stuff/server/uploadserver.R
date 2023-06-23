@@ -15,17 +15,6 @@ templateCSV <- data.frame(
                                   station_names = NULL,
                                   combined_df = NULL)
   
-observeEvent(input$uploadinstructions, { 
-    showModal(modalDialog(
-      title = "Instructions",
-      "Download the data template using the 'Download File' button to see the required format. 
-      Select your CSV file by clicking 'Choose CSV File' and then 'Open' to upload it.
-      The uploaded file will be displayed in the table below.
-      To delete a file, click the 'Delete' button next to it.
-      For futher editing here, click the 'Advanced Editing' botton.
-      Click the ? icon for help anytime!", 
-      easyClose = TRUE))
-  }) #instructions button
 
 output$downloadFile <- downloadHandler( #data template download button
     filename = "slugtemplate.csv",
