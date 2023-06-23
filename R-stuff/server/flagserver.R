@@ -1,7 +1,3 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
 
@@ -9,8 +5,7 @@ selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]
   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
   event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
-  df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$station) %in% event.click.data$key) | 
-                          (paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key)),]
+  df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$station) %in% event.click.data$key) | (paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key)),]
   return(df_chosen)
 }) 
 
