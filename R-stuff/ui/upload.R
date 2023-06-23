@@ -1,4 +1,4 @@
-```{r}
+
 library(googledrive)
 library(readr)
 
@@ -68,4 +68,3 @@ div(class = 'upload-panel-container panel-container',
 # actionButton('viz_btn','Visualize'))
 # )
 
-```
