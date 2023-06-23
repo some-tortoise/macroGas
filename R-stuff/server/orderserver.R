@@ -24,7 +24,7 @@ color_mapping <- c("1" = "red", "2" = "orange", "3" = "#008000", "4" = "blue", "
     curVal <- 0
     
   for (i in 1:length(goop$combined_df$station)) {
-    if(goop$combined_df[i, 'Station'] != curVal){
+    if(goop$combined_df[i, 'station'] != curVal){
       curVal <- goop$combined_df[i, 'station']
       curNum <- curNum + 1
     }

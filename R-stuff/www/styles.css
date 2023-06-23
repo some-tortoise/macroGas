@@ -123,12 +123,18 @@ body{
 }
 
 .calculate-output-dt-container{
-  background-color: aqua;
   margin: 0;
+  margin-top: 70px;
   padding: 0;
   height: 35vh;
 }
   
 .blue-panel{
   background-color: #1B867F;
+}
+
+#dischargeOutput{
+  font-size: 20px;
+  font-weight: bold;
+  color: #105687;
 }
