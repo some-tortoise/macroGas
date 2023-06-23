@@ -1,6 +1,6 @@
 div(class = 'order-panel-container panel-container', 
     fluidRow(
-      column(width = 6,
+      column(width = 3,
              rank_list(
                text = "Reorder your stations as peaks appear earliest to latest on the graph",
                labels = c("Red", "Orange", "Green", "Blue", "Purple"),
@@ -8,14 +8,10 @@ div(class = 'order-panel-container panel-container',
                options = sortable_options(swap = FALSE)
                )
              ), 
-      column(width = 6,
-             actionButton("station_reorder", label = "Submit Station Reorder")
-             )
+      actionButton("station_reorder", label = "Submit Station Reorder")
       ),
     fluidRow(
-       column(width = 11,
-        plotOutput("orig_plot", height = "300px",  width = "900px"),
+       plotOutput("orig_plot"),
        textOutput("reorder_complete")
-)
-)
+       )
 )

@@ -54,7 +54,7 @@ observeEvent(event_data("plotly_relayout"), {
   barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
   if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
-  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT')
   
   if(barNum == 0){
     goop$calc_xLeft <- 0
@@ -81,12 +81,12 @@ output$dischargecalcplot <- renderPlotly({
     NA
   )
   
-  xLeft <- as.POSIXct(xLeft, tz = 'GMT', origin = "1970-01-01")
-  xRight <- as.POSIXct(xRight, tz = 'GMT', origin = "1970-01-01")
+  xLeft <- as.POSIXct(xLeft, tz = 'GMT')
+  xRight <- as.POSIXct(xRight, tz = 'GMT')
   
   plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines') %>%
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range, fill = 'tozeroy') %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT'), y = ~Low_Range, fill = 'tozeroy') %>%
     layout(shapes = list(
       # left line
       list(type = "line", x0 = xLeft, x1 = xLeft,
@@ -98,4 +98,3 @@ output$dischargecalcplot <- renderPlotly({
     config(edits = list(shapePosition = TRUE))
   
 })
-
