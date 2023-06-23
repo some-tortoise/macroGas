@@ -1,16 +1,16 @@
 
 observe({
   goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
-})
+}) #filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
 
 observe({
   goop$calc_curr_station_df$Date_Time <- goop$calc_curr_station_df$Date_Time
-})
+}) 
 
 observe({
   goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
   goop$calc_yValue <- goop$calc_curr_station_df$Low_Range
-})
+}) #assigns date/time to the x-axis, conductivity to the y-axis 
 
 observe({
   goop$calc_xLeft <- goop$calc_xValue[500]
@@ -19,8 +19,31 @@ observe({
 })
 
 observe({
-  goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xLeft) - goop$calc_xOne):(as.numeric(goop$calc_xRight) - goop$calc_xOne), ]
+  goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
 })
+
+observeEvent(input$calc_station_picker, {
+  goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
+})
+
+output$start_time <- renderUI({
+  if (nrow(goop$combined_df) > 0) {
+    default_value <- as.character(goop$combined_df$Date_Time[1])
+  } else {
+    default_value <- ""
+  }
+  textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+}) #start time renderUI
+
+output$end_time <- renderUI({
+  if (nrow(goop$combined_df) > 0) {
+    default_value <- as.character(goop$combined_df$Date_Time[1])
+  } else {
+    default_value <- ""
+  }
+  textInput("end_datetime", "End Date and Time", value = default_value)
+}) #end time renderUI
+
 
 observe({
   goop$calc_discharge_table <- NULL
@@ -36,7 +59,7 @@ output$dischargeOutput <- renderText({
     mutate(Area = NA) %>%
     relocate(Area, .after = NaCl_Conc)
   
-  background_cond <- as.numeric(station_slug$Low_Range[1]) #this is a value that I want inputtable on Shiny
+  background_cond <- as.numeric(input$background) 
   station_slug <- station_slug %>%
     mutate(NaCl_Conc = (Low_Range - background_cond) * 0.00047) %>%
     mutate(Area = NaCl_Conc * 5)
@@ -45,7 +68,7 @@ output$dischargeOutput <- renderText({
   Mass_NaCl <- input$salt_mass
   Discharge <- Mass_NaCl/Area
   return(paste0('Discharge: ',Discharge))
-})
+}) #the math.R stuff that prints a final discharge value
 
 observeEvent(event_data("plotly_relayout"), {
   ed <- event_data("plotly_relayout")
