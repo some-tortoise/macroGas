@@ -75,10 +75,17 @@ observeEvent(input$upload, {
       uploaded_data$data[[length(uploaded_data$data) + 1]] <- correct_df #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
       uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
       
-      output$contents <- renderDT({ #table displayed only shows the last-uploaded dataset (need to make it reactive to show whichever is selected :(( )))
-        selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
-        datatable(selected_file)
-    })
+      output$contents <- renderDT({ #displays the DT and allows to select rows/columns
+        if (length(uploaded_data$data) > 0) {
+          selected_file <- uploaded_data$data[[which(uploaded_data$csv_names == input$select)]]
+          targ <- switch(input$row_and_col_select,
+                         'rows' = 'row',
+                         'columns' = 'column')
+          
+          datatable(selected_file, selection = list(target = targ),
+                    options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
+        }
+      })
     }
   }
 })
@@ -116,14 +123,25 @@ observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering 
   }
 })
 
-observeEvent(input$continue_button,{
+observeEvent(input$submit_delete, {
+  val <- uploaded_data$index
+  
+  selected_rows <- as.integer(input$contents_rows_selected)
+  selected_cols <- as.integer(input$contents_columns_selected)
+  if (length(selected_rows) > 0) {
+    uploaded_data$data[[val]] <- uploaded_data$data[[val]][-selected_rows, ]
+  }
+  if (length(selected_cols) > 0) {
+    uploaded_data$data[[val]] <- uploaded_data$data[[val]][, -selected_cols, drop = FALSE]
+  }
+}) #code to delete rows/columns
+
+observeEvent(input$continue_button,{ 
   comb_df <- do.call(rbind, uploaded_data$data)
   view(comb_df)
   goop$combined_df <- comb_df
-})
+}) #rbind all the uploaded data frames
 
-# writing my own code to combine them into combined_df
-# uploaded_data$data is where all of the correctly formatted CSVs are now, each file also given indexes
 
 
 ##old stuff to save for later##
@@ -137,20 +155,9 @@ observeEvent(input$continue_button,{
 #     datatable(uploaded_data$data[[uploaded_data$index]], selection = list(target = targ),
 #               options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
 #   }
-# })
+# }) #able to switch between editing rows and columns
 # 
-# observeEvent(input$submit_delete, {
-#   val <- uploaded_data$index
-#   
-#   selected_rows <- as.integer(input$table1_rows_selected)
-#   selected_cols <- as.integer(input$table1_columns_selected)
-#   if (length(selected_rows) > 0) {
-#     uploaded_data$data[[val]] <- uploaded_data$data[[val]][-selected_rows, ]
-#   }
-#   if (length(selected_cols) > 0) {
-#     uploaded_data$data[[val]] <- uploaded_data$data[[val]][, -selected_cols, drop = FALSE]
-#   }
-# })
+
 # 
 # observeEvent(input$viz_btn, {
 #   # combine all elements of uploaded$data
