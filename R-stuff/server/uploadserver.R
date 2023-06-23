@@ -47,6 +47,59 @@ output$downloadFile <- downloadHandler( #data template download button
     write.csv(templateCSV, file, row.names = FALSE)
   })
 
+
+#import data with correct format from gdrive
+import_from_drive <- function(gdrive_link) {
+  file_id <- sub('.*\\/d\\/([^\\/]+).*', '\\1', gdrive_link)
+  if (file_id == gdrive_link) {
+    showModal(
+      modalDialog(
+        title = "Error",
+        "Invalid Google Drive link. Please provide a valid link to the CSV file."
+      )
+    )
+    return(NULL)
+  }
+  
+  temp_file <- tempfile(fileext = ".csv")
+  drive_download(as_id(file_id), path = temp_file)
+  data <- read.csv(temp_file)
+  unlink(temp_file)
+  return(data)
+}
+
+
+ observeEvent(input$import_button, {
+    if (!is.null(input$gdrive_link) && input$gdrive_link != "") {
+      data <- import_from_drive(input$gdrive_link)
+      if (!is.null(data)) {
+        uploaded_data$data[[length(uploaded_data$data) + 1]] <- data
+        uploaded_data$csv_names <- c(uploaded_data$csv_names, input$gdrive_link)
+        showModal(
+          modalDialog(
+            title = "Success",
+            "Data imported successfully from Google Drive!"
+          )
+        )
+      } else {
+        showModal(
+          modalDialog(
+            title = "Error",
+            "Failed to import data from Google Drive. Please make sure the link is valid and accessible."
+          )
+        )
+      }
+    } else {
+      showModal(
+        modalDialog(
+          title = "Error",
+          "Please enter a valid Google Drive link."
+        )
+      )
+    }
+  })
+
+
 observeEvent(input$upload, {
   req(input$upload)
   df <- read.csv(input$upload$datapath) #using the df value just to check formatting, usin a new variable to save to uploaded_data later

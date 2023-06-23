@@ -1,4 +1,8 @@
- div(class = 'upload-panel-container panel-container',
+```{r}
+library(googledrive)
+library(readr)
+
+div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
        actionButton("uploadinstructions", "?"),
@@ -14,7 +18,8 @@
        tags$hr(),
        conditionalPanel(
          condition = "input.gdrive_choice",
-         textInput('gdrive_link', 'Google Drive Link:')
+         textInput("gdrive_link", "CSV File Google Drive Link: "),
+         actionButton("import_button", "Import Data")
        ),
        conditionalPanel(
          condition = "input.manual_choice",
@@ -63,3 +68,4 @@
 # actionButton('viz_btn','Visualize'))
 # )
 
+```
