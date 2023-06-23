@@ -1,9 +1,10 @@
 templateCSV <- data.frame(
     "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
     "Station" = c(1, 1, 1),
-    "Low Range μS/cm" = c(1, 2, 3),
-    "Full Range μS/cm" = c(1, 2, 3),
-    "High Range μS/cm" = c(1, 2, 3),
+    "Low_Range_μS_cm" = c(1, 2, 3),
+    "Full_Range_μS_cm" = c(1, 2, 3),
+    "High_Range_μS_cm" = c(1, 2, 3),
+    "Temp_C" = c(1, 2, 3),
     stringsAsFactors = FALSE) 
   
   dtRendered <- reactiveVal(FALSE)
