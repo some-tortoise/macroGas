@@ -34,11 +34,3 @@ combined_df <- combined_df |>
          Full_Range_Flag = 'good',
          Temp_C_Flag = 'good')
 
-# combined_df <- read.csv('slugtemplate.csv')
-# colnames(combined_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
-# combined_df <- combined_df %>% #saves following code as loaded
-#   mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
-#   mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
-# combined_df$station = as.character(combined_df$station)
-# combined_df <- combined_df %>% mutate(id = 1:nrow(combined_df))
-# combined_df
