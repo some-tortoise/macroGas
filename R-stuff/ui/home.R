@@ -16,7 +16,7 @@ div(class = 'home-panel-container panel-container',
                 height: 200px;
                 padding: 10px;
                 float: right",
-      h2("Instructions and Resouces"),
+      h2("Instructions and Resources"),
       p("For more information:",
         tags$a(href = "http://dx.doi.org/10.1029/2011WR010942", "Covino et al. 2011. Stream-groundwater exchange and hydrologic turnover at the network scale.'"))
       ),
