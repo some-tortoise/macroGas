@@ -8,7 +8,6 @@ templateCSV <- data.frame(
     stringsAsFactors = FALSE) 
   
   dtRendered <- reactiveVal(FALSE)
-
   uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
@@ -91,21 +90,29 @@ import_from_drive <- function(gdrive_link) {
 
 observeEvent(input$upload, {
   req(input$upload)
-  df <- read.csv(input$upload$datapath) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+  tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
   success <- FALSE
   
   if (!identical(colnames(df), colnames(templateCSV))) {
     success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV must have identical columns to the given template. If you do not have certain data, please leave that respective column blank.",
-       
+      p("Uploaded CSV must have identical columns (same column names and sequence) to the given template.
+      If you do not have certain data, please leave that respective column blank."),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Back")
+      )
     ))
   } else if (length(colnames(df)) > length(colnames(templateCSV))) {
     success <- FALSE
     showModal(modalDialog(
       title = "Error",
-      "Uploaded CSV has more columns than given template.",
+      p("Uploaded CSV has more columns than given template."),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton("Back")
+      )
     ))
   } else {
     success <- TRUE
