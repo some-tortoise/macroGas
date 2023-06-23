@@ -1,3 +1,18 @@
+observeEvent(goop$combined_df, {
+  st <- c(0)
+  a <- data.frame(st)
+  colNames <- list('Station 1')
+  for(i in 1:(length(unique(goop$combined_df$station)) - 1)){
+    st <- c(0)
+    a <- cbind(a, st)
+    colNames <- append(colNames, paste0('Station ', i + 1))
+  }
+  
+  row.names(a) <- 'Discharge'
+  colnames(a) <- colNames
+  goop$dichargeDF <- a
+  #View(goop$dichargeDF)
+})
 
 observe({
   goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
@@ -97,4 +112,8 @@ output$dischargecalcplot <- renderPlotly({
     )) %>%
     config(edits = list(shapePosition = TRUE))
   
+})
+
+output$dischargetable <- renderDT({
+  datatable(goop$dichargeDF) 
 })
