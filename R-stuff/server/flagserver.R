@@ -40,7 +40,7 @@ output$end_datetime_input <- renderUI({
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  plot_ly(data = filteredData(), type = 'scatter', mode = 'lines', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(id,"_",station)), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") %>%
+  plot_ly(data = filteredData(), type = 'scatter', mode = 'lines', x = ~Date_Time, y = as.formula(paste0('~', as.character(input$variable_choice))), key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") %>%
     layout(xaxis = list(
       range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date

@@ -7,10 +7,14 @@ library(shinyjs)
 library(shinyFiles)
 library(shinyTime) 
 library(sortable)
+library(tidyverse)
+library(lubridate)
+library(readr)
 
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 # tell shiny to log all reactivity
 reactlog_enable()
+
 
 ui <- fluidPage(
     useShinyjs(),
@@ -40,7 +44,7 @@ server <-  function(input, output, session) {
     source("server/uploadserver.R", local = TRUE)
     source("server/orderserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
-    source("server/calculateserver.R", local = TRUE)
+    #source("server/calculateserver.R", local = TRUE)
     source("server/compareserver.R", local = TRUE)
 }
 
