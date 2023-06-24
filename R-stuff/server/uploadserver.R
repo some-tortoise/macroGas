@@ -7,27 +7,19 @@ templateCSV <- data.frame(
     "Temp_C" = c(1, 2, 3),
     stringsAsFactors = FALSE) 
   
-  dtRendered <- reactiveVal(FALSE)
-  uploaded_data <- reactiveValues(csv_names = NULL, 
+dtRendered <- reactiveVal(FALSE)
+uploaded_data <- reactiveValues(csv_names = NULL, 
                                   data = NULL,
                                   index = 1,
                                   station_names = NULL,
                                   combined_df = NULL)
   
-
+# template stuff
 output$downloadFile <- downloadHandler( #data template download button
     filename = "slugtemplate.csv",
     content = function(file) {
       write.csv(templateCSV, file, row.names = FALSE)
-    })
-
-#observeEvent(input$upload, { #reactivevalues for the CSVs the user uploads
-#  uploaded_data <- reactiveValues(csv_names = NULL, 
-#                                  data = NULL,
-#                                  index = 1,
-#                                  station_names = NULL,
-#                                  combined_df = NULL)
-#})
+      })
 
 output$downloadFile <- downloadHandler( #data template download button
   filename = "slugtemplate.csv",
@@ -36,79 +28,9 @@ output$downloadFile <- downloadHandler( #data template download button
   })
 
 
-#import data with correct format from gdrive
-import_from_drive <- function(gdrive_link) {
-  file_id <- sub('.*\\/d\\/([^\\/]+).*', '\\1', gdrive_link)
-  if (file_id == gdrive_link) {
-    showModal(
-      modalDialog(
-        title = "Error",
-        p("Invalid Google Drive link. Please provide a valid link to the CSV file.")
-      )
-    )
-    return(NULL)
-  }
-  
-  file_name = drive_get(as_id(file_id))[["name"]]
-  file_type = tail(unlist(strsplit(file_name, "\\.")),n=1)
-  if(file_type=="csv"){
-    temp_file <- tempfile(fileext = ".csv")
-    drive_download(as_id(file_id), path = temp_file)
-    tryCatch({data <- read.csv(temp_file)}, error = function(e) data<-NULL)
-    unlink(temp_file)
-    return(list(data, file_name)) 
-  }
-  else{
-    showModal(
-      modalDialog(
-        title = "Error",
-        p("The file you want to upload is not a csv file. Please choose the correct file to upload!")
-      )
-    )
-    return(NULL)
-  }
-}
-
-
- observeEvent(input$import_button, {
-    if (!is.null(input$gdrive_link) && input$gdrive_link != "") {
-      data <- import_from_drive(input$gdrive_link)[[1]]
-      if (!is.null(data)) {
-        file_name <- import_from_drive(input$gdrive_link)[[2]]
-        uploaded_data$data[[length(uploaded_data$data) + 1]] <- data
-        uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name)
-        showModal(
-          modalDialog(
-            title = "Success",
-            "Data imported successfully from Google Drive!"
-          )
-        )
-      } else {
-        showModal(
-          modalDialog(
-            title = "Error",
-            "Failed to import data from Google Drive. Please make sure the link is valid and accessible."
-          )
-        )
-      }
-    } else {
-      showModal(
-        modalDialog(
-          title = "Error",
-          "Please enter a valid Google Drive link."
-        )
-      )
-    }
-  })
-
-
-observeEvent(input$upload, {
-  req(input$upload)
-  tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
-  success <- FALSE
-  
-  if (!identical(colnames(df), colnames(templateCSV))) {
-    success <- FALSE
+#function for checking whether the format of the uploaded file
+check_format <- function(csv_file, file_name){
+  if (!identical(colnames(csv_file), colnames(templateCSV))) {
     showModal(modalDialog(
       title = "Error",
       p("Uploaded CSV must have identical columns (same column names and sequence) to the given template.
@@ -118,62 +40,107 @@ observeEvent(input$upload, {
         modalButton("Back")
       )
     ))
-  } else if (length(colnames(df)) > length(colnames(templateCSV))) {
-    success <- FALSE
-    showModal(modalDialog(
-      title = "Error",
-      p("Uploaded CSV has more columns than given template."),
-      easyClose = FALSE,
-      footer = tagList(
-        modalButton("Back")
-      )
-    ))
-  } else {
-    success <- TRUE
-    
-    # Store uploaded data in the reactive uploaded_data value
-    if(success) {
-      dtRendered(TRUE)
-      correct_df <- read.csv(input$upload$datapath) #new variable that stores only correctly formatted data
-      uploaded_data$data[[length(uploaded_data$data) + 1]] <- correct_df #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
-      uploaded_data$csv_names <- c(uploaded_data$csv_names, input$upload$name) 
-      
-      updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
-      output$contents <- renderDT({ #displays the DT and allows to select rows/columns
-        if (length(uploaded_data$data) > 0) {
-          selected_file <- uploaded_data$data[[uploaded_data$index]]
-          targ <- switch(input$row_and_col_select,
-                         'rows' = 'row',
-                         'columns' = 'column')
-          
-          datatable(selected_file, selection = list(target = targ),
-                    options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
-        }
-      })
+    return(FALSE)
+  } 
+  else{
+    dtRendered(TRUE)
+    if(file_name %in% uploaded_data$csv_names){
+      return(TRUE)
+    }
+    else{
+      uploaded_data$data[[length(uploaded_data$data) + 1]] <- csv_file #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
+      uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name)
+      updateSelectInput(session, 'select', choices = uploaded_data$csv_names, selected = file_name)
     }
   }
-})
-  # all the code to upload, validate, display, and select user-uploaded CSVs
-  
+}
 
-observe({
-  if(length(uploaded_data$csv_names) > 1){
-    for(i in 1:length(uploaded_data$csv_names)){
-      if(input$select == uploaded_data$csv_names[i]){
-        uploaded_data$index <- i
-      }
-    } 
+#import data with correct format from gdrive
+import_from_drive <- function(gdrive_link) {
+  file_id <- sub('.*\\/d\\/([^\\/]+).*', '\\1', gdrive_link)
+  if (file_id == gdrive_link) 
+    return(NULL)
+  file_name = drive_get(as_id(file_id))[["name"]]
+  file_type = tail(unlist(strsplit(file_name, "\\.")),n=1)
+  if(file_type=="csv"){
+    temp_file <- tempfile(fileext = ".csv")
+    drive_download(as_id(file_id), path = temp_file)
+    tryCatch({data <- read.csv(temp_file)}, error = function(e) data<-NULL)
+    unlink(temp_file)
+    return(list(data, file_name)) 
   }
   else
-    uploaded_data$index <- 1
+    return(NULL)
+}
+
+observeEvent(input$import_button, {
+  if (!is.null(input$gdrive_link) && input$gdrive_link != "") {
+    data <- import_from_drive(input$gdrive_link)[[1]]
+    if (!is.null(data)) {
+      file_name <- import_from_drive(input$gdrive_link)[[2]]
+      check_format(data, file_name)
+    } 
+    else {
+      showModal(
+        modalDialog(
+          title = "Error",
+          "Failed to import data from Google Drive. Please make sure the link is valid and accessible."
+        )
+      )
+    }
+  } 
+  else {
+    showModal(
+      modalDialog(
+        title = "Error",
+        "Please enter a valid Google Drive link."
+      )
+    )
+  }
+  
+})
+
+#import data from local
+observeEvent(input$upload, {
+  req(input$upload)
+  tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+  check_format(df, input$upload$name)
+})
+
+observe({
+  if(length(uploaded_data$csv_names) > 0)
+    if(length(uploaded_data$csv_names) > 1){
+      for(i in 1:length(uploaded_data$csv_names)){
+        if(input$select == uploaded_data$csv_names[i]){
+          uploaded_data$index <- i
+        }
+      } 
+    }
+    else
+      uploaded_data$index <- 1
+  else
+    dtRendered(FALSE)
 }) #updates the uploaded_data$index based on how many CSVs are uplaoded, works for any file naming convention
 
+#renderDT
+output$contents <- renderDT({ #displays the DT and allows to select rows/columns
+  if((length(uploaded_data$csv_names)>0) & (uploaded_data$index<=length(uploaded_data$csv_names))){
+    selected_file <- uploaded_data$data[[uploaded_data$index]]
+    targ <- switch(input$row_and_col_select,
+                   'rows' = 'row',
+                   'columns' = 'column')
+    datatable(selected_file, selection = list(target = targ),
+              options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
+  }
+})
+
+#deleting unwanted files with the select dropdown and removes them from the index
 observeEvent(input$delete,{
   index = uploaded_data$index
   uploaded_data$data <- uploaded_data$data[-index]
   uploaded_data$csv_names <- uploaded_data$csv_names[-index]
   updateSelectInput(session, 'select', choices = uploaded_data$csv_names)
-}) #deleting unwanted files with the select dropdown and removes them from the index
+})
 
 observe({ #shinyJS code to show/hide an actionbutton to continue on to ordering page
   if(dtRendered()){ #dtRendered is a reactive value that's set to TRUE once table is displayed

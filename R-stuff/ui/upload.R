@@ -2,7 +2,6 @@
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-       actionButton("uploadinstructions", "?"),
        h4("Instruction",
           bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
        bsPopover(id = "q1", title = "Instruction",
@@ -20,13 +19,18 @@ div(class = 'upload-panel-container panel-container',
        downloadButton("downloadFile", "Download File"),
        br(),
        #two upload choices
-       h5("Import data from:"),
-       radioButtons("upload_m", "Choose how to upload data", c("Google Drive", "Manually")),
-       tags$hr(),
+       radioButtons("upload_m", "Import data from:", c("Google Drive", "Manually")),
        conditionalPanel(
          condition = "input.upload_m == 'Google Drive'",
-         textInput('gdrive_link', 'Google Drive Link:'),
-         actionButton("import_button", "Import Data")
+         h5(HTML("<b>G_Drive Link:</b>")),
+         fluidRow(column(5,
+                         textInput('gdrive_link', NULL)),
+                  column(1,
+                         actionButton("import_button", icon("check")),
+                         bsTooltip("import_button", "Import file from the entered link", placement = "bottom", 
+                                   trigger = "hover",options = list(container = "body"))))
+         #textInput('gdrive_link', 'Google Drive Link:'),
+         #actionButton("import_button", "Import Data")
        ),
        conditionalPanel(
          condition = "input.upload_m == 'Manually'",
@@ -37,9 +41,17 @@ div(class = 'upload-panel-container panel-container',
                             ".csv")
                  )
          ),
-       selectInput("select", "Select Files", choices = NULL),
-       actionButton("delete", "Remove Selected Dataset"),
-       tags$hr(),
+       hr(),
+       h5(HTML("<b>Select Files:</b>")),
+       fluidRow(column(4,
+                       selectInput("select", NULL, choices = NULL, width = "100%")),
+                column(1,
+                       actionButton("delete", icon("trash")),
+                       bsTooltip("delete", "Delete the selected dataset", placement = "bottom", trigger = "hover",
+                                 options = list(container = "body")))),
+       #selectInput("select", "Select Files", choices = NULL),
+       #actionButton("delete", "Remove Selected Dataset"),
+       hr(),
        checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
        conditionalPanel(
          condition = "input.Edit_upload",
