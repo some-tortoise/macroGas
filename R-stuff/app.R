@@ -26,8 +26,7 @@ ui <- fluidPage(
         source("ui/upload.R")[1],
         source("ui/order.R")[1],
         source("ui/flag.R")[1],
-        source("ui/calculate.R")[1],
-        source("ui/compare.R")[1]
+        source("ui/calculate.R")[1]
     ),
     
     includeScript(path = "www/script.js")
@@ -44,7 +43,6 @@ server <-  function(input, output, session) {
     source("server/orderserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
     source("server/calculateserver.R", local = TRUE)
-    source("server/compareserver.R", local = TRUE)
 }
 
 shinyApp(ui = ui, server = server)

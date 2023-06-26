@@ -36,8 +36,6 @@ function openTab(evt, name) {
         topDist = 3*screenSize;
     }else if(classList.contains('calculate-nav-el')){
         topDist = 4*screenSize;
-    }else if(classList.contains('compare-nav-el')){
-        topDist = 5*screenSize;
     }else{
         console.log('Weird navbar behavior occured.');
     }
@@ -60,7 +58,6 @@ function scrollOpenTab() {
   else if (dist < 3*screenSize) { nav_show = 'order-nav-el'; }
   else if(dist < 4*screenSize){ nav_show = 'flag-nav-el'; }
   else if(dist < 5*screenSize){ nav_show = 'calculate-nav-el'; }
-  else if(dist >= 5*screenSize){ nav_show = 'compare-nav-el'; }
 
   tablinks = document.getElementsByClassName("nav-el-circle");
   for (i = 0; i < tablinks.length; i++) {
