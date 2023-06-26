@@ -4,17 +4,17 @@ library(DT)
 library(tidyverse)
 
 ui <- fluidPage(
-  titlePanel("Calculate Flux"),
+  titlePanel("Calculate DO Flux"),
   sidebarLayout(
     sidebarPanel(
       fileInput("data_file", "Upload DO Data File (CSV):"),
       numericInput("C_a", "Ambient Concentration (C_a) in mg/L:", value = 0),
-      numericInput("K", "Factor K:", value = 1),
+      numericInput("K", "Coefficient K:", value = 1),
       actionButton("calculate", "Calculate F")
     ),
     mainPanel(
       style = "background-color: #f8f8f8; padding: 20px;",
-      h4("Result:"),
+      h4("Fluxes Result:"),
       dataTableOutput("output")
     )
   )
@@ -44,7 +44,6 @@ server <- function(input, output) {
       'Date_Time' = DT,
       'DO_Conc_mg/L' = DO,
       'Flux' = F)
-  # Create a dataframe with DO Conc. and F
 
      output$output <- renderDataTable({
       datatable(result, options = list(pageLength = 20))
