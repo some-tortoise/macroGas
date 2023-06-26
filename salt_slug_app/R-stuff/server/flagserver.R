@@ -49,7 +49,7 @@ output$main_plot <- renderPlotly({
   for(i in seq(unique_station)){
     color_mapping[as.character(i)] <- rainbow_color[i]
   }
-  p = plot_ly(data = filteredData(), type = 'scatter', mode = 'lines', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(id,"_",station)), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") |>
+  p = plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(id,"_",station)), color = ~as.character(station), colors = ~color_mapping, opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
