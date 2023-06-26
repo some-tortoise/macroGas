@@ -1,4 +1,5 @@
 library(tidyverse)
 library(readr)
 
-data <- read.csv("data.csv", header = FALSE)
+data <- read.csv("./gas_app/example.csv", header = FALSE)
+
