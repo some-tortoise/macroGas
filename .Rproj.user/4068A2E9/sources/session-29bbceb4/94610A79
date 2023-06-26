@@ -1,26 +1,26 @@
 {
-    "id": "D25651D4",
-    "path": "~/Desktop/Data+/macroGas/salt slug app/R-stuff/app.R",
-    "project_path": "salt slug app/R-stuff/app.R",
+    "id": "94610A79",
+    "path": "~/Desktop/Data+/macroGas/salt_slug_app/R-stuff/app.R",
+    "project_path": "salt_slug_app/R-stuff/app.R",
     "type": "r_source",
     "hash": "0",
     "contents": "",
     "dirty": false,
-    "created": 1687802520768.0,
+    "created": 1687802698603.0,
     "source_on_save": false,
     "relative_order": 1,
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "29,2",
-        "scrollLine": "18"
+        "cursorPosition": "23,28",
+        "scrollLine": "14"
     },
     "folds": "",
-    "lastKnownWriteTime": 1687795029,
+    "lastKnownWriteTime": 1687802850,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1687795029,
+    "last_content_update": 1687802850001,
     "read_only": false,
     "read_only_alternatives": []
 }
