@@ -24,7 +24,6 @@ ui <- fluidPage(
     div(class = 'tabbable',
         source("ui/home.R")[1],
         source("ui/upload.R")[1],
-        source("ui/order.R")[1],
         source("ui/flag.R")[1],
         source("ui/calculate.R")[1]
     ),
@@ -40,7 +39,6 @@ server <-  function(input, output, session) {
     # Call the server functions from the included files
     source("server/homeserver.R", local = TRUE)
     source("server/uploadserver.R", local = TRUE)
-    source("server/orderserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
     source("server/calculateserver.R", local = TRUE)
 }
