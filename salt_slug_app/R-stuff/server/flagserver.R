@@ -14,7 +14,7 @@ selectedData <- reactive({
 }) 
 
 output$station <- renderUI({
-  num_station <- unique(combined_df$station)
+  num_station <- unique(goop$combined_df$station)
   radioButtons('station', label = '', num_station)
 })
 
@@ -43,7 +43,7 @@ output$end_datetime_input <- renderUI({
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  unique_station = unique(combined_df$station)
+  unique_station = unique(goop$combined_df$station)
   rainbow_color = rainbow(length(unique_station))
   color_mapping <- c()
   for(i in seq(unique_station)){
@@ -72,69 +72,3 @@ observeEvent(input$flag_btn, {
 #
 # EXPORT STUFF
 #
-
-observeEvent(input$download, {
-  showModal(modalDialog(
-    title = 'How do you want to download your dataset?',
-    downloadButton('downloadBtn', 'Download'),
-    actionButton('upload_to_gdrive', 'Upload to Google Drive'),
-    easyClose = FALSE,
-    footer = tagList(
-      modalButton("Close")
-    )
-  ))
-})
-
-output$downloadBtn <- downloadHandler(
-  filename = function() {
-    # Set the filename of the downloaded file
-    "flagged_data.csv"
-  },
-  content = function(file) {
-    # Generate the content of the file
-    write.csv(goop$combined_df, file, row.names = FALSE)
-  }
-)
-
-observeEvent(input$upload_to_gdrive, {
-  showModal(modalDialog(
-    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
-    actionButton('path_ok', 'OK')
-  ))
-})
-
-observeEvent(input$path_ok,{
-  name <- 'flagged_data.csv'
-  turn_file_to_csv(goop$combined_df, name)
-  res = tryCatch(upload_csv_file(goop$combined_df, name, input$drivePath), error = function(i) NA)
-  if(is.na(res)){
-    showModal(modalDialog(
-      h3('The path you entered is invalid!'),
-      easyClose = FALSE,
-      footer = tagList(
-        modalButton('Back')
-      )
-    ))      
-  }
-  else{
-    if(paste0('processed_', name) %in% (drive_ls(input$drivePath)[['name']])){
-      showModal(modalDialog(
-        h3('File has been uploaded successfully!'),
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton('Back')
-        )
-      ))
-    }
-    else{
-      showModal(modalDialog(
-        h3('File upload failed!'),
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton('Back')
-        )
-      ))
-    }
-  }
-}
-)
