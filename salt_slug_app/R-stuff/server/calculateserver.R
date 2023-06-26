@@ -145,6 +145,20 @@ output$dischargetable <- renderDT({
 })
 
 #download stuff
+upload_csv_file <- function(clean_df, name, folder_path){
+  file <- paste('processed_',name, sep='')
+  file <- drive_put(
+    media = file,
+    name = file,
+    type = 'csv',
+    path = as_id(folder_path))
+  return('success')
+}
+
+turn_file_to_csv <- function(clean_df, name){
+  write.csv(clean_df, paste('./processed_',name, sep=''), row.names=FALSE)
+}
+
 observeEvent(input$download, {
   showModal(modalDialog(
     title = 'How do you want to download your dataset?',
@@ -176,7 +190,7 @@ observeEvent(input$upload_to_gdrive, {
 })
 
 observeEvent(input$path_ok,{
-  name <- 'flagged_data.csv'
+  name <- 'discharge.csv'
   turn_file_to_csv(goop$dichargeDF, name)
   res = tryCatch(upload_csv_file(goop$dichargeDF, name, input$drivePath), error = function(i) NA)
   if(is.na(res)){
