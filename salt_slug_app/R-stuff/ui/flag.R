@@ -20,8 +20,7 @@ div(class = 'flag-panel-container panel-container',
              uiOutput("start_datetime_input"),
              uiOutput("end_datetime_input"),
              selectInput('flag_type', label = 'Select flag type', c('good', 'questionable', 'interesting', 'bad')),
-             actionButton('flag_btn', label = 'Flag points'),
-             actionButton('download', label = 'Download the flagged dataset')
+             actionButton('flag_btn', label = 'Flag points')
       ),
       column(width= 8,
              plotlyOutput('main_plot'),
