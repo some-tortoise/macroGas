@@ -1,0 +1,7 @@
+[1,"Installing 'shinyBS' ...\n"]
+[2,"trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.3/shinyBS_0.61.1.tgz'\n"]
+[2,"Content type 'application/x-gzip' length 105204 bytes (102 KB)\n======="]
+[2,"========"]
+[1,"The downloaded binary packages are in\n"]
+[1,"\t/var/folders/gw/6bn196zx2tj1dmbh2d9l40d80000gn/T//RtmpxuYuFZ/downloaded_packages\n"]
+[2,"===================================\ndownloaded 102 KB\n\n\n\n✔ Package 'shinyBS' successfully installed.\n"]

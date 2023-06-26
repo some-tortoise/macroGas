@@ -1,0 +1,6 @@
+[1,"Installing 'shinyFiles' ...\n"]
+[2,"trying URL 'https://cran.rstudio.com/bin/macosx/big-sur-arm64/contrib/4.3/shinyFiles_0.9.3.tgz'\n"]
+[2,"Content type 'application/x-gzip' length 409608 bytes (400 KB)\n==================================================\ndownloaded 400 KB\n\n"]
+[1,"The downloaded binary packages are in\n"]
+[1,"\t/var/folders/gw/6bn196zx2tj1dmbh2d9l40d80000gn/T//RtmpEanLqo/downloaded_packages\n"]
+[2,"\n\n✔ Package 'shinyFiles' successfully installed.\n"]
