@@ -11,8 +11,9 @@ library(googledrive)
 library(readr)
 library(shinyBS)
 
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
+#source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 # tell shiny to log all reactivity
+combined_df <- NULL
 reactlog_enable()
 
 ui <- fluidPage(
