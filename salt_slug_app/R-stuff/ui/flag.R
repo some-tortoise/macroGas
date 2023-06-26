@@ -13,7 +13,8 @@ tags$style(
 div(class = 'flag-panel-container panel-container',
     fluidRow(
       column(width= 3,
-             radioButtons('station', label = 'Select station to view', c(1, 2, 3, 4, 5)),
+             HTML("<h5><b>Select station to view</b></h5>"),
+             uiOutput("station"),
              radioButtons("variable_choice",label = helpText('Select variable to graph'),
                           choices = c("Low Range, µs/cm" = "Low_Range", "Full Range, µs/cm" = 'Full_Range', "Temp, C" = 'Temp_C')),
              uiOutput("start_datetime_input"),
