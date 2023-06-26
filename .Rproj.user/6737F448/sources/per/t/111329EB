@@ -1,0 +1,26 @@
+{
+    "id": "111329EB",
+    "path": "~/GitHub/macroGas/shinySource.R",
+    "project_path": "shinySource.R",
+    "type": "r_source",
+    "hash": "1376956380",
+    "contents": "",
+    "dirty": false,
+    "created": 1685892282795.0,
+    "source_on_save": false,
+    "relative_order": 1,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "31,4",
+        "scrollLine": "0"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 1685726376,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1685726376,
+    "read_only": false,
+    "read_only_alternatives": []
+}
