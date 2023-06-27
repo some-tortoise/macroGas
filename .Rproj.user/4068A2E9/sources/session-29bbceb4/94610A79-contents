@@ -10,6 +10,8 @@ library(sortable)
 library(googledrive)
 library(readr)
 library(shinyBS)
+library(tidyverse)
+library(dplyr)
 
 #source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
 # tell shiny to log all reactivity
@@ -20,7 +22,7 @@ ui <- fluidPage(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  navbarPage('FUCK GOOP FUCK',
+  navbarPage('censored by Anna',
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',

@@ -15,7 +15,7 @@ observeEvent(goop$combined_df, {
 })
 
 observe({
-  goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
+  goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
 }) #filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
 
 observe({
@@ -28,8 +28,8 @@ observe({
 }) #assigns date/time to the x-axis, conductivity to the y-axis 
 
 observe({
-  goop$calc_xLeft <- goop$calc_xValue[500]
-  goop$calc_xRight <- goop$calc_xValue[2000]
+  goop$calc_xLeft <- goop$calc_xValue[1]
+  goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1]
   goop$calc_xOne <- as.numeric(goop$calc_xValue[1])
 })
 
@@ -38,7 +38,7 @@ observe({
 })
 
 observeEvent(input$calc_station_picker, {
-  goop$calc_curr_station_df <- combined_df[combined_df$station %in% input$calc_station_picker, ]
+  goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
 })
 
 output$start_time <- renderUI({
@@ -86,29 +86,15 @@ output$dischargeOutput <- renderText({
   return(paste0('Discharge: ',Discharge))
 }) #the math.R stuff that prints a final discharge value
 
-observeEvent(event_data("plotly_relayout"), {
-  ed <- event_data("plotly_relayout")
-  shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
-  if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
-  barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
-  if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
-  row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
-  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
-  
-  if(barNum == 0){
-    goop$calc_xLeft <- 0
-    goop$calc_xLeft <- pts[1]
-  }else{
-    goop$calc_xRight <- 0
-    goop$calc_xRight <- pts[1]
-  }
-})
-
 output$dischargecalcplot <- renderPlotly({
-  
+  print('a')
   req(goop$calc_curr_station_df)
+  print('b')
+  print(goop$calc_curr_station_df)
   req(goop$calc_xLeft)
+  print('c')
   req(goop$calc_xRight)
+  print('d')
   xVal <- goop$calc_curr_station_df$Date_Time
   yVal <- goop$calc_curr_station_df$Low_Range
   xLeft <- goop$calc_xLeft
@@ -132,12 +118,36 @@ output$dischargecalcplot <- renderPlotly({
            y0 = 0, y1 = 1, yref = "paper"),
       # right line
       list(type = "line", x0 = xRight, x1 = xRight,
-           y0 = 0, y1 = 1, yref = "paper")
+           y0 = 0, y1 = 1, yref = "paper"),
+      # right line
+      list(type = "line", x0 = 0, x1 = 1,
+           y0 = input$background, y1 = input$background, xref = "paper")
     )) %>%
     config(edits = list(shapePosition = TRUE))
+  
+  event_data("plotly_relayout", source = "dischargecalcplot")
   p <- event_register(p, 'plotly_relayout')
   p
   
+})
+
+
+observeEvent(event_data("plotly_relayout"), {
+  ed <- event_data("plotly_relayout")
+  shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+  if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
+  barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
+  if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
+  row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+  
+  if(barNum == 0){
+    goop$calc_xLeft <- 0
+    goop$calc_xLeft <- pts[1]
+  }else{
+    goop$calc_xRight <- 0
+    goop$calc_xRight <- pts[1]
+  }
 })
 
 output$dischargetable <- renderDT({
