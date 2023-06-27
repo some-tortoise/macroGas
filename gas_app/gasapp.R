@@ -1,4 +1,5 @@
 library(shiny) # for webpage creation
+library(tidyverse)
 library(reactlog)
 library(plotly) # for interactive graphs
 library(DT) # for datatables

@@ -1,9 +1,7 @@
 templateCSV <- data.frame(
   "Date_Time" = c("05/25/23 12:00:00 PM", "05/25/23 12:00:05 PM", "05/25/23 12:00:10 PM"),
   "Station" = c(1, 1, 1),
-  "Low_Range_μS_cm" = c(1, 2, 3),
-  "Full_Range_μS_cm" = c(1, 2, 3),
-  "High_Range_μS_cm" = c(1, 2, 3),
+  "DO_conc_mg_L" = c(1, 2, 3),
   "Temp_C" = c(1, 2, 3),
   stringsAsFactors = FALSE) 
 
@@ -22,7 +20,7 @@ output$downloadFile <- downloadHandler( #data template download button
   })
 
 output$downloadFile <- downloadHandler( #data template download button
-  filename = "slugtemplate.csv",
+  filename = "DOtemplate.csv",
   content = function(file) {
     write.csv(templateCSV, file, row.names = FALSE)
   })
@@ -165,7 +163,7 @@ observeEvent(input$submit_delete, {
 
 observeEvent(input$continue_button,{
   comb_df <- do.call(rbind, uploaded_data$data)
-  colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
+  colnames(comb_df) <- c('Date_Time', 'station', 'DO_conc_mg_L','Temp_C') #naming columns
   comb_df <- comb_df %>% #saves following code as loaded
     mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
     mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
