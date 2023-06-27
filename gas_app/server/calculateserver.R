@@ -19,10 +19,10 @@ observeEvent(input$calculate, {
     )
   
   output$results <- renderDataTable({
-    datatable(result, options = list(pageLength = 5))
+    datatable(result, options = list(pageLength = 5, searching = FALSE))
  
   output$mean_results <- renderDataTable({
-      datatable(mean_result)
+      datatable(mean_result, options = list(pageLength = 1, paging = FALSE, searching = FALSE))
   })
 })
 }) 
