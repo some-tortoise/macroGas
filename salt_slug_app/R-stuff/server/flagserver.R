@@ -49,13 +49,15 @@ output$main_plot <- renderPlotly({
   # for(i in seq(unique_station)){
   #   color_mapping[as.character(i)] <- rainbow_color[i]
   # }
-  p = plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink") |>
+  p = plot_ly(data = filteredData(), type = 'scatter', mode = 'markers', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>
     config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
     layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'))
+  
+  event_data("plotly_relayout", source = "main_plot")
   p = event_register(p, 'plotly_relayout')
   p
 })
