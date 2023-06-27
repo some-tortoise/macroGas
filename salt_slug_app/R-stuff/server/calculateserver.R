@@ -118,7 +118,10 @@ output$dischargecalcplot <- renderPlotly({
            y0 = 0, y1 = 1, yref = "paper"),
       # right line
       list(type = "line", x0 = xRight, x1 = xRight,
-           y0 = 0, y1 = 1, yref = "paper")
+           y0 = 0, y1 = 1, yref = "paper"),
+      # right line
+      list(type = "line", x0 = 0, x1 = 1,
+           y0 = input$background, y1 = input$background, xref = "paper")
     )) %>%
     config(edits = list(shapePosition = TRUE))
   
