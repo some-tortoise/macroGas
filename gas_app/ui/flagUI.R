@@ -9,6 +9,8 @@ div(class = 'flag-panel-container panel-container',
              uiOutput("station"),
              radioButtons("variable_choice",label = helpText('Select variable to graph'),
                           choices = c("DO Conc, mg/L" = "DO_conc_mg_L",  "Temp, C" = 'Temp_C')),
+             uiOutput("start_datetime_input"),
+             uiOutput("end_datetime_input"),
              selectInput('flag_type', label = 'Select flag type', c('good', 'questionable', 'interesting', 'bad')),
              actionButton('flag_btn', label = 'Flag points')
       ),
