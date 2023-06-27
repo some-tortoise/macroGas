@@ -163,9 +163,13 @@ observeEvent(input$submit_delete, {
   }
 }) #code to delete rows/columns
 
-observeEvent(input$continue_button,{ 
+observeEvent(input$continue_button,{
   comb_df <- do.call(rbind, uploaded_data$data)
-  view(comb_df)
+  colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
+  comb_df <- comb_df %>% #saves following code as loaded
+    mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
+    mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
+  View(comb_df)
   goop$combined_df <- comb_df
 }) #rbind all the uploaded data frames
 
