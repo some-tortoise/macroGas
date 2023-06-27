@@ -22,12 +22,13 @@ ui <- fluidPage(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  navbarPage('censored by Anna',
+  navbarPage('SLUGS', id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
                           source("ui/upload.R")[1]),
-                 tabPanel('Flag',
+                 tabPanel(title = 'Flag',
+                          value = "flagpanel",
                           source("ui/flag.R")[1]),
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])

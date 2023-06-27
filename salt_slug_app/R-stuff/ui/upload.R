@@ -63,12 +63,15 @@ div(class = 'upload-panel-container panel-container',
        ),
 
       #column for the output table
-      column(width = 7,
+     
+    column(width = 7,
         div(
           DTOutput("contents"),
+            br(),
+            hr(),
             div(
                id = "conditional",
-               p("Once you're happy with the uploaded files, click below to move on to ordering your stations"),
+               h5("When you're done uploading your data, click below to move on to ordering your stations"),
                actionButton("continue_button", "Continue")
            )
        )
