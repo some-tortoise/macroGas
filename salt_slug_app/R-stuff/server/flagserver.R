@@ -14,8 +14,9 @@ selectedData <- reactive({
 }) 
 
 output$station <- renderUI({
-  num_station <- unique(goop$combined_df$station)
-  radioButtons('station', label = '', num_station)
+  req(goop$combined_df)
+  num_station <- unique(goop$combined_df$Station)
+  radioButtons('station', label = '', choices = num_station, selected = NULL)
 })
 
 # Reactive expression for filtered data
@@ -57,7 +58,6 @@ output$main_plot <- renderPlotly({
     config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
     layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'))
   p = event_register(p, 'plotly_relayout')
-  p
 })
 
 output$selected_data_table <- renderDT({
