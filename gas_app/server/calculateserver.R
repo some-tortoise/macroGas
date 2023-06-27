@@ -9,11 +9,20 @@ observeEvent(input$calculate, {
   Flux <- K * (DO - C_a)
   
   result <- data.frame(
-    'Date_Time' = DT,
+    'Date_Time' = goop$combined_df$Date_Time,
     'DO_Conc_mg_L' = DO,
     'Flux' = Flux)
   
-  output$output <- renderDataTable({
-    datatable(result, options = list(pageLength = 20))
+  mean_result <- data.frame(
+    "Mean_DO" = mean(DO),
+    "Mean_Flux" = mean(Flux)
+    )
+  
+  output$results <- renderDataTable({
+    datatable(result, options = list(pageLength = 5))
+ 
+  output$mean_results <- renderDataTable({
+      datatable(mean_result)
   })
 })
+}) 
