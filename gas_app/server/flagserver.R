@@ -9,7 +9,7 @@ selectedData <- reactive({
 
 output$station <- renderUI({
   num_station <- unique(goop$combined_df$station)
-  radioButtons('Station', label = '', num_station)
+  radioButtons('Station', label = '', num_station) 
 })
 
 # Reactive expression for filtered data
