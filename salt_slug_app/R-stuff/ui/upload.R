@@ -71,7 +71,7 @@ div(class = 'upload-panel-container panel-container',
             hr(),
             div(
                id = "conditional",
-               h5("When you're done uploading your data, click below to move on to ordering your stations"),
+               h5("When you're done uploading your data, click below to move on QA/QC."),
                actionButton("continue_button", "Continue")
            )
        )
