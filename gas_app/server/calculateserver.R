@@ -4,7 +4,7 @@ observeEvent(input$calculate, {
   
   C_a <- as.numeric(input$C_a)  
   K <- as.numeric(input$K)  
-  DO <- goop$combined_df$DO_conc_mg_L
+  DO <- as.numeric(goop$combined_df$DO_conc_mg_L)
   
   Flux <- K * (DO - C_a)
   
@@ -18,11 +18,11 @@ observeEvent(input$calculate, {
     "Mean_Flux" = mean(Flux)
     )
   
-  output$results <- renderDataTable({
+output$results <- renderDataTable({
     datatable(result, options = list(pageLength = 5, searching = FALSE))
+  })
  
-  output$mean_results <- renderDataTable({
+output$mean_results <- renderDataTable({
       datatable(mean_result, options = list(pageLength = 1, paging = FALSE, searching = FALSE))
   })
 })
-}) 

@@ -11,10 +11,12 @@ library(sortable)
 library(googledrive)
 library(readr)
 library(shinyBS)
+library(shinythemes)
 
 
 ui <- fluidPage(
   navbarPage('Gas App',
+              theme = shinytheme("flatly"),
              tabPanel('Home',
                       source("ui/homeUI.R")[1]),
              tabPanel('Upload',
