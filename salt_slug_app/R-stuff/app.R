@@ -15,7 +15,9 @@ library(dplyr)
 library(shinythemes)
 
 reactlog_enable()
-
+<p>Right arrow: <i class="arrow right"></i></p>
+<p>Left arrow: <i class="arrow left"></i></p>
+  
 ui <- fluidPage(
   theme = shinytheme("flatly"),
   useShinyjs(),
@@ -35,10 +37,60 @@ ui <- fluidPage(
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  includeScript(path = "www/script.js")
+  includeScript(path = "www/script.js"),
+  
+  tags$script(HTML("
+    $(document).on('click', '.left-arrow', function(){
+      var currentTab = $('#navbar .active > a').attr('data-value');
+      var prevTab = $('#navbar a[data-value=\"' + currentTab + '\"]').parent().prev().find('a');
+      if(prevTab.length > 0){
+        $(prevTab).tab('show');
+      }
+    });
+
+    $(document).on('click', '.right-arrow', function(){
+      var currentTab = $('#navbar .active > a').attr('data-value');
+      var nextTab = $('#navbar a[data-value=\"' + currentTab + '\"]').parent().next().find('a');
+      if(nextTab.length > 0){
+        $(nextTab).tab('show');
+      }
+    });
+  ")),
+  
+  tags$style(HTML("
+    .arrow {
+      position: absolute;
+      top: 85%;
+      width: 40px;
+      height: 40px;
+      background-color: #ccc;
+      border-radius: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      display: inline-block;
+      justify-content: center;
+      align-items: center;
+      font-size: 24px;
+    }
+    .left-arrow {
+      left: 20px;
+    }
+  
+    .right-arrow {
+      right: 20px;
+    }
+  ")),
+  
+  tags$div(class = "arrow left-arrow"),
+  tags$div(class = "arrow right-arrow")
   )
 
 server <-  function(input, output, session) {
+  
+  observeEvent(input$navbar, {
+    currentTab <- input$navbar
+    updateNavbarPage(session, "navbar", selected = currentTab)
+  })
   
     goop <- reactiveValues()
     goop$combined_df <- combined_df
