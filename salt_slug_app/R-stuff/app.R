@@ -14,8 +14,6 @@ library(tidyverse)
 library(dplyr)
 library(shinythemes)
 
-#source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
-# tell shiny to log all reactivity
 reactlog_enable()
 
 ui <- fluidPage(
