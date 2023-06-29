@@ -21,10 +21,7 @@ reactlog_enable()
 ui <- fluidPage(
   theme = shinytheme("flatly"),
   useShinyjs(),
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
-  ),
-  navbarPage('SLUGS', id = "navbar",
+  navbarPage(img(src = 'macrogas-logo.png', width = '60px'),id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
@@ -35,6 +32,9 @@ ui <- fluidPage(
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   includeScript(path = "www/script.js")
   )
 
