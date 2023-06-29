@@ -63,12 +63,12 @@ ui <- fluidPage(
       height: 40px;
       background-color: #ccc;
       border-radius: 50%;
-      transform: translateY(-50%);
+      transform: translate(-50%, -50%);
       cursor: pointer;
-      display: inline-block;
+      display: inline-flex;
       justify-content: center;
       align-items: center;
-      font-size: 24px;
+      font-size: 20px;
     }
     .left-arrow {
       left: 20px;
@@ -79,8 +79,8 @@ ui <- fluidPage(
     }
   ")),
   
-  tags$div(class = "arrow left-arrow"),
-  tags$div(class = "arrow right-arrow")
+  tags$div(class = "arrow left-arrow", icon("chevron-left")),
+  tags$div(class = "arrow right-arrow", icon("chevron-right"))
   )
 
 server <-  function(input, output, session) {
