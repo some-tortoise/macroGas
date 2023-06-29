@@ -5,8 +5,8 @@ tags$style(
 div(class = 'flag-panel-container panel-container',
     fluidRow(
       column(width= 3,
-             bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
-             bsPopover(id = "q1", title = "",
+             bsButton("q2", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
+             bsPopover(id = "q2", title = "",
                        content = paste0("First, select a station you would like to view. Once selected, you can change the variable you are viewing. Then, click on a point or select multiple points on the plot to your right, then flag them using the buttons on your left"),
                        placement = "right", 
                        trigger = "focus",
