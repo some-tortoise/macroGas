@@ -26,10 +26,11 @@ Chalf <- background + (1/2) * (Cmax - background)
 print(Chalf)
 
 #calculate time to half height 
-index_Cmax <- which(slugtemplate$Low_Range_μS_cm == Cmax) #half-height has to occur before the peak -- can't identify point on the backside
-closest_index <- which(slugtemplate$Low_Range_μS_cm <= Chalf & seq_along(slugtemplate$Low_Range_μS_cm) < index_Cmax) #identifies just the stuff before the peak
-index_Chalf <- closest_index[length(closest_index)]
+index_Cmax <- which(slugtemplate$Low_Range_μS_cm == Cmax) #half-height has to occur before the peak -- need to identify where peak happens
+distances_to_half_height <- abs(slugtemplate$Low_Range_μS_cm[1:index_Cmax - 1] - Chalf) #subtracts half height from all points before the peak
+index_Chalf <- which.min(distances_to_half_height) #identifies index of the closest value to Chalf between 1 and Cmax
 
+#calculate time between start and peak
 start_time <- slugtemplate$Date_Time[1]
 Chalf_time <- slugtemplate$Date_Time[index_Chalf]
 time_to_half <- (Chalf_time - start_time)
