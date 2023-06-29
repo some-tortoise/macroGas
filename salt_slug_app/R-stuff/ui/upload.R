@@ -1,8 +1,7 @@
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-       h4("Instructions",
-          bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+                 bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
        bsPopover(id = "q1", title = "",
                  content = paste0("The “Download File” button contains a CSV with an example breakthrough curve in the required formatting. Feel free to use this data to get familiar with using the app.<br><br>",
                                   "Match CSV files to the example formatting. If your data is missing certain fields, you can create the respective column and leave it blank (except for ’Station’). Column naming conventions must match. If each experiment station is saved as an individual CSV, you can either upload them one at a time (allowing us to validate formatting for each), or create one large CSV that identifies each station. Either way — there must be a station column! <em>Please only upload data from a single tracer injection experiment at a time!</em><br><br>",
@@ -10,11 +9,11 @@ div(class = 'upload-panel-container panel-container',
                  placement = "right", 
                  trigger = "focus",
                  options = list(container = "body", html = TRUE)),
-       hr(),
-       h5("Data Template:"),
-       downloadButton("downloadFile", "Download File"),
        br(),
-       hr(),
+       br(),
+       downloadButton("downloadFile", "Download data format"), 
+       br(),
+       br(),
        #two upload choices
        radioButtons("upload_m", "Import data from:", c("Manually", "Google Drive")),
        conditionalPanel(
@@ -26,21 +25,17 @@ div(class = 'upload-panel-container panel-container',
                          actionButton("import_button", icon("check")),
                          bsTooltip("import_button", "Import file from the entered link", placement = "bottom", 
                                    trigger = "hover",options = list(container = "body")))),
-         hr(),
-         #textInput('gdrive_link', 'Google Drive Link:'),
-         #actionButton("import_button", "Import Data")
        ),
        conditionalPanel(
          condition = "input.upload_m == 'Manually'",
-         fileInput("upload", "Choose CSV File",
+         fileInput("upload", "Choose CSV file",
                  multiple = FALSE,
                  accept = c("text/csv",
                             "text/comma-separated-values,text/plain",
                             ".csv")
                  )
          ),
-       hr(),
-       h5(HTML("<b>Select Files:</b>")),
+       h5(HTML("<b>Select files:</b>")),
        fluidRow(column(8,
                        selectInput("select", NULL, choices = NULL, width = "100%")),
                 column(1,
@@ -49,8 +44,7 @@ div(class = 'upload-panel-container panel-container',
                                  options = list(container = "body")))),
        #selectInput("select", "Select Files", choices = NULL),
        #actionButton("delete", "Remove Selected Dataset"),
-       hr(),
-       checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
+       checkboxInput("Edit_upload", "Advanced editing", value = FALSE),
        conditionalPanel(
          condition = "input.Edit_upload",
          # numericInput('station_name','Enter station number', 0),
@@ -67,8 +61,6 @@ div(class = 'upload-panel-container panel-container',
     column(width = 7,
         div(
           DTOutput("contents"),
-            br(),
-            hr(),
             div(
                id = "conditional",
                h5("When you're done uploading your data, click below to move on QA/QC."),
@@ -77,14 +69,3 @@ div(class = 'upload-panel-container panel-container',
        )
       )
 )
-#        checkboxInput("header", "Header", FALSE),
-#        radioButtons("sep", "Separator",
-#           choices = c(Comma = ",",
-#             Semicolon = ";" ,
-#            Tab = "\t"),
-#        selected = ","),
-# 
-# div(
-# actionButton('viz_btn','Visualize'))
-# )
-

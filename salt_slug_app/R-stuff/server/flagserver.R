@@ -15,7 +15,7 @@ selectedData <- reactive({
 
 output$station <- renderUI({
   num_station <- unique(goop$combined_df$station)
-  radioButtons('station', label = '', num_station)
+  radioButtons('station', label = "Select station to graph", num_station)
 })
 
 # Reactive expression for filtered data
@@ -29,7 +29,7 @@ output$start_datetime_input <- renderUI({
   } else {
     default_value <- ""
   }
-  textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+  textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
 })
 
 output$end_datetime_input <- renderUI({
@@ -38,7 +38,7 @@ output$end_datetime_input <- renderUI({
   } else {
     default_value <- ""
   }
-  textInput("end_datetime", "End Date and Time", value = default_value)
+  textInput("end_datetime", "End date and time", value = default_value)
 })
 
 # Render the Plotly graph with updated start and end date and time
