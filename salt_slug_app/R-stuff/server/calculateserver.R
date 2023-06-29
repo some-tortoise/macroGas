@@ -113,7 +113,7 @@ output$dischargecalcplot <- renderPlotly({
           type = 'scatter', mode = 'lines') %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range) %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~input$background, fill = 'tonextx') %>%
-    layout(shapes = list(
+    layout(showlegend = FALSE, shapes = list(
       # left line
       list(type = "line", x0 = xLeft, x1 = xLeft,
            y0 = 0, y1 = 1, yref = "paper"),
