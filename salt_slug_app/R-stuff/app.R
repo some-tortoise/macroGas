@@ -15,8 +15,6 @@ library(dplyr)
 library(shinythemes)
 
 reactlog_enable()
-<p>Right arrow: <i class="arrow right"></i></p>
-<p>Left arrow: <i class="arrow left"></i></p>
   
 ui <- fluidPage(
   theme = shinytheme("flatly"),
