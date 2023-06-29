@@ -112,7 +112,7 @@ output$dischargecalcplot <- renderPlotly({
   p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines') %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range) %>%
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~input$background, fill = 'tonextx') %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~input$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(showlegend = FALSE, shapes = list(
       # left line
       list(type = "line", x0 = xLeft, x1 = xLeft,
