@@ -17,6 +17,7 @@ library(shinythemes)
 ui <- fluidPage(
   navbarPage('Gas App',
               theme = shinytheme("flatly"),
+             useShinyjs(),
              tabPanel('Home',
                       source("ui/homeUI.R")[1]),
              tabPanel('Upload',

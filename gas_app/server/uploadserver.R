@@ -170,28 +170,3 @@ observeEvent(input$continue_button,{
   View(comb_df)
   goop$combined_df <- comb_df
 }) #rbind all the uploaded data frames
-
-
-
-##old stuff to save for later##
-
-# output$table1 <- renderDT({
-#   if(length(uploaded_data$data)>0){
-#     targ <- switch(input$row_and_col_select,
-#                    'rows' = 'row',
-#                    'columns' = 'column')
-# 
-#     datatable(uploaded_data$data[[uploaded_data$index]], selection = list(target = targ),
-#               options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
-#   }
-# }) #able to switch between editing rows and columns
-# 
-
-# 
-# observeEvent(input$viz_btn, {
-#   # combine all elements of uploaded$data
-#   # add column with station names
-#   uploaded_data$combined_df <- '\'visualized\''
-#   print(uploaded_data$combined_df)
-# })
-
