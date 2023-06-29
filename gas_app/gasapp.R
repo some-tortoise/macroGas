@@ -21,7 +21,7 @@ ui <- fluidPage(
                       source("ui/homeUI.R")[1]),
              tabPanel('Upload',
                       source("ui/uploadUI.R")[1]),
-             tabPanel('Flag',
+             tabPanel('QA/QC',
                       source("ui/flagUI.R")[1]),
              tabPanel('Calculate',
                       source("ui/calculateUI.R")[1])

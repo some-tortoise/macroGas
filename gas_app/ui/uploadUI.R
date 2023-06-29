@@ -2,8 +2,7 @@
 div(class = 'upload-panel-container panel-container',
     #column for sidebar options
     column(width = 3,
-           h4("Instruction",
-              bsButton("q1", label = "", icon = icon("question"), style = "info", size = "extra-small")),
+              bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
            bsPopover(id = "q1", title = "Instruction",
                      content = paste0("Click the \\'Download File\\' button to see the required format.",
                                       "Select your CSV file by clicking \\'Choose CSV File\\' and then Open to upload it.",
@@ -15,8 +14,9 @@ div(class = 'upload-panel-container panel-container',
                      trigger = "focus",
                      options = list(container = "body")
            ),
-           h5("Data Template:"),
-           downloadButton("downloadFile", "Download File"),
+           br(),
+           br(),
+           downloadButton("downloadFile", "Download data format"),
            br(),
            #two upload choices
            radioButtons("upload_m", "Import data from:", c("Google Drive", "Manually")),
@@ -34,15 +34,15 @@ div(class = 'upload-panel-container panel-container',
            ),
            conditionalPanel(
              condition = "input.upload_m == 'Manually'",
-             fileInput("upload", "Choose CSV File",
+             fileInput("upload", "Choose CSV file",
                        multiple = FALSE,
                        accept = c("text/csv",
                                   "text/comma-separated-values,text/plain",
                                   ".csv")
              )
            ),
-           hr(),
-           h5(HTML("<b>Select Files:</b>")),
+           
+           h5(HTML("<b>Select files:</b>")),
            fluidRow(column(8,
                            selectInput("select", NULL, choices = NULL, width = "100%")),
                     column(1,
@@ -51,8 +51,8 @@ div(class = 'upload-panel-container panel-container',
                                      options = list(container = "body")))),
            #selectInput("select", "Select Files", choices = NULL),
            #actionButton("delete", "Remove Selected Dataset"),
-           hr(),
-           checkboxInput("Edit_upload", "Advanced Editing", value = FALSE),
+           br(),
+           checkboxInput("Edit_upload", "Advanced editing", value = FALSE),
            conditionalPanel(
              condition = "input.Edit_upload",
              # numericInput('station_name','Enter station number', 0),
@@ -70,7 +70,7 @@ div(class = 'upload-panel-container panel-container',
              DTOutput("contents"),
              div(
                id = "conditional",
-               p("Once you're happy with the uploaded files, click below to move on to ordering your stations"),
+               p("Once you're happy with the uploaded files, click below to move on to QA/QC"),
                actionButton("continue_button", "Continue")
              )
            )
