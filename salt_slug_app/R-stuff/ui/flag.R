@@ -5,7 +5,14 @@ tags$style(
 div(class = 'flag-panel-container panel-container',
     fluidRow(
       column(width= 3,
-        
+             bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
+             bsPopover(id = "q1", title = "",
+                       content = paste0("First, select a station you would like to view. Once selected, you can change the variable you are viewing. Then, click on a point or select multiple points on the plot to your right, then flag them using the buttons on your left"),
+                       placement = "right", 
+                       trigger = "focus",
+                       options = list(container = "body", html = TRUE)),
+             br(),
+             br(),
              uiOutput("station"),
              radioButtons("variable_choice",label = 'Select variable to graph',
                           choices = c("Low Range, µs/cm" = "Low_Range", "Full Range, µs/cm" = 'Full_Range', "Temp, C" = 'Temp_C')),
