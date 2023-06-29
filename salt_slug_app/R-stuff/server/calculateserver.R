@@ -41,6 +41,16 @@ observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
 })
 
+# this observe makes the left bar manually inputtable instead
+observe({
+  print(goop$calc_xLeft)
+  print(input$start_datetime)
+  inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
+  if(!is.null(inputtedLeft)){
+    goop$calc_xLeft <- inputtedLeft
+  }
+})
+
 output$start_time <- renderUI({
   if (nrow(goop$combined_df) > 0) {
     default_value <- as.character(goop$combined_df$Date_Time[1])
@@ -87,14 +97,13 @@ output$dischargeOutput <- renderText({
 }) #the math.R stuff that prints a final discharge value
 
 output$dischargecalcplot <- renderPlotly({
-  print('a')
+  
   req(goop$calc_curr_station_df)
-  print('b')
-  print(goop$calc_curr_station_df)
+  
   req(goop$calc_xLeft)
-  print('c')
+  
   req(goop$calc_xRight)
-  print('d')
+  
   xVal <- goop$calc_curr_station_df$Date_Time
   yVal <- goop$calc_curr_station_df$Low_Range
   xLeft <- goop$calc_xLeft
@@ -155,7 +164,10 @@ output$dischargetable <- renderDT({
  datatable(goop$dichargeDF) 
 })
 
-#download stuff
+#
+#DOWNLOAD STUFF
+#
+{
 upload_csv_file <- function(clean_df, name, folder_path){
   file <- paste('processed_',name, sep='')
   file <- drive_put(
@@ -235,4 +247,4 @@ observeEvent(input$path_ok,{
   }
 }
 )
-
+}
