@@ -22,10 +22,10 @@ ui <- fluidPage(
   navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')),id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
-                tabPanel('Trim',
-                      source("ui/trim.R")[1]),
                  tabPanel('Upload',
                           source("ui/upload.R")[1]),
+                  tabPanel('Trim',
+                      source("ui/trim.R")[1]),
                  tabPanel(title = 'QA/QC',
                           value = "flagpanel",
                           source("ui/flag.R")[1]),
@@ -45,8 +45,8 @@ server <-  function(input, output, session) {
     
     # Call the server functions from the included files
     source("server/homeserver.R", local = TRUE)
-    source("server/trimserver.R", local = TRUE)
     source("server/uploadserver.R", local = TRUE)
+    source("server/trimserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
     source("server/calculateserver.R", local = TRUE)
 }
