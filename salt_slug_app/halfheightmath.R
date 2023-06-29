@@ -20,9 +20,9 @@ y <- slugtemplate$Low_Range_μS_cm
 plot(x,y)
 
 #calculate half height
-background <- slugtemplate$Low_Range_μS_cm[1]
+background_cond <- slugtemplate$Low_Range_μS_cm[1]
 Cmax <- max(slugtemplate$Low_Range_μS_cm)
-Chalf <- background + (1/2) * (Cmax - background)
+Chalf <- background_cond + (1/2) * (Cmax - background)
 print(Chalf)
 
 #calculate time to half height 

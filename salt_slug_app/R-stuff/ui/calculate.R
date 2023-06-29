@@ -13,6 +13,7 @@ div(class = 'calculate-panel-container panel-container',
                  numericInput("background", label = "Enter background conductivity here", value = 100),
                  numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000),
                  textOutput("dischargeOutput"),
+                 textOutput("halfheightOutput"),
                  actionButton('download', label = "",icon = icon("download"))
                  ),
           column(width = 5,

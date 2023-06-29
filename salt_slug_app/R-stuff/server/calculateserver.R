@@ -96,6 +96,28 @@ output$dischargeOutput <- renderText({
   return(paste0('Discharge: ',Discharge))
 }) #the math.R stuff that prints a final discharge value
 
+output$halfheightOutput <- renderText({
+  station_slug <- goop$trimmed_slug
+  
+  Cmax <- max(station_slug$Low_Range)
+  index_Cmax <- which(station_slug$Low_Range == Cmax)
+  
+  background_cond <- as.numeric(input$background) 
+  Chalf <- (background_cond + (1/2)*(Cmax - background_cond))
+  
+  poss_indexes_background <- which(station_slug$Low_Range == background_cond)
+  index_background <- max(poss_indexes_background[1:index_Cmax]) #this assumes the background conductivity is higher on the backside which isn't a given
+
+  distances_to_half_height <- abs(station_slug$Low_Range[index_background:(index_Cmax - 1)] - Chalf)
+  index_Chalf <- which.min(distances_to_half_height)
+  
+  start_time <- station_slug$Date_Time[index_background]
+  Chalf_time <- station_slug$Date_Time[index_Chalf]
+  time_to_half <- (Chalf_time-start_time)
+  return(paste0('Time to half height: ', time_to_half))
+})
+
+
 output$dischargecalcplot <- renderPlotly({
   
   req(goop$calc_curr_station_df)
