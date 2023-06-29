@@ -5,8 +5,9 @@ div(class = 'home-panel-container panel-container',
                 width: 800px;
                 height: 200px;
                 padding: 10px;",
-    h1("Salt Slug App"),
-    p("Placeholder text welcoming science people to the salt slug visualization/computation app")
+    h1("Welcome!"),
+    p("This app has been designed so users can easily take their conservative tracer/salt slug data and upload it from either Google Drive or locally, then flag points as they see fit, visualize their data, and calculate discharge and time to half height from their data."),
+    p("This app was created for the Bernhardt Lab at Duke University.")
   ),
   br(),
   br(),

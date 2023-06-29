@@ -63,7 +63,7 @@ div(class = 'upload-panel-container panel-container',
           DTOutput("contents"),
             div(
                id = "conditional",
-               h5("When you're done uploading your data, click below to move on QA/QC."),
+               h5("When you're done uploading your data, click below to move on data trimming."),
                actionButton("continue_button", "Continue")
            )
        )

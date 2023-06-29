@@ -171,7 +171,7 @@ observeEvent(input$continue_button,{
     mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
   #View(comb_df)
   goop$combined_df <- comb_df
-  updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
+  updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) #rbind all the uploaded data frames
 
 
