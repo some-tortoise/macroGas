@@ -1,10 +1,11 @@
 ############
 ##Trimming##
 ############
+library(dbscan)
 
 # !!!!need combined_df from updated_cleaning.R for it to work##
 #grabs station and filters out first eensy bit of bad data
-station1_slug <- combined_df %>% filter(station == '1')
+station1_slug <- combined_df %>% filter(station == '3')
 station1_slug <- station1_slug %>%
   filter(substr(Date_Time, 12, 19) >= "13:20:00") # gets only the time from the date time
 station1_slug$Date_Time = as.numeric(station1_slug$Date_Time)
