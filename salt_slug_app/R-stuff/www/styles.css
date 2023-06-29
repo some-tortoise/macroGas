@@ -11,89 +11,26 @@ body{
   overscroll-behavior: contain;
 }
 
-
-/*
-.container-fluid{
-  background-color: rgb(234, 234, 234);
-  position: relative;
-  margin: 0;
+.container-fluid {
   padding: 0;
-  height: 100vh;
+  margin: 0;
 }
 
-.tabbable{
-  margin-top: 20px;
-  padding-left: 150px;
-  height: 100vh;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
+.navbar-brand{
+  padding: 0;
+  margin: 0;
 }
 
-.navbar-container{
-  width: 80px;
-  height: 100%;
-  position: absolute;
-  float: left;
-  z-index: 2;
+.navbar-header{
+  padding: 0;
+  margin: 0;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 
-
-.block-thing{
-  background-color: #012169;
-  width: 15px;
-  height: 100%;
-  position: absolute;
-  float: left;
-  z-index: 20;
+.navbar>.container-fluid .navbar-brand {
+    margin-left: 0px;
 }
-
-.nav-el{
-  position: relative;
-  width: 70px;
-  height: 50px;
-}
-
-.nav-el-circle{
-  position: absolute;
-  width: 70px;
-  height: 70px;
-  background-color: #012169;
-  z-index: 1;
-  left: -20px;
-  transition: 0.3s;
-  border-radius: 500px;
-}
-
-.nav-el-circle:hover{
-  width: 160px;
-  background-color: #105687;
-}
-
-.active-nav-el{
-  width: 160px;
-  background-color: #2f75a8;
-}
-
-.nav-text{
-  display: none;
-}
-
-.active-nav-text{
-  display: block;
-  position: absolute;
-  left: 30px;
-  top: 20px;
-  z-index: 15;
-  font-size: 20px;
-  font-weight: bold;
-  color: rgb(0, 19, 36);
-}
-
-.panel-container{
-  height: 100vh;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
-}*/
 
 /*CALCULATE PANEL*/
 

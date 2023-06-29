@@ -12,26 +12,27 @@ library(readr)
 library(shinyBS)
 library(tidyverse)
 library(dplyr)
+library(shinythemes)
 
-#source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE)) #gets cleaned data
-# tell shiny to log all reactivity
 reactlog_enable()
 
 ui <- fluidPage(
+  theme = shinytheme("flatly"),
   useShinyjs(),
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
-  ),
-  navbarPage('censored by Anna',
+  navbarPage(img(src = 'macrogas-logo.png', width = '60px'),id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
                           source("ui/upload.R")[1]),
-                 tabPanel('Flag',
+                 tabPanel(title = 'QA/QC',
+                          value = "flagpanel",
                           source("ui/flag.R")[1]),
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   includeScript(path = "www/script.js")
   )
 
