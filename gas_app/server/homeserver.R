@@ -48,21 +48,6 @@ observeEvent(input$upload, {
   check_format(df, input$upload$name)
 })
 
-observe({
-  if(length(uploaded_data$csv_names) > 0)
-    if(length(uploaded_data$csv_names) > 1){
-      for(i in 1:length(uploaded_data$csv_names)){
-        if(input$select == uploaded_data$csv_names[i]){
-          uploaded_data$index <- i
-        }
-      } 
-    }
-  else
-    uploaded_data$index <- 1
-  else
-    dtRendered(FALSE)
-}) #updates the uploaded_data$index based on how many CSVs are uplaoded, works for any file naming convention
-
 #deleting unwanted files with the select dropdown and removes them from the index
 observeEvent(input$delete,{
   index = uploaded_data$index

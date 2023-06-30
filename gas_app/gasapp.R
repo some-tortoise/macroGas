@@ -21,7 +21,7 @@ ui <- fluidPage(
              tabPanel('Home',
                       source("ui/homeUI.R")[1]),
              tabPanel('QA/QC',
-                      source("ui/flagUI.R")[1]),
+                      source("ui/flagUI.R")[1])
   )
     
 )
@@ -32,6 +32,7 @@ server <- function(input, output, session) {
   goop$combined_df <- combined_df
   
   # Call the server functions from the included files
+  source("server/homeserver.R", local = TRUE)
   source("server/flagserver.R", local = TRUE)
 }
 
