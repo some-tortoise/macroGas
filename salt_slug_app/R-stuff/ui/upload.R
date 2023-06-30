@@ -1,4 +1,10 @@
+popoverTempate <- 
+  '<div class="popover popover-lg" role="tooltip"><div class="arrow"></div><h3 class="popover-title"></h3><div class="popover-content"></div></div>'
+
 div(class = 'upload-panel-container panel-container',
+    tags$head(
+      tags$style(HTML(".popover.popover-lg {width: 500px; max-width: 500px;}"))
+    ),
     #column for sidebar options
     column(width = 3,
                  bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
@@ -8,7 +14,7 @@ div(class = 'upload-panel-container panel-container',
                                   "<em>If uploading through Google Drive:</em> As with uploading manually, CSV formatting must match. In Google Drive, set the access under ‘Share’ in each CSV to ‘Anyone with the link’. Paste the drive link from the ‘Copy Link’ button within ‘Share’ into the app. Links must be to an individual CSV — links to folders will not work. Repeat the process for each station."),
                  placement = "right", 
                  trigger = "focus",
-                 options = list(container = "body", html = TRUE)),
+                 options = list(template = popoverTempate)),
        br(),
        br(),
        downloadButton("downloadFile", "Download data format"), 
