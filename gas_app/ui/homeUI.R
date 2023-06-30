@@ -22,5 +22,7 @@ div(class = 'home-panel-container panel-container',
                        options = list(container = "body"))
              )
       ),
-    
+    fluidRow(
+      actionButton("continue_button", label = "Continue")
+    )
     )
