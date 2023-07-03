@@ -1,12 +1,14 @@
+#packages to install
 library(googledrive)
 library(tidyverse)
 library(lubridate)
 library(readr)
 
-#drive_auth()
-
 raw_folder <- 'https://drive.google.com/drive/u/0/folders/1G1lauwH1H3Ds92ReuW6S2DNijWrXCB3Q'
 list_of_raw_csv_names = drive_ls(raw_folder)[['name']] #gives us file names from google drive
+
+##at this point -- select 1 when prompted to give tidyverse API access to your google drive##
+##then run the rest of the code 
 
 get_and_clean_data <- function(){
   df = c() #creates an empty vector
