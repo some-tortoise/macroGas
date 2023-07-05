@@ -16,3 +16,8 @@ output$trim_plot <- renderPlotly({
   trim_plot
 })
 
+observeEvent(input$continue_button2, {
+  updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
+})
+
+             
