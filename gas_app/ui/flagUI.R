@@ -16,7 +16,8 @@ div(class = 'flag-panel-container panel-container',
       ),
       column(width= 8,
              plotlyOutput('main_plot'),
-             dataTableOutput('selected_data_table')
+             dataTableOutput('selected_data_table'),
+             download_Button('download_longer',"Download Data")
       )
     )
 )
