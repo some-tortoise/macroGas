@@ -13,7 +13,7 @@ library(readr)
 library(shinyBS)
 library(shinythemes)
 
-
+#combined_df <- get from google drive stuff
 ui <- fluidPage(
   navbarPage('Gas App',
               theme = shinytheme("flatly"),
@@ -21,13 +21,12 @@ ui <- fluidPage(
              tabPanel('Home',
                       source("ui/homeUI.R")[1]),
              tabPanel('QA/QC',
-                      source("ui/flagUI.R")[1])
+                      source("ui/qaqcUI.R")[1])
   )
     
 )
 
 server <- function(input, output, session) {
-  combined_df <- NULL
   goop <- reactiveValues()
   goop$combined_df <- combined_df
   
