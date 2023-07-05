@@ -19,13 +19,14 @@ reactlog_enable()
 ui <- fluidPage(
   theme = shinytheme("flatly"),
   useShinyjs(),
-  navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')),id = "navbar",
+  navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')), id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
                           source("ui/upload.R")[1]),
                   tabPanel('Trim',
-                      source("ui/trim.R")[1]),
+                          value = "trimpanel",
+                          source("ui/trim.R")[1]),
                  tabPanel(title = 'QA/QC',
                           value = "flagpanel",
                           source("ui/flag.R")[1]),
@@ -80,8 +81,7 @@ ui <- fluidPage(
   ")),
   
   tags$div(class = "arrow left-arrow", icon("chevron-left")),
-  tags$div(class = "arrow right-arrow", icon("chevron-right"))
-  )
+  tags$div(class = "arrow right-arrow", icon("chevron-right")))
 
 server <-  function(input, output, session) {
   
