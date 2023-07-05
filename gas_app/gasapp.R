@@ -32,8 +32,7 @@ server <- function(input, output, session) {
   goop$combined_df <- combined_df
   
   # Call the server functions from the included files
-  source("server/homeserver.R", local = TRUE)
-  source("server/flagserver.R", local = TRUE)
+  source("server/qaqcserver.R", local = TRUE)
 }
 
 
