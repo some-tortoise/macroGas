@@ -15,13 +15,11 @@ library(dplyr)
 library(shinythemes)
 
 reactlog_enable()
-
-combined_df <- NULL
   
 ui <- fluidPage(
   theme = shinytheme("flatly"),
   useShinyjs(),
-  navbarPage(title = div(img(src = 'macrogas-logo.png', width = '120px')),id = "navbar",
+  navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')),id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
