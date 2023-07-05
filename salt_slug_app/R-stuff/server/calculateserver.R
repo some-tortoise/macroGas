@@ -35,7 +35,7 @@ observe({
 
 observe({
   goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
-})
+}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
 
 observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
@@ -69,10 +69,9 @@ output$end_time <- renderUI({
   textInput("end_datetime", "End Date and Time", value = default_value)
 }) #end time renderUI
 
-
 observe({
   goop$calc_discharge_table <- NULL
-})
+}) #currently useless
 
 output$dischargeOutput <- renderText({
   station_slug <- goop$trimmed_slug
@@ -115,7 +114,7 @@ output$halfheightOutput <- renderText({
   Chalf_time <- station_slug$Date_Time[index_Chalf]
   time_to_half <- (Chalf_time-start_time)
   return(paste0('Time to half height: ', time_to_half))
-})
+}) #half height math
 
 
 output$dischargecalcplot <- renderPlotly({
