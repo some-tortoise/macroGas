@@ -59,7 +59,7 @@ observe({
     })
     
     output$end_datetime_input <- renderUI({
-      textInput("end_datetime", "End date and time", value = "")
+       textInput("end_datetime", "End date and time", value = "")
     })
     
     output$main_plot <- renderUI({
