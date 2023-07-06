@@ -1,8 +1,3 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
-
 selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]
   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
@@ -11,11 +6,6 @@ selectedData <- reactive({
                           (paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key)),]
   return(df_chosen)
 }) 
-
-output$station <- renderUI({
-  num_station <- unique(goop$combined_df$station)
-  radioButtons('station', label = '', num_station)
-})
 
 # Reactive expression for filtered data
 filteredData <- reactive({
@@ -42,12 +32,6 @@ output$end_datetime_input <- renderUI({
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  # unique_station = unique(goop$combined_df$station)
-  # rainbow_color = rainbow(length(unique_station))
-  # color_mapping <- c()
-  # for(i in seq(unique_station)){
-  #   color_mapping[as.character(i)] <- rainbow_color[i]
-  # }
   p = plot_ly(data = filteredData(), type = 'scatter', mode = 'markers', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
