@@ -18,6 +18,7 @@ library(kableExtra)
 
 reactlog_enable()
 
+combined_df <- NULL
 
 ui <- fluidPage(
   theme = shinytheme("flatly"),

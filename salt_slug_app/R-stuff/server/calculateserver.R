@@ -13,16 +13,11 @@ observeEvent(goop$combined_df, {
   #View(goop$dichargeDF)
 })
 
-observe({
+output$calc_station <- renderUI({
   if(!is.null(goop$combined_df)){
-    output$calc_station <- renderUI({
-      selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
-    })
-  }
-  else{
-    output$calc_station <- renderUI({
-      HTML("<label>Choose A Station<br></br></label>")
-    })
+    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
+  }else{
+    HTML("<label>Choose A Station<br></br></label>")
   }
 })
 
@@ -162,7 +157,7 @@ output$dischargecalcplot <- renderPlotly({
   xRight <- as.POSIXct(xRight, tz = 'GMT', origin = "1970-01-01")
   
   p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
-          type = 'scatter', mode = 'lines', source = "calc-graph") %>%
+          type = 'scatter', mode = 'lines', source = "R") %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range) %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~input$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(showlegend = FALSE, shapes = list(
@@ -185,7 +180,7 @@ output$dischargecalcplot <- renderPlotly({
 })
 
 
-observeEvent(event_data("plotly_relayout", source = "calc-graph"), {
+observeEvent(event_data("plotly_relayout", source = "R"), {
   ed <- event_data("plotly_relayout")
   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
   if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape

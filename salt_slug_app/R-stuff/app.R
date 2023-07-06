@@ -18,8 +18,6 @@ library(kableExtra)
 
 reactlog_enable()
 
-combined_df <- NULL
-
 ui <- fluidPage(
   theme = shinytheme("flatly"),
   tags$head(
@@ -78,7 +76,7 @@ server <-  function(input, output, session) {
     source("server/uploadserver.R", local = TRUE)
     source("server/trimserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)
-    #source("server/calculateserver.R", local = TRUE)
+    source("server/calculateserver.R", local = TRUE)
 }
 
 shinyApp(ui = ui, server = server)
