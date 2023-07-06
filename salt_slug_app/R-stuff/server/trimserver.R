@@ -45,6 +45,16 @@ output$trim_plot <- renderPlotly({
   
 })
 
+observe({
+  goop$trimmed_combined_df <- subset(goop$combined_df, Date_Time > goop$trim_xLeft & Date_Time < goop$trim_xRight)
+  
+})
+
+output$trimmed_plot <- renderPlotly({
+  plot <- plot_ly(data = goop$trimmed_combined_df, type = 'scatter', mode = 'lines', x=~Date_Time, y=~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9)
+  plot
+})
+
 
 observeEvent(event_data("plotly_relayout", source = "D"), {
   ed <- event_data("plotly_relayout", source = "D")

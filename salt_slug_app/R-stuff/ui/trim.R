@@ -1,10 +1,11 @@
 div(class = 'trim-panel-container panel-container',
         fluidRow(
-      column(width= 4,
-            uiOutput("station_picker")
+      column(width= 7,
+            uiOutput("station_picker"),
+             plotlyOutput('trim_plot')
       ),
-      column(width = 7,
-             plotlyOutput('trim_plot'),
+      column(width = 4,
+             plotlyOutput('trimmed_plot'),
               div(
                 hr(),
                 h5("After adjusting the vertical bars so that only relevant data is within them, click below to save your changes and move on to QA/QC."),
