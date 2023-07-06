@@ -60,7 +60,7 @@ ui <- fluidPage(
     tags$div(class = "arrow left-arrow", icon("chevron-left")),
     tags$div(class = "arrow right-arrow", icon("chevron-right")))
   )
-
+ 
 server <-  function(input, output, session) {
   
   observeEvent(input$navbar, {
