@@ -44,24 +44,47 @@ output$trim_plot <- renderPlotly({
   trim_xLeft <- as.POSIXct(trim_xLeft, tz = 'GMT', origin = "1970-01-01")
   trim_xRight <- as.POSIXct(trim_xRight, tz = 'GMT', origin = "1970-01-01")
   
-  
   #super fun error-checking courtesy of chatgpt
-  print("Trim X Left in renderPlotly:")
+  print("Trim_xLeft in renderPlotly:")
   print(trim_xLeft)
-  print("Trim X Right in renderPlotly:")
+  print("Trim_xRight in renderPlotly:")
   print(trim_xRight)
   
-  trim_plot <- plot_ly(data = goop$trim_stations_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink2") |>
-    layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'))
-  trim_plot
+  plot <- plot_ly(data = goop$trim_stations_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink2") %>%
+    #add_trace(x = ~Date_Time, y = ~Low_Range) %>%
+    #add_trace(x = c(trim_xLeft, trim_xRight), y = c(NA, NA), line = list(color = 'rgba(0, 0, 0, 0)', width = 0), fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)') %>%
+     layout(plot_bgcolor='white', xaxis = list(title = 'Date Time')) # shapes = list(
+      # list(type = "line", x0 = trim_xLeft, x1 = trim_xLeft,
+      #      y0 = 0, y1 = 1, yref = "paper"),
+      # list(type = "line", x0 = trim_xRight, x1 = trim_xRight,
+      #      y0 = 0, y1 = 1, yref = "paper")
+ #   )) %>%
+    # config(edits = list(shapePosition = TRUE))
   
-  # trim_plot <- plot_ly(goop$trim_stations_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink2") %>%
-  #   layout(plot_bgcolor = 'white', xaxis = list(title = 'Date Time')
-  #   )
-  
-  trim_plot
+  #event_data <- event_data("plotly_relayout", source = "trim_plot")
+  #plot <- plot %>% event_register("plotly_relayout")
+  plot
   
 })
+
+# observeEvent(event_data("plotly_relayout"), {
+#   ed <- event_data("plotly_relayout")
+#   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+#   if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
+#   barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
+#   if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
+#   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
+#   pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+#   
+#   if(barNum == 0){
+#     goop$trim_xLeft <- 0
+#     goop$trim_xLeft <- pts[1]
+#   }else{
+#     goop$trim_xRight <- 0
+#     goop$trim_xRight <- pts[1]
+#   }
+# })
+
 
 observeEvent(input$continue_button2, {
   updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
