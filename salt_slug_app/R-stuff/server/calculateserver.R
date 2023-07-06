@@ -23,7 +23,7 @@
   
   output$background_out <- renderUI({
     req(goop$calc_curr_station_df)
-    numericInput("background", label = "Enter background conductivity here", value = mean(goop$calc_curr_station_df$Low_Range))
+    numericInput("background", label = "Enter background conductivity here", value = goop$background)
   })
   
   output$calc_station <- renderUI({
@@ -57,6 +57,34 @@
     goop$calc_xLeft <- goop$calc_xValue[1]
     goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1]
     goop$calc_xOne <- as.numeric(goop$calc_xValue[1])
+  })
+  
+  # observeEvent(input$calc_station_picker,{
+  #   req(goop$calc_xLeft)
+  #   req(goop$calc_xValue)
+  #   start_time <- goop$calc_xLeft
+  #   print('GORILLAS')
+  #   startVal <- as.numeric(goop$calc_xLeft)
+  #   bottomVal <- as.numeric(goop$calc_xValue[1])
+  #   topVal <- as.numeric(goop$calc_xValue[length(goop$calc_xValue)])
+  #   minDist <- bottomVal
+  #   minVal <- bottomVal
+  #   index_start_time <- 0
+  #   for(x in bottomVal:topVal){
+  #     if(abs(startVal-x) <= minDist){
+  #       index_start_time <- x-bottomVal
+  #       minDist <- abs(startVal-x)
+  #       minVal <- x
+  #     }
+  #   }
+  #   #print(as.POSIXct(minVal, tz = 'GMT', origin = "1970-01-01"))
+  #   background_cond <- mean(goop$trimmed_slug$Low_Range[(index_start_time - 20):index_start_time])
+  #   print(background_cond)
+  #   goop$background <- background_cond
+  # })
+  
+  observe({
+    goop$background <- mean(goop$calc_curr_station_df$Low_Range)
   })
   
   observeEvent(input$background,{
@@ -221,19 +249,30 @@
       index_Cmax <- which(station_slug$Low_Range == Cmax)
       
       start_time <- goop$calc_xLeft
-      print(start_time)
-      index_start_time <- 
       
-      background_cond <- mean(station_slug$Low_Range[index_start_time - 20:index_start_time])
-      Chalf <- (background_cond + (1/2)*(Cmax - background_cond))
+      startVal <- as.numeric(goop$calc_xLeft)
+      bottomVal <- as.numeric(goop$calc_xValue[1])
+      topVal <- as.numeric(goop$calc_xValue[length(goop$calc_xValue)])
+      minDist <- bottomVal
+      minVal <- bottomVal
+      index_start_time <- 0
+      for(x in bottomVal:topVal){
+        if(abs(startVal-x) <= minDist){
+          index_start_time <- x-bottomVal
+          minDist <- abs(startVal-x)
+          minVal <- x
+        }
+      }
       
+      Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
+
       distances_to_half_height <- abs(station_slug$Low_Range[index_start_time:(index_Cmax)] - Chalf) #finds the difference between points before the max and the half height
       index_Chalf <- which.min(distances_to_half_height) #identifies the index of the smallest difference -- the point closest to being half height
-      
+
       start_time <- station_slug$Date_Time[index_start_time]
       Chalf_time <- station_slug$Date_Time[index_Chalf]
       time_to_half <- (Chalf_time-start_time)
-      return(paste0('Time to half height: ', time_to_half)) 
+      return(paste0('Time to half height: ', time_to_half))
     }
     else{
       return('Time to half height: N/A')
