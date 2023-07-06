@@ -36,7 +36,7 @@ observe({
     
     output$flag_plot <- renderPlotly({
       plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), 
-              key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5) |>
+              key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.8) |>
         layout(dragmode = 'select') |>
         event_register(event = "plotly_selected")
     })

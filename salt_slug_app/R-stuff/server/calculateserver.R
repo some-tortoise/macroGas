@@ -139,6 +139,7 @@
     if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
     
     row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
+    print(substring(shape_anchors,1,19))
     pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
     
     

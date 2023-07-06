@@ -1,7 +1,7 @@
 div(class = 'trim-panel-container panel-container',
         fluidRow(
       column(width= 7,
-            uiOutput("station_picker"),
+             uiOutput("station_picker"),
              plotlyOutput('trim_plot')
       ),
       column(width = 4,
