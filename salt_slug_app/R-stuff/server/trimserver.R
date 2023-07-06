@@ -23,8 +23,6 @@ observe({
   goop$first_trim <- goop$trim_stations_df[(as.numeric(goop$trim_xValue) >= as.numeric(goop$trim_xLeft)) & (as.numeric(goop$trim_xValue) <= as.numeric(goop$trim_xRight)), ]
 }) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
 
-goop$suspended <- TRUE
-
 output$trim_plot <- renderPlotly({
   req(goop$trim_xLeft)
   trim_xLeft <- as.POSIXct(goop$trim_xLeft, tz = 'GMT', origin = "1970-01-01")
