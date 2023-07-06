@@ -24,7 +24,7 @@ get_and_clean_data <- function(){
   df = c() #creates an empty vector
   for(i in 1:length(list_of_raw_csv_names)){ #for each name in however many files we have, do the following:
     name <- list_of_raw_csv_names[i] #gets first name
-    station_name <- strsplit(name,'_')[2] #gets station name
+    station_name <- strsplit(name,'_')[[1]][2] #gets station name
     file <- drive_get(name)[1,] #if there is a csv by this name, get it.
     drive_download(file, path = name, overwrite = TRUE) # downloads a particular file
     loaded = read.csv(name, header = FALSE) #loads file into r environment
