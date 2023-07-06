@@ -3,7 +3,7 @@
     "path": "~/Desktop/Data+/macroGas/salt_slug_app/R-stuff/app.R",
     "project_path": "salt_slug_app/R-stuff/app.R",
     "type": "r_source",
-    "hash": "127853682",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1687802698603.0,
@@ -12,8 +12,8 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "58,6",
-        "scrollLine": "34"
+        "cursorPosition": "31,33",
+        "scrollLine": "27"
     },
     "folds": "",
     "lastKnownWriteTime": 1688655386,

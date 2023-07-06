@@ -70,10 +70,6 @@ body{
   padding: 0;
   height: 35vh;
 }
-  
-.blue-panel{
-  background-color: #1B867F;
-}
 
 #dischargeOutput{
   font-size: 20px;
@@ -105,11 +101,3 @@ body{
   align-items: center;
   font-size: 20px;
 }
-/*
-.left-arrow {
-  left: 35px;
-}
-
-.right-arrow {
-  right: 20px;
-}*/
