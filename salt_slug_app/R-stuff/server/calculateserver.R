@@ -21,6 +21,11 @@
     textInput("end_datetime", "End Date and Time", value = default_value)
   }) #end time renderUI
   
+  output$background_out <- renderUI({
+    req(goop$calc_curr_station_df)
+    numericInput("background", label = "Enter background conductivity here", value = mean(goop$calc_curr_station_df$Low_Range))
+  })
+  
   output$calc_station <- renderUI({
     if(!is.null(goop$combined_df)){
       selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
@@ -54,19 +59,33 @@
     goop$calc_xOne <- as.numeric(goop$calc_xValue[1])
   })
   
+  observeEvent(input$background,{
+    goop$background <- input$background
+  })
+  
   observeEvent(input$calc_station_picker, {
     goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
   })
   
-  # this observe makes the left bar manually inputtable instead
-  # observe({
-  #   print(goop$calc_xLeft)
-  #   print(input$start_datetime)
-  #   inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
-  #   if(!is.null(inputtedLeft)){
-  #     goop$calc_xLeft <- inputtedLeft
-  #   }
-  # })
+  # this observe makes the left bar manually inputtable as well
+  observeEvent(input$start_datetime, {
+    print(goop$calc_xLeft)
+    print(input$start_datetime)
+    inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
+    if(!is.null(inputtedLeft)){
+      goop$calc_xLeft <- inputtedLeft
+    }
+  })
+  
+  # this observe makes the right bar manually inputtable as well
+  observeEvent(input$end_datetime, {
+    print(goop$calc_xRight)
+    print(input$end_datetime)
+    inputtedLeft <- ymd_hms(input$end_datetime, tz = 'GMT')
+    if(!is.null(inputtedLeft)){
+      goop$calc_xLeft <- inputtedLeft
+    }
+  })
   
   output$dischargecalcplot <- renderPlotly({
     
@@ -91,14 +110,16 @@
     p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
             type = 'scatter', mode = 'lines', source = "R") %>%
       add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range) %>%
-      add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~input$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
+      add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
       layout(showlegend = FALSE, shapes = list(
         # left line
         list(type = "line", x0 = xLeft, x1 = xLeft,
              y0 = 0, y1 = 1, yref = "paper"),
         # right line
         list(type = "line", x0 = xRight, x1 = xRight,
-             y0 = 0, y1 = 1, yref = "paper")
+             y0 = 0, y1 = 1, yref = "paper"),
+        list(type = "line", x0 = xLeft, x1 = xRight,
+             y0 = goop$background, y1 = goop$background)
       )) %>%
       config(edits = list(shapePosition = TRUE))
     
@@ -112,18 +133,25 @@
   observeEvent(event_data("plotly_relayout", source = "R"), { #R is the name of the plot
     ed <- event_data("plotly_relayout", source = "R")
     shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+    
     if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
     barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
     if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
+    
     row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
     pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+    
     
     if(barNum == 0){
       goop$calc_xLeft <- 0
       goop$calc_xLeft <- pts[1]
-    }else{
+    }else if(barNum == 1){
       goop$calc_xRight <- 0
       goop$calc_xRight <- pts[1]
+    }else if(barNum == 2){
+      new_background <- ed[grepl("^shapes.*y0$", names(ed))][[1]]
+      goop$background <- 0
+      goop$background <- new_background
     }
   })
 }
@@ -154,6 +182,8 @@
     goop$dichargeDF <- a
     #View(goop$dichargeDF)
   })
+  
+  
   
   output$dischargeOutput <- renderText({
     if(!is.null(goop$combined_df)){
@@ -214,7 +244,6 @@
       kable_styling("striped", full_width = F)
   }
 }
-
 
 #
 #DOWNLOAD STUFF
