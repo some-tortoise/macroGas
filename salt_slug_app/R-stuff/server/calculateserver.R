@@ -215,21 +215,22 @@
   
   output$halfheightOutput <- renderText({
     if(!is.null(goop$combined_df)){
-      station_slug <- goop$trimmed_slug
+      station_slug <- goop$combined_df
       
       Cmax <- max(station_slug$Low_Range)
       index_Cmax <- which(station_slug$Low_Range == Cmax)
       
-      background_cond <- as.numeric(input$background) 
+      start_time <- goop$calc_xLeft
+      print(start_time)
+      index_start_time <- 
+      
+      background_cond <- mean(station_slug$Low_Range[index_start_time - 20:index_start_time])
       Chalf <- (background_cond + (1/2)*(Cmax - background_cond))
       
-      poss_indexes_background <- which(station_slug$Low_Range == background_cond)
-      index_background <- max(poss_indexes_background[1:index_Cmax]) #this assumes the background conductivity is higher on the backside which isn't a given
+      distances_to_half_height <- abs(station_slug$Low_Range[index_start_time:(index_Cmax)] - Chalf) #finds the difference between points before the max and the half height
+      index_Chalf <- which.min(distances_to_half_height) #identifies the index of the smallest difference -- the point closest to being half height
       
-      distances_to_half_height <- abs(station_slug$Low_Range[index_background:(index_Cmax - 1)] - Chalf)
-      index_Chalf <- which.min(distances_to_half_height)
-      
-      start_time <- station_slug$Date_Time[index_background]
+      start_time <- station_slug$Date_Time[index_start_time]
       Chalf_time <- station_slug$Date_Time[index_Chalf]
       time_to_half <- (Chalf_time-start_time)
       return(paste0('Time to half height: ', time_to_half)) 
