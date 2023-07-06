@@ -5,8 +5,8 @@ tags$style(
 div(class = 'flag-panel-container panel-container',
     fluidRow(
       column(width= 3,
-             uiOutput("station_picker"),
              HTML("<h5><b>Select station to view</b></h5>"),
+             uiOutput("station"),
              radioButtons("variable_choice",label = helpText('Select variable to graph'),
                           choices = c("DO Conc, mg/L" = "DO_conc",  "Temp, C" = 'Temp_C')),
              uiOutput("start_datetime_input"),
