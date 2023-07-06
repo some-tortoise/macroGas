@@ -44,7 +44,7 @@ output$trim_plot <- renderPlotly({
 })
 
 observe({
-  goop$trimmed_combined_df <- subset(goop$combined_df, Date_Time > goop$trim_xLeft & Date_Time < goop$trim_xRight)
+  goop$trimmed_combined_df <- goop$combined_df[goop$combined_df$Date_Time > goop$trim_xLeft & goop$combined_df$Date_Time < goop$trim_xRight, ]
   
 })
 
