@@ -21,6 +21,9 @@ reactlog_enable()
 
 ui <- fluidPage(
   theme = shinytheme("flatly"),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   useShinyjs(),
   navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')), id = "navbar",
                  tabPanel('Home',
@@ -36,11 +39,7 @@ ui <- fluidPage(
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
-  tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
-  ),
   includeScript(path = "www/script.js"),
-  
   tags$script(HTML("
     $(document).on('click', '.left-arrow', function(){
       var currentTab = $('#navbar .active > a').attr('data-value');
@@ -58,33 +57,10 @@ ui <- fluidPage(
       }
     });
   ")),
-  
-  tags$style(HTML("
-    .arrow {
-      position: absolute;
-      top: 85%;
-      width: 40px;
-      height: 40px;
-      background-color: #ccc;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      cursor: pointer;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 20px;
-    }
-    .left-arrow {
-      left: 20px;
-    }
-  
-    .right-arrow {
-      right: 20px;
-    }
-  ")),
-  
-  tags$div(class = "arrow left-arrow", icon("chevron-left")),
-  tags$div(class = "arrow right-arrow", icon("chevron-right")))
+  tags$div(class = "arrow-container",
+    tags$div(class = "arrow left-arrow", icon("chevron-left")),
+    tags$div(class = "arrow right-arrow", icon("chevron-right")))
+  )
 
 server <-  function(input, output, session) {
   

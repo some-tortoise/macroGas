@@ -65,6 +65,7 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
 
 
 observeEvent(input$continue_button2, {
+  #NEED TO ACTUALLY TRIP GOOP BETWEEN goop$trim_xLeft and goop$trim_xRight HERE
   updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
 })
 
