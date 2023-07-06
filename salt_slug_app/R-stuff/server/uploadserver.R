@@ -168,8 +168,10 @@ observeEvent(input$continue_button,{
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
   comb_df <- comb_df %>% #saves following code as loaded
     mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
-    mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) #changes date_time to a mdy_hms format in gmt time zone
-  #View(comb_df)
+    mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) %>%#changes date_time to a mdy_hms format in gmt time zone
+    mutate(Low_Range_Flag = "good", Full_Range_Flag = "good",
+           High_Range_Flag = "good", Temp_C_Flag = "good", id = row.names(.))
+    #View(comb_df)
   goop$combined_df <- comb_df
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) #rbind all the uploaded data frames
