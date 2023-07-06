@@ -4,52 +4,74 @@ library(DT) # for datatables
 library(shinyjs)
 source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
 
-output$station <- renderUI({
-  num_station <- unique(goop$combined_df$station)
-  radioButtons('station', label = "Select station to graph", num_station)
-})
-
-# Reactive expression for filtered data
-filteredData <- reactive({
-  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
-})
-
-output$start_datetime_input <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
-    default_value <- as.character(goop$combined_df$Date_Time[1])
-  } else {
-    default_value <- ""
+observe({
+  if(!is.null(goop$combined_df)){
+    filteredData <- reactive({
+      df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
+    })
+    
+    output$station <- renderUI({
+      num_station <- unique(goop$combined_df$station)
+      radioButtons('station', label = "Select station to graph", num_station)
+    })
+    
+    output$variable_c <- renderUI({
+      radioButtons("variable_choice",label = 'Select variable to graph',
+                   choices = c("Low Range, µs/cm" = "Low_Range", "Full Range, µs/cm" = 'Full_Range', "Temp, C" = 'Temp_C'))
+    })
+      
+    output$start_datetime_input <- renderUI({
+      default_value <- as.character(goop$combined_df$Date_Time[1])
+      textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+    })
+    
+    output$end_datetime_input <- renderUI({
+      default_value <- as.character(goop$combined_df$Date_Time[1])
+      textInput("end_datetime", "End date and time", value = default_value)
+    })
+    
+    output$main_plot <- renderUI({
+      plotlyOutput("flag_plot")
+    })
+    
+    output$flag_plot <- renderPlotly({
+      plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), 
+              key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5) |>
+        layout(dragmode = 'select') |>
+        event_register(event = "plotly_selected")
+    })
   }
-  textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
-})
-
-output$end_datetime_input <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
-    default_value <- as.character(goop$combined_df$Date_Time[1])
-  } else {
-    default_value <- ""
+  else{
+    filteredData <- reactive({
+      df_plot <- NULL
+    })
+    
+    output$station <- renderUI({
+      HTML("<label>Select station to graph<br></br></label>")
+    })
+    
+    output$variable_c <- renderUI({
+      HTML("<label>Select variable to graph<br></br></label>")
+    })
+    
+    output$start_datetime_input <- renderUI({
+      textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = "")
+    })
+    
+    output$end_datetime_input <- renderUI({
+      textInput("end_datetime", "End date and time", value = "")
+    })
+    
+    output$main_plot <- renderUI({
+    })
   }
-  textInput("end_datetime", "End date and time", value = default_value)
 })
 
-# Render the Plotly graph with updated start and end date and time
-output$main_plot <- renderPlotly({
-  # unique_station = unique(goop$combined_df$station)
-  # rainbow_color = rainbow(length(unique_station))
-  # color_mapping <- c()
-  # for(i in seq(unique_station)){
-  #   color_mapping[as.character(i)] <- rainbow_color[i]
-  # }
-  plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), 
-              key = ~(paste0(as.character(id),"_",as.character(station))), color = ~as.character(station), opacity = 0.5) |>
-    layout(dragmode = 'select') |>
-    event_register(event = "plotly_selected")
-})
 
 selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
   event.selected.data <- event_data(event = "plotly_selected")
-  df_chosen <- df_plot[paste0(df_plot$id,'_',df_plot$station) %in% event.selected.data$key,]
+  df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$station) %in% event.selected.data$key,]
   return(df_chosen)
 }) 
 

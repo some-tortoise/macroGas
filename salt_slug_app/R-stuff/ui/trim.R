@@ -1,5 +1,5 @@
 div(class = 'trim-panel-container panel-container',
-    fluidRow(
+        fluidRow(
       column(width= 4,
             uiOutput("station_picker")
       ),
