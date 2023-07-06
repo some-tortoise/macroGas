@@ -7,6 +7,11 @@ selectedData <- reactive({
   return(df_chosen)
 }) 
 
+output$station_picker <- renderUI({
+num_station <- unique(goop$combined_df$station)
+radioButtons('station', label = '', num_station)
+})
+
 # Reactive expression for filtered data
 filteredData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]

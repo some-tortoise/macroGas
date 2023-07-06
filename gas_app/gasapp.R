@@ -24,6 +24,7 @@ get_and_clean_data <- function(){
   df = c() #creates an empty vector
   for(i in 1:length(list_of_raw_csv_names)){ #for each name in however many files we have, do the following:
     name <- list_of_raw_csv_names[i] #gets first name
+    station_name <- strsplit(name,'_')[2] #gets station name
     file <- drive_get(name)[1,] #if there is a csv by this name, get it.
     drive_download(file, path = name, overwrite = TRUE) # downloads a particular file
     loaded = read.csv(name, header = FALSE) #loads file into r environment
@@ -31,14 +32,13 @@ get_and_clean_data <- function(){
     loaded = loaded[1:3] #keeping first 3 columns
     colnames(loaded) <- c('Date_Time', 'DO_conc', 'Temp_C') #naming columns
     loaded <- slice(loaded, -(1:2))
-    view(loaded)
     loaded = loaded %>% #saves following code as loaded
       mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
-      mutate(Date_Time = as.POSIXct(Date_Time, format = "%m/%d/%y %I:%M:%S %p")) 
+      mutate(Date_Time = as.POSIXct(Date_Time, format = "%m/%d/%y %I:%M:%S %p"),
+             station = station_name) 
     df[[i]] = loaded #makes the ith element of the list equal to the data frame.
   }
   return(df)
-  view()
 }
 
 clean_dataframe_list <- get_and_clean_data()
