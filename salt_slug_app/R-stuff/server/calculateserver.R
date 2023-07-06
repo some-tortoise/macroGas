@@ -1,17 +1,29 @@
 observeEvent(goop$combined_df, {
-  st <- c(0)
-  a <- data.frame(st)
-  colNames <- list('Station 1')
-  for(i in 1:(length(unique(goop$combined_df$station)) - 1)){
-    st <- c(0)
-    a <- cbind(a, st)
-    colNames <- append(colNames, paste0('Station ', i + 1))
+  st <- c()
+  colNames <- c()
+  for(i in 1:(length(unique(goop$combined_df$station)))){
+    st[i] <- 0
+    colNames[i] <- paste0('Station ', i)
   }
   
+  a <- data.frame(matrix(st, nrow = 1))
   row.names(a) <- 'Discharge'
   colnames(a) <- colNames
   goop$dichargeDF <- a
   #View(goop$dichargeDF)
+})
+
+observe({
+  if(!is.null(goop$combined_df)){
+    output$calc_station <- renderUI({
+      selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
+    })
+  }
+  else{
+    output$calc_station <- renderUI({
+      HTML("<label>Choose A Station<br></br></label>")
+    })
+  }
 })
 
 observe({
@@ -35,7 +47,7 @@ observe({
 
 observe({
   goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
-})
+}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
 
 observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
@@ -52,7 +64,7 @@ observe({
 })
 
 output$start_time <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
+  if (!is.null(goop$combined_df)) {
     default_value <- as.character(goop$combined_df$Date_Time[1])
   } else {
     default_value <- ""
@@ -61,7 +73,7 @@ output$start_time <- renderUI({
 }) #start time renderUI
 
 output$end_time <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
+  if (!is.null(goop$combined_df)) {
     default_value <- as.character(goop$combined_df$Date_Time[1])
   } else {
     default_value <- ""
@@ -69,53 +81,62 @@ output$end_time <- renderUI({
   textInput("end_datetime", "End Date and Time", value = default_value)
 }) #end time renderUI
 
-
 observe({
   goop$calc_discharge_table <- NULL
-})
+}) #currently useless
 
 output$dischargeOutput <- renderText({
-  station_slug <- goop$trimmed_slug
-  
-  station_slug <- station_slug %>%
-    mutate(NaCl_Conc = NA) %>%
-    relocate(NaCl_Conc, .after = Low_Range)
-  station_slug <- station_slug %>%
-    mutate(Area = NA) %>%
-    relocate(Area, .after = NaCl_Conc)
-  
-  background_cond <- as.numeric(input$background) 
-  station_slug <- station_slug %>%
-    mutate(NaCl_Conc = (Low_Range - background_cond) * 0.00047) %>%
-    mutate(Area = NaCl_Conc * 5)
-  
-  Area <- sum(station_slug$Area)
-  Mass_NaCl <- input$salt_mass
-  Discharge <- Mass_NaCl/Area
-  goop$dichargeDF[[as.numeric(input$calc_station_picker)]] <- Discharge
-  return(paste0('Discharge: ',Discharge))
+  if(!is.null(goop$combined_df)){
+    station_slug <- goop$trimmed_slug
+    
+    station_slug <- station_slug %>%
+      mutate(NaCl_Conc = NA) %>%
+      relocate(NaCl_Conc, .after = Low_Range)
+    station_slug <- station_slug %>%
+      mutate(Area = NA) %>%
+      relocate(Area, .after = NaCl_Conc)
+    
+    background_cond <- as.numeric(input$background) 
+    station_slug <- station_slug %>%
+      mutate(NaCl_Conc = (Low_Range - background_cond) * 0.00047) %>%
+      mutate(Area = NaCl_Conc * 5)
+    
+    Area <- sum(station_slug$Area)
+    Mass_NaCl <- input$salt_mass
+    Discharge <- Mass_NaCl/Area
+    goop$dichargeDF[as.numeric(input$calc_station_picker)] <- Discharge
+    return(paste0('Discharge: ',Discharge)) 
+  }
+  else{
+    return('Discharge: N/A')
+  }
 }) #the math.R stuff that prints a final discharge value
 
 output$halfheightOutput <- renderText({
-  station_slug <- goop$trimmed_slug
-  
-  Cmax <- max(station_slug$Low_Range)
-  index_Cmax <- which(station_slug$Low_Range == Cmax)
-  
-  background_cond <- as.numeric(input$background) 
-  Chalf <- (background_cond + (1/2)*(Cmax - background_cond))
-  
-  poss_indexes_background <- which(station_slug$Low_Range == background_cond)
-  index_background <- max(poss_indexes_background[1:index_Cmax]) #this assumes the background conductivity is higher on the backside which isn't a given
-
-  distances_to_half_height <- abs(station_slug$Low_Range[index_background:(index_Cmax - 1)] - Chalf)
-  index_Chalf <- which.min(distances_to_half_height)
-  
-  start_time <- station_slug$Date_Time[index_background]
-  Chalf_time <- station_slug$Date_Time[index_Chalf]
-  time_to_half <- (Chalf_time-start_time)
-  return(paste0('Time to half height: ', time_to_half))
-})
+  if(!is.null(goop$combined_df)){
+    station_slug <- goop$trimmed_slug
+    
+    Cmax <- max(station_slug$Low_Range)
+    index_Cmax <- which(station_slug$Low_Range == Cmax)
+    
+    background_cond <- as.numeric(input$background) 
+    Chalf <- (background_cond + (1/2)*(Cmax - background_cond))
+    
+    poss_indexes_background <- which(station_slug$Low_Range == background_cond)
+    index_background <- max(poss_indexes_background[1:index_Cmax]) #this assumes the background conductivity is higher on the backside which isn't a given
+    
+    distances_to_half_height <- abs(station_slug$Low_Range[index_background:(index_Cmax - 1)] - Chalf)
+    index_Chalf <- which.min(distances_to_half_height)
+    
+    start_time <- station_slug$Date_Time[index_background]
+    Chalf_time <- station_slug$Date_Time[index_Chalf]
+    time_to_half <- (Chalf_time-start_time)
+    return(paste0('Time to half height: ', time_to_half)) 
+  }
+  else{
+    return('Time to half height: N/A')
+  }
+}) #half height math
 
 
 output$dischargecalcplot <- renderPlotly({
@@ -182,9 +203,11 @@ observeEvent(event_data("plotly_relayout"), {
   }
 })
 
-output$dischargetable <- renderDT({
- datatable(goop$dichargeDF) 
-})
+output$dischargetable <- function() {
+  goop$dichargeDF |>
+    knitr::kable("html") |>
+    kable_styling("striped", full_width = F)
+}
 
 #
 #DOWNLOAD STUFF
