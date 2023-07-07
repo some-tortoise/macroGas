@@ -25,9 +25,13 @@ distance_threshold <- 500
 nearby_points <- station1_slug[station1_slug$Date_Time > min(selected_points$Date_Time) - distance_threshold &
                                  station1_slug$Date_Time < max(selected_points$Date_Time) + distance_threshold, ]
 
+model <- lm(station1_slug$Low_Range ~ station1_slug$Date_Time)
+summary(model)
+
 #plots data
 x <- nearby_points$Date_Time
 y <- nearby_points$Low_Range
 plot(x,y)
 
-abline(h=mean)
+#abline(h=mean)
+abline(model)

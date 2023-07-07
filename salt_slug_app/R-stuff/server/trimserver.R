@@ -1,17 +1,6 @@
-output$station_picker <- renderUI({
-  num_station <- unique(goop$combined_df$station)
-  num_station <- as.numeric(num_station)
-  num_station <- sort(num_station)
-  checkboxGroupInput('station_picker', label = "Select station to graph", choices = num_station, selected = num_station)
-})
-
 observe({
-  goop$trim_stations_df <- goop$combined_df[goop$combined_df$station %in% input$station_picker, ]
-}) #creates goop$trim_stations_df from those picked in station_picker
-
-observe({
-  goop$trim_xValue <- goop$trim_stations_df$Date_Time
-  goop$trim_yValue <- goop$trim_stations_df$Low_Range
+  goop$trim_xValue <- goop$combined_df$Date_Time
+  goop$trim_yValue <- goop$combined_df$Low_Range
 }) #creates goop$trim_xValue and goop$trim_Yvalue from DateTime and Low_Range
 
 observe({
@@ -20,17 +9,15 @@ observe({
 })
 
 observe({
-  goop$first_trim <- goop$trim_stations_df[(as.numeric(goop$trim_xValue) >= as.numeric(goop$trim_xLeft)) & (as.numeric(goop$trim_xValue) <= as.numeric(goop$trim_xRight)), ]
+  goop$first_trim <- goop$combined_df[(as.numeric(goop$trim_xValue) >= as.numeric(goop$trim_xLeft)) & (as.numeric(goop$trim_xValue) <= as.numeric(goop$trim_xRight)), ]
 }) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
-
-goop$suspended <- TRUE
 
 output$trim_plot <- renderPlotly({
   req(goop$trim_xLeft)
   trim_xLeft <- as.POSIXct(goop$trim_xLeft, tz = 'GMT', origin = "1970-01-01")
   trim_xRight <- as.POSIXct(goop$trim_xRight, tz = 'GMT', origin = "1970-01-01")
   
-  plot <- plot_ly(data = goop$trim_stations_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9, source = "D") %>%
+  plot <- plot_ly(data = goop$combined_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9, source = "D") %>%
     layout(showlegend = FALSE, shapes = list(
       # left line
       list(type = "line", x0 = trim_xLeft, x1 = trim_xLeft,
@@ -43,6 +30,16 @@ output$trim_plot <- renderPlotly({
   
   plot
   
+})
+
+observe({
+  goop$trimmed_combined_df <- goop$combined_df[goop$combined_df$Date_Time > goop$trim_xLeft & goop$combined_df$Date_Time < goop$trim_xRight, ]
+  
+})
+
+output$trimmed_plot <- renderPlotly({
+  plot <- plot_ly(data = goop$trimmed_combined_df, type = 'scatter', mode = 'lines', x=~Date_Time, y=~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9)
+  plot
 })
 
 
@@ -65,7 +62,9 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
 
 
 observeEvent(input$continue_button2, {
-  #NEED TO ACTUALLY TRIP GOOP BETWEEN goop$trim_xLeft and goop$trim_xRight HERE
+  #trim goop$combined_df between goop$trim_xLeft and goop$trim_xRight here
+  goop$combined_df <- subset(goop$combined_df, Date_Time > goop$trim_xLeft)
+  goop$combined_df <- subset(goop$combined_df, Date_Time < goop$trim_xRight)
   updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
 })
 
