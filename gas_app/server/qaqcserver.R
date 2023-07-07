@@ -63,15 +63,16 @@ observeEvent(input$flag_btn, {
 # Download Clean Data in Longer Format
 output$download_longer <- downloadHandler(
   filename = function() {
-    paste("processed-data", Sys.Date(), ".csv")
+    "processed_data.csv"
   },
   content = function(file) {
-    goop$combined_df <- pivot_longer(
-      goop$combined_df,
-      cols = c(str_detect("DO"), str_detect("Temp")),
-      names_to = "Variable",
-      values_to = "Value"
+    longer_data <- pivot_longer(
+    goop$combined_df,
+    cols = c("DO_conc", "Temp_C"),
+    names_to = "Variable",
+    values_to = "Value"
     )
-    write.csv(goop$combined_df, file, row.names = FALSE)
+
+    write.csv(longer_data, file, row.names = FALSE)
   }
 )
