@@ -26,9 +26,8 @@ output$do_metrics_full <- renderDT({
     Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
     Hypoxia_Prob = sum(combined_df$DO_conc <= 9, na.rm = TRUE)/(length(combined_df$DO_conc))
   )
-  datatable(metrics_dt)
-})
-
+  datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
+ })
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
   metrics <- data.frame(
@@ -38,5 +37,5 @@ output$do_metrics_range <- renderDT({
     Amplitude = max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE),
     Hypoxia_Prob = sum(metrics_df$DO_conc <= 9, na.rm = TRUE)/(length(metrics_df$DO_conc))
   )
-  datatable(metrics)
+  datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 })
