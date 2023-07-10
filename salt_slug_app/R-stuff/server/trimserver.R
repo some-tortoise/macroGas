@@ -1,12 +1,6 @@
-output$station_picker <- renderUI({
-  num_station <- unique(goop$combined_df$station)
-  num_station <- as.numeric(num_station)
-  num_station <- sort(num_station)
-  checkboxGroupInput('station_picker', label = "Select station to graph", choices = num_station, selected = num_station)
-})
 
 observe({
-  goop$trim_stations_df <- goop$combined_df[goop$combined_df$station %in% input$station_picker, ]
+  goop$trim_stations_df <- goop$combined_df
 }) #creates goop$trim_stations_df from those picked in station_picker
 
 observe({
