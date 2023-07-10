@@ -1,3 +1,40 @@
+varContainerUI <- function (id, var = 'Unknown Variable'){
+  ns <- NS(id)
+  tagList(
+    div(class = 'qaqc--type-container',
+        h1(var),
+        tabsetPanel(
+          tabPanel('Graph',plotlyOutput(ns('main_plot'))),
+          tabPanel('Summary',uiOutput(ns('summary')))
+        ),
+        div(class = 'qaqc--type-flag-container',
+            h3('Flag Type'),
+            selectInput(ns('flag_type'), label = '', choices = c('good', 'questionable', 'interesting', 'bad')),
+            actionButton(ns('flag_btn'), class = 'flag-btn', 'Flag selected points')
+        )
+    )
+  )
+}
+
+varContainerServer <- function(id, goop) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+      output$summary <- renderUI({
+        print(unique(goop$combined_df$Variable))
+        h1('Summary would go here')
+      })
+      output$main_plot <- renderPlotly({
+        df <- data.frame(X = c(1,2,3),
+                         Y = c(5,6,75))
+        print(df)
+        plot_ly(data = df, type = 'scatter', mode = 'markers', 
+                x = ~X, y = ~Y)
+      })
+    }
+  )
+}
+
 div(class = 'qaqc page',
     div(class = 'qaqc--intro-container',
         div(class = 'qaqc--intro',
@@ -13,34 +50,32 @@ div(class = 'qaqc page',
         )
       ),
     div(class = 'qaqc--main',
-      div(class = 'qaqc--type-container',
-          h1('Dissolved Oxygen (DO)'),
-          tabsetPanel(
-            tabPanel('Graph',plotlyOutput('main_plot')),
-            tabPanel('Summary',h1('Summary would go here'))
-          ),
-          div(class = 'qaqc--type-flag-container',
-              h3('Flag Type'),
-              selectInput('flag_type', label = '', choices = c('good', 'questionable', 'interesting', 'bad')),
-              actionButton('flag_btn', 'Flag selected points')
-              )
-          ),
-      
-      # fluidRow(
-      #   column(width= 3,
-      #          HTML("<h5><b>Select station to view</b></h5>"),
-      #          uiOutput("station"),
-      #          uiOutput("variable_c"),
-      #          uiOutput("start_datetime_input"),
-      #          uiOutput("end_datetime_input"),
-      #          #selectInput('flag_type', label = 'Select flag type', c('good', 'questionable', 'interesting', 'bad')),
-      #          #actionButton('flag_btn', label = 'Flag points'),
-      #          actionButton("Reset", label = "reset flags")
-      #   ),
-      #   column(width= 8,
-      #          dataTableOutput('selected_data_table'),
-      #          downloadButton('download_longer',"Download Data")
-      #   )
-      # )
+        #varContainerUI(id = 'DO', var = 'Dissolved Oxygen (DO)'),
+        #varContainerUI(id = 'CH4', var = 'Methane (CH4)')
+        uiOutput('varContainers')
     )
 )
+
+
+
+
+
+
+
+
+# fluidRow(
+#   column(width= 3,
+#          HTML("<h5><b>Select station to view</b></h5>"),
+#          uiOutput("station"),
+#          uiOutput("variable_c"),
+#          uiOutput("start_datetime_input"),
+#          uiOutput("end_datetime_input"),
+#          #selectInput('flag_type', label = 'Select flag type', c('good', 'questionable', 'interesting', 'bad')),
+#          #actionButton('flag_btn', label = 'Flag points'),
+#          actionButton("Reset", label = "reset flags")
+#   ),
+#   column(width= 8,
+#          dataTableOutput('selected_data_table'),
+#          downloadButton('download_longer',"Download Data")
+#   )
+# )

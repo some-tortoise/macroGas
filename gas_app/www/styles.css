@@ -164,8 +164,74 @@ FLAG
     margin: 0;
 }
 
-#flag_btn{
+.qaqc--type-flag-container > .flag-btn{
     background: linear-gradient(180deg, #9AC1F9 0%, #7BACF4 100%);
     max-height: 39px;
     border: none;
+}
+
+
+/***
+VIEW
+***/
+
+.view .page{
+    margin: 0;
+    padding: 0;
+    font-family: Inter;
+}
+
+.view--main{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.view--intro-container{
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 100px;
+}
+
+.view--intro{
+    margin-left: 100px;
+    margin-right: 100px;
+    max-width: 1200px;
+    padding: 20px;
+    background-color: #F3F3F3;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.view--intro > .form-group > #view_site-label{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.view--intro > #view_dateRange{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.view--type-container{
+    position: relative;
+    padding-bottom: 50px;
+}
+
+.view--type-container > h1{
+    font-family: Inter;
+    font-size: 20px;
+    font-weight: 700;
+    padding-bottom: 20px;
+    max-width: 500px;
 }

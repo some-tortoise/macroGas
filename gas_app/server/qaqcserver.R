@@ -1,3 +1,5 @@
+
+
 selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
@@ -76,6 +78,20 @@ observeEvent(input$Reset,{
 observeEvent(input$reset_Yes,{
   goop$combined_df$Flag = "good"
   removeModal()
+})
+
+output$varContainers <- renderUI({
+  LL <- vector("list",10)       
+  for(i in unique(goop$combined_df$Variable)){
+    LL[[i]] <- list(varContainerUI(id = i, var = i))
+  }      
+  return(LL)  
+})
+
+observe({
+  for(i in unique(goop$combined_df$Variable)){
+    varContainerServer(i, goop = goop)
+  }
 })
 
 # Download Clean Data in Longer Format
