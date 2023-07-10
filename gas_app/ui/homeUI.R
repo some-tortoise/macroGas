@@ -1,5 +1,5 @@
 div(class = 'home panel-container',
-    img(src = 'home-back.jpg', width = '60px', class = "home--img"),
+    img(src = 'home-back.jpg', class = "home--img"),
     div(class = 'home--title-container',
       h1(class = 'home--title', 'GHG Visualization Project')
     ),

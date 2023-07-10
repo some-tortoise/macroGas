@@ -48,7 +48,7 @@ check_format <- function(csv_file, file_name){
       return(TRUE)
     }
     else{
-      uploaded_data$data[[length(uploaded_data$data) + 1]] <- csv_file #stores a correctly formatted data in uploaded_data$data as a separate element (i think ?)
+      uploaded_data$data[[length(uploaded_data$data) + 1]] <- csv_file #stores a correctly formatted data in uploaded_data$data as a separate element
       uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name)
       updateSelectInput(session, 'select', choices = uploaded_data$csv_names, selected = file_name)
     }
