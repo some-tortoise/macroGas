@@ -9,7 +9,7 @@ fluidPage(
                          tableOutput("do_metrics_range")),
                 tabPanel("Full Range",
                          plotlyOutput("do_plot_full"),
-                         tableOutput("do_metrics)full"))
+                         tableOutput("do_metrics_full"))
                 )
               )
               )

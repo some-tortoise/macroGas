@@ -18,3 +18,25 @@ output$do_plot_full <- renderPlotly({
     layout(title = "DO Conc Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Conc"))
 })
 
+output$do_metrics_full <- renderDT({
+  metrics_dt <-  data.frame(
+    Mean = mean(combined_df$DO_conc, na.rm = TRUE),
+    Minimum = min(combined_df$DO_conc, na.rm = TRUE),
+    Maximum = max(combined_df$DO_conc, na.rm = TRUE),
+    Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
+    Hypoxia_Prob = length(combined_df[DO_conc <= 9])/(length(combined_df$DO_conc))
+  )
+  datatable(metrics_dt)
+})
+
+output$do_metrics_range <- renderDT({
+  metrics_df <- filtered_df()
+  metrics <- data.frame(
+    Mean = mean(metrics_df$DO_conc, na.rm = TRUE),
+    Minimum = min(metrics_df$DO_conc, na.rm = TRUE),
+    Maximum = max(metrics_df$DO_conc, na.rm = TRUE),
+    Amplitude = max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE),
+    Hypoxia_Prob = length(metrics_df[DO_conc <= 9])/(length(metrics_df$DO_conc))
+  )
+  datatable(metrics)
+})
