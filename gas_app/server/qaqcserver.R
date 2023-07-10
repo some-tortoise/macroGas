@@ -1,26 +1,26 @@
 selectedData <- reactive({
-  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station,]
+  df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
   event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
-  df_chosen <- df_plot[((paste0(df_plot$Date_Time,'_',df_plot$station) %in% event.click.data$key) | 
-                          (paste0(df_plot$Date_Time,'_',df_plot$station) %in% event.selected.data$key)),]
-  df_chosen <- df_chosen[df_chosen$variable == input$variable_choice,]
+  df_chosen <- df_plot[((paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.click.data$key) | 
+                          (paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key)),]
+  df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
   return(df_chosen)
 }) 
 
 output$variable_c <- renderUI({
   radioButtons("variable_choice",label = helpText('Select variable to graph'),
-               choices = unique(goop$combined_df$variable))
+               choices = unique(goop$combined_df$Variable))
 })
 
 output$station <- renderUI({
-num_station <- unique(goop$combined_df$station)
-radioButtons('station', label = '', choices = setNames(num_station, num_station))
+num_station <- unique(goop$combined_df$Station)
+radioButtons('Station', label = '', choices = setNames(num_station, num_station))
 })
 
 # Reactive expression for filtered data
 filteredData <- reactive({
-  df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
+  df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station, ]
 })
 
 output$start_datetime_input <- renderUI({
@@ -43,8 +43,8 @@ output$end_datetime_input <- renderUI({
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  plot_ly(data = filteredData()[goop$combined_df$variable == input$variable_choice,], type = 'scatter', mode = 'markers', 
-              x = ~Date_Time, y = ~value, key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.5, source = "imgLink") |>
+  plot_ly(data = filteredData()[goop$combined_df$Variable == input$variable_choice,], type = 'scatter', mode = 'markers', 
+              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(Date_Time),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
@@ -58,7 +58,7 @@ output$selected_data_table <- renderDT({
 })
 
 observeEvent(input$flag_btn, {
-  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)), "Flag"] <- input$flag_type  # Set the flag
+  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
 })
 
 
@@ -68,13 +68,8 @@ output$download_longer <- downloadHandler(
     "processed_data.csv"
   },
   content = function(file) {
-    longer_data <- pivot_longer(
-    goop$combined_df,
-    cols = c("DO_conc", "Temp_C"),
-    names_to = "Variable",
-    values_to = "Value"
-    )
+  
 
-    write.csv(longer_data, file, row.names = FALSE)
+    write.csv(combined_df, file, row.names = FALSE)
   }
 )
