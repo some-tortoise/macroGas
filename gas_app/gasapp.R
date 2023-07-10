@@ -45,6 +45,16 @@ clean_dataframe_list <- get_and_clean_data()
 combined_df <- do.call(rbind, clean_dataframe_list)
 
 ui <- fluidPage(
+  class = 'body-container',
+  theme = shinytheme("flatly"),
+  tags$head(
+    HTML(
+      '<link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">'
+    ),
+    tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
+  ),
   navbarPage('Gas App',
               theme = shinytheme("flatly"),
              useShinyjs(),
