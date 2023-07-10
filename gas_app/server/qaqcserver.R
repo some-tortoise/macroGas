@@ -61,6 +61,22 @@ observeEvent(input$flag_btn, {
   goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
 })
 
+#reset all flags
+observeEvent(input$Reset,{
+  showModal(modalDialog(
+    h4("Are you sure you want to reset all the flags?"),
+    easyClose = FALSE,
+    footer = tagList(
+      actionButton("reset_Yes", "Yes"),
+      modalButton("No")
+    )
+  ))
+})
+
+observeEvent(input$reset_Yes,{
+  goop$combined_df$Flag = "good"
+  removeModal()
+})
 
 # Download Clean Data in Longer Format
 output$download_longer <- downloadHandler(
@@ -70,6 +86,6 @@ output$download_longer <- downloadHandler(
   content = function(file) {
   
 
-    write.csv(combined_df, file, row.names = FALSE)
+    write.csv(goop$combined_df, file, row.names = FALSE)
   }
 )
