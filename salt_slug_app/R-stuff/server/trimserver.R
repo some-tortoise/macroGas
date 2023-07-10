@@ -1,6 +1,10 @@
 observe({
-  goop$trim_xValue <- goop$combined_df$Date_Time
-  goop$trim_yValue <- goop$combined_df$Low_Range
+  goop$trim_stations_df <- goop$combined_df
+}) #creates goop$trim_stations_df from those picked in station_picker
+
+observe({
+  goop$trim_xValue <- goop$trim_stations_df$Date_Time
+  goop$trim_yValue <- goop$trim_stations_df$Low_Range
 }) #creates goop$trim_xValue and goop$trim_Yvalue from DateTime and Low_Range
 
 observe({
