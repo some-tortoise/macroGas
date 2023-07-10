@@ -208,19 +208,16 @@
   
   
   observeEvent(goop$combined_df, {
-    selected_stations <- unique(goop$combined_df$station)
     st <- c()
     colNames <- c()
-    
-    for(i in 1:(length(unique(goop$combined_df$station)))){
-      station_num <- selected_stations[i]
-      st[i] <- 0 #assigns discharge value of 0 initially to each column
-      colNames[i] <- paste0('Station ', station_num)
+    print('FROG')
+    for(i in unique(goop$combined_df$station)){
+      st <- c(st, 0) #assigns discharge value of 0 initially to each column
+      colNames <- c(colNames, paste0('Station ', i))
     } #for loop to name the columns after each unique station in goop$combined_df 
-    
-    a <- data.frame(matrix(st, nrow = 1))
-    row.names(a) <- 'Discharge'
-    colnames(a) <- colNames
+    print(a)
+    a <- data.frame('Station' = colNames,
+                    'Discharge' = st)
     goop$dischargeDF <- a
   })
   
@@ -237,9 +234,8 @@
       Mass_NaCl <- input$salt_mass
       Discharge <- Mass_NaCl/Area
       
-      selected_station <- as.numeric(input$calc_station_picker)
-      goop$dischargeDF[, selected_station] <- Discharge
-      
+      #goop$dischargeDF[as.numeric(input$calc_station_picker)] <- Discharge
+
       return(paste0('Discharge: ', Discharge)) 
     }
     else{
@@ -275,11 +271,14 @@
     }
   }) #half height math
   
-  output$dischargetable <- function() {
-    goop$dischargeDF |>
-      knitr::kable("html") |>
-      kable_styling("striped", full_width = F)
-  }
+  # output$dischargetable <- function() {
+  #   goop$dischargeDF |>
+  #     knitr::kable("html") |>
+  #     kable_styling("striped", full_width = F)
+  # }
+  output$dischargetable <- renderDT(
+    goop$dischargeDF
+  )
 }
 
 #

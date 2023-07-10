@@ -20,7 +20,7 @@ div(class = 'calculate-panel-container panel-container',
                  class = 'calculate-graph-container',
                  plotlyOutput("dischargecalcplot"),
                  fluidRow(class = 'calculate-output-dt-container',
-                         tableOutput("dischargetable"))
+                         DTOutput("dischargetable"))
              )
     )
 )
