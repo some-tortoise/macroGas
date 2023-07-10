@@ -29,10 +29,10 @@
       ),
       column(width = 2,
              actionButton("question", label = "", icon = icon("question")),
-             bsTooltip(id = "question", "placeholder text", placement = "bottom", trigger = "hover", options = list(container = "body"))
+             bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity prior to the breakthrough curve, though it can be changed manually as well.", placement = "bottom", trigger = "hover", options = list(container = "body"))
       )
     )
-  })
+  }) #a renderUI for the background conductivity input, as well as explanation of how we calculate it
   
   output$calc_station <- renderUI({
     if(!is.null(goop$combined_df)){
@@ -91,16 +91,17 @@
   #   goop$background <- background_cond
   # })
   
+    
+  observeEvent(input$calc_station_picker, {
+    goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
+  })
+  
   observe({
     goop$background <- (mean(goop$calc_curr_station_df$Low_Range) - 10)
   })
   
   observeEvent(input$background,{
     goop$background <- input$background
-  })
-  
-  observeEvent(input$calc_station_picker, {
-    goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
   })
   
   # this observe makes the left bar manually inputtable as well
@@ -154,6 +155,7 @@
         # right line
         list(type = "line", x0 = xRight, x1 = xRight,
              y0 = 0, y1 = 1, yref = "paper"),
+        # background conductivity
         list(type = "line", x0 = xLeft, x1 = xRight,
              y0 = goop$background, y1 = goop$background)
       )) %>%
@@ -206,20 +208,21 @@
   
   
   observeEvent(goop$combined_df, {
+    selected_stations <- unique(goop$combined_df$station)
     st <- c()
     colNames <- c()
+    
     for(i in 1:(length(unique(goop$combined_df$station)))){
-      st[i] <- 0
-      colNames[i] <- paste0('Station ', i)
-    }
+      station_num <- selected_stations[i]
+      st[i] <- 0 #assigns discharge value of 0 initially to each column
+      colNames[i] <- paste0('Station ', station_num)
+    } #for loop to name the columns after each unique station in goop$combined_df 
     
     a <- data.frame(matrix(st, nrow = 1))
     row.names(a) <- 'Discharge'
     colnames(a) <- colNames
-    goop$dichargeDF <- a
-    #View(goop$dichargeDF)
+    goop$dischargeDF <- a
   })
-  
   
   
   output$dischargeOutput <- renderText({
@@ -227,22 +230,17 @@
       station_slug <- goop$trimmed_slug
       
       station_slug <- station_slug %>%
-        mutate(NaCl_Conc = NA) %>%
-        relocate(NaCl_Conc, .after = Low_Range)
-      station_slug <- station_slug %>%
-        mutate(Area = NA) %>%
-        relocate(Area, .after = NaCl_Conc)
-      
-      background_cond <- as.numeric(input$background) 
-      station_slug <- station_slug %>%
-        mutate(NaCl_Conc = (Low_Range - background_cond) * 0.00047) %>%
-        mutate(Area = NaCl_Conc * 5)
+        mutate(NaCl_Conc = (Low_Range - as.numeric(goop$background)) * 0.00047,
+               Area = NaCl_Conc * 5)
       
       Area <- sum(station_slug$Area)
       Mass_NaCl <- input$salt_mass
       Discharge <- Mass_NaCl/Area
-      goop$dichargeDF[as.numeric(input$calc_station_picker)] <- Discharge
-      return(paste0('Discharge: ',Discharge)) 
+      
+      selected_station <- as.numeric(input$calc_station_picker)
+      goop$dischargeDF[, selected_station] <- Discharge
+      
+      return(paste0('Discharge: ', Discharge)) 
     }
     else{
       return('Discharge: N/A')
@@ -251,27 +249,17 @@
   
   output$halfheightOutput <- renderText({
     if(!is.null(goop$combined_df)){
-      station_slug <- goop$combined_df
+      station_slug <- goop$trimmed_slug
       
       Cmax <- max(station_slug$Low_Range)
-      index_Cmax <- which(station_slug$Low_Range == Cmax)
+      index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
+      print(index_Cmax)
       
       start_time <- goop$calc_xLeft
-      
-      startVal <- as.numeric(goop$calc_xLeft)
-      bottomVal <- as.numeric(goop$calc_xValue[1])
-      topVal <- as.numeric(goop$calc_xValue[length(goop$calc_xValue)])
-      minDist <- bottomVal
-      minVal <- bottomVal
-      index_start_time <- 0
-      for(x in bottomVal:topVal){
-        if(abs(startVal-x) <= minDist){
-          index_start_time <- x-bottomVal
-          minDist <- abs(startVal-x)
-          minVal <- x
-        }
-      }
-      
+      print(start_time)
+      index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
+      print(index_start_time)
+
       Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
 
       distances_to_half_height <- abs(station_slug$Low_Range[index_start_time:(index_Cmax)] - Chalf) #finds the difference between points before the max and the half height
@@ -279,8 +267,8 @@
 
       start_time <- station_slug$Date_Time[index_start_time]
       Chalf_time <- station_slug$Date_Time[index_Chalf]
-      time_to_half <- (Chalf_time-start_time)
-      return(paste0('Time to half height: ', time_to_half))
+      time_to_half <- (Chalf_time - start_time)
+      return(paste0('Time to half height: ', time_to_half, " minutes"))
     }
     else{
       return('Time to half height: N/A')
@@ -288,7 +276,7 @@
   }) #half height math
   
   output$dischargetable <- function() {
-    goop$dichargeDF |>
+    goop$dischargeDF |>
       knitr::kable("html") |>
       kable_styling("striped", full_width = F)
   }
@@ -331,7 +319,7 @@ output$downloadBtn <- downloadHandler(
   },
   content = function(file) {
     # Generate the content of the file
-    write.csv(goop$dichargeDF, file, row.names = FALSE)
+    write.csv(goop$dischargeDF, file, row.names = FALSE)
   }
 )
 
@@ -344,8 +332,8 @@ observeEvent(input$upload_to_gdrive, {
 
 observeEvent(input$path_ok,{
   name <- 'discharge.csv'
-  turn_file_to_csv(goop$dichargeDF, name)
-  res = tryCatch(upload_csv_file(goop$dichargeDF, name, input$drivePath), error = function(i) NA)
+  turn_file_to_csv(goop$dischargeDF, name)
+  res = tryCatch(upload_csv_file(goop$dischargeDF, name, input$drivePath), error = function(i) NA)
   if(is.na(res)){
     showModal(modalDialog(
       h3('The path you entered is invalid!'),
