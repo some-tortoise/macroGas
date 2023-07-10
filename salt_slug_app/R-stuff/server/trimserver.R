@@ -1,4 +1,3 @@
-
 observe({
   goop$trim_stations_df <- goop$combined_df
 }) #creates goop$trim_stations_df from those picked in station_picker

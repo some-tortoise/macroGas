@@ -23,7 +23,15 @@
   
   output$background_out <- renderUI({
     req(goop$calc_curr_station_df)
-    numericInput("background", label = "Enter background conductivity here", value = goop$background)
+    fluidRow(
+      column(width = 8,
+             numericInput("background", label = "Background conductivity:", value = goop$background)
+      ),
+      column(width = 2,
+             actionButton("question", label = "", icon = icon("question")),
+             bsTooltip(id = "question", "placeholder text", placement = "bottom", trigger = "hover", options = list(container = "body"))
+      )
+    )
   })
   
   output$calc_station <- renderUI({
@@ -84,7 +92,7 @@
   # })
   
   observe({
-    goop$background <- mean(goop$calc_curr_station_df$Low_Range)
+    goop$background <- (mean(goop$calc_curr_station_df$Low_Range) - 10)
   })
   
   observeEvent(input$background,{
@@ -190,7 +198,7 @@
   
   observe({
     goop$calc_discharge_table <- NULL
-  }) #currently useless
+  }) 
   
   observe({
     goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
