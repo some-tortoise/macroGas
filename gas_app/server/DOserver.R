@@ -24,7 +24,7 @@ output$do_metrics_full <- renderDT({
     Minimum = min(combined_df$DO_conc, na.rm = TRUE),
     Maximum = max(combined_df$DO_conc, na.rm = TRUE),
     Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = length(combined_df[combined_df$DO_conc <= 9])/(length(combined_df$DO_conc))
+    Hypoxia_Prob = sum(combined_df$DO_conc <= 9, na.rm = TRUE)/(length(combined_df$DO_conc))
   )
   datatable(metrics_dt)
 })
@@ -36,7 +36,7 @@ output$do_metrics_range <- renderDT({
     Minimum = min(metrics_df$DO_conc, na.rm = TRUE),
     Maximum = max(metrics_df$DO_conc, na.rm = TRUE),
     Amplitude = max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = length(metrics_df[metrics_df$DO_conc <= 9])/(length(metrics_df$DO_conc))
+    Hypoxia_Prob = sum(metrics_df$DO_conc <= 9, na.rm = TRUE)/(length(metrics_df$DO_conc))
   )
   datatable(metrics)
 })
