@@ -2,8 +2,8 @@ selectedData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
   event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
-  df_chosen <- df_plot[((paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.click.data$key) | 
-                          (paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key)),]
+  df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$Station) %in% event.click.data$key) | 
+                          (paste0(df_plot$id,'_',df_plot$Station) %in% event.selected.data$key)),]
   df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
   return(df_chosen)
 }) 
@@ -24,8 +24,8 @@ filteredData <- reactive({
 })
 
 output$start_datetime_input <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
-    default_value <- as.character(goop$combined_df$Date_Time[1])
+  if (!is.null(goop$combined_df)) {
+    default_value <- as.character(min(goop$combined_df$Date_Time))
   } else {
     default_value <- ""
   }
@@ -33,8 +33,8 @@ output$start_datetime_input <- renderUI({
 })
 
 output$end_datetime_input <- renderUI({
-  if (nrow(goop$combined_df) > 0) {
-    default_value <- as.character(goop$combined_df$Date_Time[1])
+  if (!is.null(goop$combined_df)) {
+    default_value <- as.character(max(goop$combined_df$Date_Time))
   } else {
     default_value <- ""
   }
@@ -43,10 +43,18 @@ output$end_datetime_input <- renderUI({
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  plot_ly(data = filteredData()[goop$combined_df$Variable == input$variable_choice,], type = 'scatter', mode = 'markers', 
-              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(Date_Time),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
+  start_time = tryCatch(as.POSIXct(input$start_datetime, "UTC"), 
+                        error = function(e) min(goop$combined_df$Date_Time))
+  end_time = tryCatch(as.POSIXct(input$end_datetime, "UTC"), 
+                      error = function(e) max(goop$combined_df$Date_Time))
+  plot_df = filteredData() %>% filter(Variable == input$variable_choice,
+                                      Date_Time >= start_time,
+                                      Date_Time <= end_time)
+  print(end_time)
+  plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
+              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
-      range = c(as.POSIXct(input$start_datetime), as.POSIXct(input$end_datetime)),  # Set the desired range from start date and time to end date and time
+      range = c(start_time - hours(1), end_time + hours(1)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>
     config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
