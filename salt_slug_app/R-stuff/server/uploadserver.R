@@ -126,11 +126,11 @@ observe({
 output$contents <- renderDT({ #displays the DT and allows to select rows/columns
   if((length(uploaded_data$csv_names)>0) & (uploaded_data$index<=length(uploaded_data$csv_names))){
     selected_file <- uploaded_data$data[[uploaded_data$index]]
-    targ <- switch(input$row_and_col_select,
-                   'rows' = 'row',
-                   'columns' = 'column')
-    datatable(selected_file, selection = list(target = targ),
-              options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
+    # targ <- switch(input$row_and_col_select,
+    #                'rows' = 'row',
+    #                'columns' = 'column')
+    datatable(selected_file, 
+             options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
   }
 })
 
