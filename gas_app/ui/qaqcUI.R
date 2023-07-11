@@ -42,7 +42,7 @@ varContainerServer <- function(id, variable, goop) {
       })
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "red", "interesting" = "yellow", "questionable" = "orange", "good" = "blue")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF", "good" = "#9EC1CF")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
         plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
