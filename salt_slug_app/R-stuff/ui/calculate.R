@@ -12,7 +12,10 @@ div(class = 'calculate-panel-container panel-container',
                  uiOutput("end_time"),
                  uiOutput("background_out"),
                  numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000),
+                 hr(),
+                 h3("Final Values"),
                  textOutput("dischargeOutput"),
+                 br(),
                  textOutput("halfheightOutput"),
                  actionButton('download', label = "",icon = icon("download"))
                  ),
@@ -20,7 +23,7 @@ div(class = 'calculate-panel-container panel-container',
                  class = 'calculate-graph-container',
                  plotlyOutput("dischargecalcplot"),
                  fluidRow(class = 'calculate-output-dt-container',
-                         DTOutput("dischargetable"))
+                         tableOutput("dischargetable"))
              )
     )
 )

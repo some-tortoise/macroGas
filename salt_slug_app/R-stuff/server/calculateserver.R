@@ -213,7 +213,9 @@
     } #for loop to name the columns after each unique station in goop$combined_df 
 
     a <- data.frame('Station' = which_station,
-                    'Discharge' = zero)
+                    'Discharge' = zero,
+                    'Half_Height' = zero,
+                    'Gwater_exchange' = zero)
     goop$dischargeDF <- a
   })
   
@@ -230,8 +232,7 @@
       Mass_NaCl <- input$salt_mass
       Discharge <- Mass_NaCl/Area
       
-      print(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'])
-      goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge #works obvi but only for row 1
+      goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
       
       return(paste0('Discharge: ', Discharge)) 
       
@@ -259,21 +260,21 @@
       start_time <- station_slug$Date_Time[index_start_time]
       Chalf_time <- station_slug$Date_Time[index_Chalf]
       time_to_half <- (Chalf_time - start_time)
+      
       return(paste0('Time to half height: ', time_to_half, " minutes"))
+      
     }
     else{
       return('Time to half height: N/A')
     }
   }) #half height math
   
-  # output$dischargetable <- function() {
-  #   goop$dischargeDF |>
-  #     knitr::kable("html") |>
-  #     kable_styling("striped", full_width = F)
-  # }
-  output$dischargetable <- renderDT(
-    goop$dischargeDF
-  )
+  output$dischargetable <- function() {
+    goop$dischargeDF %>%
+      knitr::kable("html", col.names =
+          c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Groundwater Exchange (?)")) %>%
+      kable_styling("striped", full_width = F)
+  }
 }
 
 #
