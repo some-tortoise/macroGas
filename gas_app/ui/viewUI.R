@@ -1,13 +1,14 @@
-varContainerUI <- function (id, var = 'Unknown Variable'){
+varViewUI <- function (id, var = 'Unknown Variable'){
   ns <- NS(id)
   tagList(
     div(class = 'view--type-container',
-        h1(var)
+        h1(var),
+        plotlyOutput(ns('main_plot_view'))
     )
   )
 }
 
-varContainerServerView <- function(id, variable, goop) {
+varViewServer <- function(id, variable, goop) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -28,6 +29,6 @@ div(class = 'view page',
         )
     ),
     div(class = 'view--main',
-        uiOutput('varContainers')
+        uiOutput('varViewContainers')
     )
 )
