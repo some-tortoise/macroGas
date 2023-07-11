@@ -28,7 +28,7 @@ div(class = 'view page',
     div(class = 'view--intro-container',
         div(class = 'view--intro',
             p(class = 'view--intro-instructions', "Select the date range you would like to view data from"),
-            dateRangeInput('viewDateRange', 'Enter Date Range')
+            uiOutput('viewDateRange')
         )
     ),
     div(class = 'view--main',
