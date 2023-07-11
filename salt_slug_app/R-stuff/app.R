@@ -14,6 +14,7 @@ library(tidyverse)
 library(dplyr)
 library(shinythemes)
 library(lubridate)
+library(knitr)
 library(kableExtra)
 
 reactlog_enable()
