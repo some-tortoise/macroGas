@@ -12,7 +12,8 @@ div(class = 'trim panel-container',
     div(class = 'trim--continue-container',
         p('When you are happy with your trim, press continue'),
         actionButton('trimContinue', class='continue-btn', 'Continue')
-        )
+        ),
+    div(class = 'instructions-container', '?')
 )
     # fluidRow(
     #   column(width= 6,

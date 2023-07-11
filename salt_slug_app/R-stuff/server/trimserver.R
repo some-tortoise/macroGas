@@ -65,7 +65,7 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
 })
 
 
-observeEvent(input$continue_button2, {
+observeEvent(input$trimContinue, {
   #trim goop$combined_df between goop$trim_xLeft and goop$trim_xRight here
   goop$combined_df <- subset(goop$combined_df, Date_Time > goop$trim_xLeft)
   goop$combined_df <- subset(goop$combined_df, Date_Time < goop$trim_xRight)
