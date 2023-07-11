@@ -18,7 +18,8 @@ div(class = 'qaqc panel-container',
                     )
                 )
             )
-        )
+        ),
+    div(class = 'instructions-container', '?')
     )
 
 # tags$style(
