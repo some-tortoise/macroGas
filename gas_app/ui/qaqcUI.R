@@ -20,15 +20,37 @@ varContainerServer <- function(id, variable, goop) {
   moduleServer(
     id,
     function(input, output, session) {
+      
+      selectedData <- reactive({
+        df_plot <- goop$combined_df
+        #event.click.data <- event_data(event = "plotly_click", source = paste0("typegraph_",variable))
+        event.selected.data <- event_data(event = "plotly_selected", source = paste0("typegraph_",variable))
+        df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Station) %in% event.selected.data$key),]
+        df_chosen <- df_chosen[df_chosen$Variable == variable,]
+        
+        return(df_chosen)
+      }) 
+      
       output$summary <- renderUI({
         print(unique(goop$combined_df$Variable))
         h1('Summary would go here')
       })
       
+      observeEvent(input$flag_btn, {
+        View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station))])
+        goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
+      })
+      
       output$main_plot <- renderPlotly({
-        plotdf <- goop$combined_df %>% filter(Variable == variable)
-        plot_ly(data = plotdf, type = 'scatter', mode = 'markers', 
-                x = ~Date_Time, y = ~Value)
+        filteredData <- goop$combined_df
+        plot_df = filteredData %>% filter(Variable == variable)
+        plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
+                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = c('lightblue', 'yellow'), source = paste0("typegraph_",variable)) |>
+          layout(xaxis = list(
+            type = "date"  # Specify the x-axis type as date
+          ), dragmode = 'select') |>
+          config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
+          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = variable))
       })
     }
   )
