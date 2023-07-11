@@ -48,18 +48,18 @@ div(class = 'upload-panel-container panel-container',
                        actionButton("delete", icon("trash")),
                        bsTooltip("delete", "Delete the selected dataset", placement = "bottom", trigger = "hover",
                                  options = list(container = "body")))),
-       #selectInput("select", "Select Files", choices = NULL),
-       #actionButton("delete", "Remove Selected Dataset"),
-       checkboxInput("Edit_upload", "Advanced editing", value = FALSE),
-       conditionalPanel(
-         condition = "input.Edit_upload",
-         # numericInput('station_name','Enter station number', 0),
-         radioButtons("row_and_col_select", "Choose which to edit",
-                      choices = c("rows",
-                                  "columns"),
-                      selected = "rows"),
-         actionButton('submit_delete', 'Delete selected')
-         )
+       selectInput("select", "Select Files", choices = NULL),
+       actionButton("delete", "Remove Selected Dataset"),
+       # checkboxInput("Edit_upload", "Advanced editing", value = FALSE),
+       # conditionalPanel(
+       #   condition = "input.Edit_upload",
+       #   # numericInput('station_name','Enter station number', 0),
+       #   radioButtons("row_and_col_select", "Choose which to edit",
+       #                choices = c("rows",
+       #                            "columns"),
+       #                selected = "rows"),
+       #   actionButton('submit_delete', 'Delete selected')
+       #   )
        ),
 
       #column for the output table

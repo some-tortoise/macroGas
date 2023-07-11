@@ -13,7 +13,7 @@ div(class = 'calculate-panel-container panel-container',
                  uiOutput("background_out"),
                  numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000),
                  hr(),
-                 h3("Final Values"),
+                 h4("Current Station Calculations:"),
                  textOutput("dischargeOutput"),
                  textOutput("halfheightOutput"),
                  actionButton('download', label = "",icon = icon("download"))
