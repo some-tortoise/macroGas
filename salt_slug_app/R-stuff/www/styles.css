@@ -69,6 +69,7 @@ NAVBAR
 }
 
 /***
+HOME
 ***/
 
 .home{padding-top: 50px;}
@@ -161,6 +162,98 @@ NAVBAR
 #homeContinue:hover{
   background-color: #f6c86ca6;
 }
+
+/***
+UPLOAD
+***/
+
+.upload--boxes-container{
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  margin-top: 20px;
+  gap:30px;
+}
+
+.upload--box-1{
+  margin-left: 50px;
+  display: flex;
+  flex-direction: column;
+  background-color: #F4F4F4;
+  border-radius: 5px;
+  padding: 50px;
+  max-width: 500px;
+  padding-bottom: 200px;
+}
+
+.upload--bar1{
+  background-color: #D9D9D9;
+  height: 3px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
+.upload--box-2{
+  width: 100%;
+  margin-right: 55px;
+  padding: 50px;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.upload--dt-container{
+  width: 100%;
+  min-height: 300px;
+}
+
+.upload--continue-container{
+  background-color: #F4F4F4;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  padding: 15px;
+}
+
+.upload--continue-container > p{
+  padding: none;
+  margin: 0 0 0 0;
+}
+
+.upload--continue-container > #uploadContinue{
+  background-color: #F8AD1BA6;
+  border-radius: 10px;
+  border: none;
+  color: #71480B;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.75px;
+
+}
+
+.instructions-container{
+  position: absolute;
+  right: 26px;
+  bottom: 26px;
+  border-radius: 100%;
+  padding: 10px;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #000000;
+  color: white;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+
 
 /*CALCULATE PANEL*/
 

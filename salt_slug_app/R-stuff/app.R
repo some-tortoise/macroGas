@@ -44,27 +44,7 @@ ui <- fluidPage(class = 'body-container',
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
-  includeScript(path = "www/script.js"),
-  tags$script(HTML("
-    $(document).on('click', '.left-arrow', function(){
-      var currentTab = $('#navbar .active > a').attr('data-value');
-      var prevTab = $('#navbar a[data-value=\"' + currentTab + '\"]').parent().prev().find('a');
-      if(prevTab.length > 0){
-        $(prevTab).tab('show');
-      }
-    });
-
-    $(document).on('click', '.right-arrow', function(){
-      var currentTab = $('#navbar .active > a').attr('data-value');
-      var nextTab = $('#navbar a[data-value=\"' + currentTab + '\"]').parent().next().find('a');
-      if(nextTab.length > 0){
-        $(nextTab).tab('show');
-      }
-    });
-  ")),
-  tags$div(class = "arrow-container",
-    tags$div(class = "arrow left-arrow", icon("chevron-left")),
-    tags$div(class = "arrow right-arrow", icon("chevron-right")))
+  includeScript(path = "www/script.js")
   )
  
 server <-  function(input, output, session) {
