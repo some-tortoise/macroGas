@@ -4,5 +4,5 @@ div(class = 'home page',
       h1(class = 'home--title', 'GHG Visualization Project')
     ),
     div(class = 'home--info-container', 
-        div(class = 'home--info-text', 'Created in collaboration with Bernhardt Lab'))
+        div(class = 'home--info-text', 'Created in collaboration with the Bernhardt Lab'))
     )
