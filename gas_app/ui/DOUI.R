@@ -1,7 +1,7 @@
 fluidPage(
   sidebarLayout(
     sidebarPanel("",
-                 dateRangeInput("do_date_viewer", "Select Date(s) To View/Calculate")),
+                 uiOutput("do_date_viewer")),
     mainPanel("",
               tabsetPanel(
                 tabPanel("Selected Range",

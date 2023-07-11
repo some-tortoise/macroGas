@@ -3,8 +3,15 @@ combined_df <- pivot_wider(combined_df,
   values_from = "Value"
 )
 
+output$do_date_viewer <- renderUI({
+  start_date = min(combined_df$Date_Time)
+  end_date = max(combined_df$Date_Time)
+  dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
+                 start = start_date, end = end_date)
+})
+
 filtered_df <- reactive({
-  selected_dates <- input$do_date_viewer
+  selected_dates <- input$date_range_input
   subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
 })
 

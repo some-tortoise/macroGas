@@ -67,7 +67,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       })
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF000", "good" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "good" = "#9EC1CF")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
         plot_df <- subset(plot_df, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
@@ -90,7 +90,7 @@ div(class = 'qaqc page',
   ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five 
   centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset 
   sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
-          dateRangeInput('qaqcDateRange', 'Enter Date Range')
+          uiOutput('qaqcDateRange')
         )
       ),
     div(class = 'qaqc--main',
