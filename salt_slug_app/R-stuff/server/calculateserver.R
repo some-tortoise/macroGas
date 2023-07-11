@@ -40,7 +40,7 @@
     }else{
       HTML("<label>Choose A Station<br></br></label>")
     }
-  })
+  }) #station picking
 }
 
 #
@@ -97,7 +97,7 @@
   })
   
   observe({
-    goop$background <- (mean(goop$calc_curr_station_df$Low_Range) - 10)
+    goop$background <- ((mean(goop$calc_curr_station_df$Low_Range)) - 10)
   })
   
   observeEvent(input$background,{
@@ -106,8 +106,6 @@
   
   # this observe makes the left bar manually inputtable as well
   observeEvent(input$start_datetime, {
-    print(goop$calc_xLeft)
-    print(input$start_datetime)
     inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
     if(!is.null(inputtedLeft)){
       goop$calc_xLeft <- inputtedLeft
@@ -116,8 +114,6 @@
   
   # this observe makes the right bar manually inputtable as well
   observeEvent(input$end_datetime, {
-    print(goop$calc_xRight)
-    print(input$end_datetime)
     inputtedLeft <- ymd_hms(input$end_datetime, tz = 'GMT')
     if(!is.null(inputtedLeft)){
       goop$calc_xLeft <- inputtedLeft
@@ -208,23 +204,23 @@
   
   
   observeEvent(goop$combined_df, {
-    st <- c()
-    colNames <- c()
-    print('FROG')
-    for(i in unique(goop$combined_df$station)){
-      st <- c(st, 0) #assigns discharge value of 0 initially to each column
-      colNames <- c(colNames, paste0('Station ', i))
+    zero <- c()
+    which_station <- c()
+
+        for(i in unique(goop$combined_df$station)){
+      zero <- c(zero, 0) #assigns discharge value of 0 initially to each column
+      which_station <- c(which_station, paste0('Station ', i))
     } #for loop to name the columns after each unique station in goop$combined_df 
-    print(a)
-    a <- data.frame('Station' = colNames,
-                    'Discharge' = st)
+
+    a <- data.frame('Station' = which_station,
+                    'Discharge' = zero)
     goop$dischargeDF <- a
   })
   
   
   output$dischargeOutput <- renderText({
     if(!is.null(goop$combined_df)){
-      station_slug <- goop$trimmed_slug
+      station_slug <- goop$trimmed_slug #using trimmed_slug which is only the values between two vertical bars
       
       station_slug <- station_slug %>%
         mutate(NaCl_Conc = (Low_Range - as.numeric(goop$background)) * 0.00047,
@@ -234,14 +230,16 @@
       Mass_NaCl <- input$salt_mass
       Discharge <- Mass_NaCl/Area
       
-      #goop$dischargeDF[as.numeric(input$calc_station_picker)] <- Discharge
-
+      print(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'])
+      goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge #works obvi but only for row 1
+      
       return(paste0('Discharge: ', Discharge)) 
+      
     }
     else{
       return('Discharge: N/A')
     }
-  }) #the math.R stuff that prints a final discharge value
+   }) #the math.R stuff that prints a final discharge value
   
   output$halfheightOutput <- renderText({
     if(!is.null(goop$combined_df)){
@@ -249,12 +247,9 @@
       
       Cmax <- max(station_slug$Low_Range)
       index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
-      print(index_Cmax)
-      
+
       start_time <- goop$calc_xLeft
-      print(start_time)
       index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
-      print(index_start_time)
 
       Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
 
