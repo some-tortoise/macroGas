@@ -241,6 +241,15 @@ UPLOAD
 
 }
 
+#uploadContinue{
+  transition-duration: 0.2s;
+}
+
+#uploadContinue:hover{
+  
+  background-color: #8d6310a6;
+}
+
 .instructions-container{
   position: absolute;
   right: 26px;
@@ -258,14 +267,83 @@ UPLOAD
   font-weight: 600;
 }
 
-#uploadContinue{
+/***
+TRIM
+***/
+
+.trim{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.trim--text-title-container{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.trim--text-title-container > h1{
+  color: #000;
+  font-family: Inter;
+  font-size: 30px;
+  font-weight: 700;
+  min-width: 270px;
+}
+
+.trim--bar1{
+  margin-top: 10px;
+  height: 10px;
+  width: 100%;
+  background-color: #EDEDED;
+}
+
+.trim--main-text{
+  color: #000;
+  font-family: Inter;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.trim--continue-container{
+  background-color: #F4F4F4;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  margin-top: 50px;
+}
+
+.trim--continue-container > p{
+  color: #000;
+  font-family: Inter;
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0 0 0 0;
+}
+
+.trim--continue-container > #trimContinue{
+  background-color: #F8AD1BA6;
+  border-radius: 10px;
+  border: none;
+  color: #71480B;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.75px;
   transition-duration: 0.2s;
 }
 
-#uploadContinue:hover{
+#trimContinue:hover{
   background-color: #8d6310a6;
 }
-
 /*CALCULATE PANEL*/
 
 .calculate-top-container{
