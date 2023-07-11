@@ -19,13 +19,18 @@ library(kableExtra)
 
 reactlog_enable()
 
-ui <- fluidPage(
+ui <- fluidPage(class = 'body-container',
   theme = shinytheme("flatly"),
   tags$head(
+    HTML(
+      '<link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Inknut+Antiqua:wght@400;500;700;800;900&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">'
+    ),
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(),
-  navbarPage(title = div(img(src = 'macrogas-logo.png', width = '60px')), id = "navbar",
+  navbarPage(title = '', id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
                  tabPanel('Upload',
