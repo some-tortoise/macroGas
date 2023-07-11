@@ -76,7 +76,7 @@ HOME PAGE
 }
 
 /***
-FLAG
+QAQC
 ***/
 
 
@@ -168,6 +168,39 @@ FLAG
     background: linear-gradient(180deg, #9AC1F9 0%, #7BACF4 100%);
     max-height: 39px;
     border: none;
+}
+
+/**
+QAQC: Summary
+**/
+
+.summary-container{
+    background-color: #F4F4F4;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    font-family: Inter;
+    padding-left: 67px;
+    padding-right: 67px;
+    padding-top: 35px;
+    padding-bottom: 51px;
+}
+
+.summary-sub-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.summary-sub-container > h1{
+    font-weight: 900;
+    font-size: 18px;
+}
+
+.summary-sub-container > p{
+    font-weight: 400;
+    font-size: 14px;
 }
 
 

@@ -32,8 +32,33 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       }) 
       
       output$summary <- renderUI({
-        print(unique(goop$combined_df$Variable))
-        h1('Summary would go here')
+        values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
+        full_mean <- round(mean(values, na.rm = TRUE), 2)
+        full_median <- median(values, na.rm = TRUE)
+        print(mean)
+        div(class = 'summary-container',
+            div(class = 'summary-sub-container',
+                h1('Daily'),
+                p(paste0('Mean: ','Unknown')),
+                p(paste0('Median: ','Unknown')),
+                p(paste0('Standard deviation: ','Unknown')),
+                dateInput('summary_daily_date', 'Date: ')
+                ),
+            div(class = 'summary-sub-container',
+                h1('Full'),
+                p(paste0('Mean: ',full_mean)),
+                p(paste0('Median: ',full_median)),
+                p(paste0('Standard deviation: ','Unknown'))
+              ),
+            div(class = 'summary-sub-container',
+                h1('Custom'),
+                p(paste0('Mean: ','Unknown')),
+                p(paste0('Median: ','Unknown')),
+                p(paste0('Standard deviation: ','Unknown')),
+                dateRangeInput('summary_custom_dateRange', 'Date Range:')
+              )
+            )
+        
       })
       
       observeEvent(input$flag_btn, {
