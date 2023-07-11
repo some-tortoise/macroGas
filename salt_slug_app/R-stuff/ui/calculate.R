@@ -15,7 +15,6 @@ div(class = 'calculate-panel-container panel-container',
                  hr(),
                  h3("Final Values"),
                  textOutput("dischargeOutput"),
-                 br(),
                  textOutput("halfheightOutput"),
                  actionButton('download', label = "",icon = icon("download"))
                  ),
