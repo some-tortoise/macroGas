@@ -259,11 +259,11 @@
 
       start_time <- station_slug$Date_Time[index_start_time]
       Chalf_time <- station_slug$Date_Time[index_Chalf]
-      time_to_half <- (Chalf_time - start_time)
+      time_to_half <- ((Chalf_time - start_time)*60)
       
       goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
       
-      return(paste0('Time to half height: ', time_to_half, " minutes"))
+      return(paste0('Time to half height: ', time_to_half, " seconds"))
       
     }
     else{
