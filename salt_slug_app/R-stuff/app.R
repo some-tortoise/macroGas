@@ -19,6 +19,10 @@ library(kableExtra)
 
 reactlog_enable()
 
+js_code <- HTML("shinyjs.enableUpload = function() {
+               document.getElementById('uploadContinue').classList.remove('disabled')
+           }")
+
 ui <- fluidPage(class = 'body-container',
   theme = shinytheme("flatly"),
   tags$head(
@@ -30,6 +34,7 @@ ui <- fluidPage(class = 'body-container',
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
   useShinyjs(),
+  extendShinyjs(text = js_code, functions = "enableUpload"),
   navbarPage(title = '', id = "navbar",
                  tabPanel('Home',
                           source("ui/home.R")[1]),
@@ -44,7 +49,17 @@ ui <- fluidPage(class = 'body-container',
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
-  includeScript(path = "www/script.js")
+  includeScript(path = "www/script.js"),
+  tags$script(HTML("
+    $(document).on('click', '.continue-btn', function(){
+      if(this.classList.contains('disabled')) return;
+      var currentTab = $('#navbar .active > a').attr('data-value');
+      var nextTab = $('#navbar a[data-value=\"' + currentTab + '\"]').parent().next().find('a');
+      if(nextTab.length > 0){
+        $(nextTab).tab('show');
+      }
+    });
+  ")),
   )
  
 server <-  function(input, output, session) {

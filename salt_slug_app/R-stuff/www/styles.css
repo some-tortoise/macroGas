@@ -6,6 +6,7 @@ body{
   font-family: 'Inter', sans-serif;
   margin: 0;
   padding: 0;
+  
 }
 
 .body-container{
@@ -16,6 +17,14 @@ body{
 div .container-fluid{
   margin: 0;
   padding: 0;
+}
+
+#homeContinue{
+  transition-duration: 0.2s;
+}
+
+#homeContinue:hover{
+  background-color: #8d6310a6;
 }
 
 /***
@@ -159,9 +168,7 @@ HOME
   letter-spacing: 1.5px;
 }
 
-#homeContinue:hover{
-  background-color: #f6c86ca6;
-}
+
 
 /***
 UPLOAD
@@ -184,21 +191,19 @@ UPLOAD
   border-radius: 5px;
   padding: 50px;
   max-width: 500px;
-  padding-bottom: 200px;
 }
 
 .upload--bar1{
   background-color: #D9D9D9;
   height: 3px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  margin-top: 50px;
+  margin-bottom: 50px;
 }
 
 .upload--box-2{
   width: 100%;
   margin-right: 55px;
-  padding: 50px;
-  padding-top: 0;
+  padding: 0 50 0 50;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -253,7 +258,13 @@ UPLOAD
   font-weight: 600;
 }
 
+#uploadContinue{
+  transition-duration: 0.2s;
+}
 
+#uploadContinue:hover{
+  background-color: #8d6310a6;
+}
 
 /*CALCULATE PANEL*/
 

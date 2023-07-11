@@ -163,7 +163,14 @@ observeEvent(input$submit_delete, {
   }
 }) #code to delete rows/columns
 
-observeEvent(input$continue_button,{
+observeEvent(uploaded_data$data,  {
+  js$enableUpload()
+})
+
+observeEvent(input$uploadContinue,{
+  if(is.na(uploaded_data$data) || is.null(uploaded_data$data)){
+    return();
+  }
   comb_df <- do.call(rbind, uploaded_data$data)
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
   comb_df <- comb_df %>% #saves following code as loaded

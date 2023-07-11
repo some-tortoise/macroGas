@@ -1,7 +1,8 @@
 div(class = 'upload panel-container',
     div(class = 'upload--boxes-container',
         div(class = 'upload--box-1',
-          p('Files that do not obey the data format will not be accepted. You can download the data format HERE'),
+          p('Files that do not obey the data format will not be accepted. You can download the data format here.'),
+          downloadButton("downloadFile", "Data format"), 
           div(class = 'upload--bar1 style-bar'),
           radioButtons('upload_m', 'How would you like to upload your data?', c('Manually', 'Through Google Drive ' = 'Google Drive')),
           conditionalPanel(
@@ -30,7 +31,7 @@ div(class = 'upload panel-container',
                 DTOutput("contents")),
             div(class = 'upload--continue-container',
                 p('When you have uploaded all your files, press continue.'),
-                actionButton('uploadContinue', 'Continue'))
+                actionButton('uploadContinue', class='continue-btn disabled', 'Continue'))
             )
         ),
     div(class = 'instructions-container', '?')

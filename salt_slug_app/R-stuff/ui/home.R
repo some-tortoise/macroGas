@@ -20,6 +20,6 @@ div(class = 'home panel-container',
           )
         ),
     div(class = 'home--btn-container',
-        actionButton('homeContinue', 'Continue')
+        actionButton('homeContinue', class='continue-btn', 'Continue')
         )
   )
