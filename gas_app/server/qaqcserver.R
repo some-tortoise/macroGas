@@ -89,17 +89,18 @@ observeEvent(input$reset_Yes,{
 })
 
 output$varContainers <- renderUI({
-  LL <- vector("list",10)       
-  for(i in unique(goop$combined_df$Variable)){
+  vars <- unique(goop$combined_df$Variable)
+  LL <- vector("list",length(vars))       
+  for(i in vars){
     LL[[i]] <- list(varContainerUI(id = i, var = i))
   }      
   return(LL)  
 })
 
 observe({
-  for(i in unique(goop$combined_df$Variable)){
-    varContainerServer(i, goop = goop)
-  }
+  lapply(unique(goop$combined_df$Variable), function(i) {
+    varContainerServer(id = i, variable = i, goop = goop)
+  })
 })
 
 # Download Clean Data in Longer Format
