@@ -10,6 +10,6 @@ output$varViewContainers <- renderUI({
 
 observe({
   lapply(unique(goop$combined_df$Variable), function(i) {
-    varViewServer(id = i, variable = i, goop = goop)
+    varViewServer(id = i, variable = i, goop = goop, dateRange = reactive({input$viewDateRange}))
   })
 })

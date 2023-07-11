@@ -8,12 +8,14 @@ varViewUI <- function (id, var = 'Unknown Variable'){
   )
 }
 
-varViewServer <- function(id, variable, goop) {
+varViewServer <- function(id, variable, goop, dateRange) {
   moduleServer(
     id,
     function(input, output, session) {
+      
       output$main_plot_view <- renderPlotly({
         plotdf_view <- goop$combined_df %>% filter(Variable == variable)
+        plotdf_view <- subset(plotdf_view, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         plot_ly(data = plotdf_view, type = 'scatter', mode = 'markers', 
                 x = ~Date_Time, y = ~Value)
       })

@@ -73,7 +73,7 @@ output$varContainers <- renderUI({
 
 observe({
   lapply(unique(goop$combined_df$Variable), function(i) {
-    varContainerServer(id = i, variable = i, goop = goop)
+    varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$qaqcDateRange}))
   })
 })
 

@@ -16,7 +16,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
   )
 }
 
-varContainerServer <- function(id, variable, goop) {
+varContainerServer <- function(id, variable, goop, dateRange) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -45,6 +45,7 @@ varContainerServer <- function(id, variable, goop) {
         color_mapping <- c("bad" = "red", "interesting" = "yellow", "questionable" = "orange", "good" = "blue")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
+        plot_df <- subset(plot_df, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
                 x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = color_mapping, source = paste0("typegraph_",variable)) |>
           layout(xaxis = list(
