@@ -44,9 +44,7 @@ div(class = 'qaqc page',
   sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
           dateRangeInput('qaqcDateRange', 'Enter Date Range'),
           uiOutput("station"),
-          uiOutput("variable_c"),
-          uiOutput("start_datetime_input"),
-          uiOutput("end_datetime_input")
+          uiOutput("variable_c")
         )
       ),
     div(class = 'qaqc--main',
@@ -55,27 +53,3 @@ div(class = 'qaqc page',
         uiOutput('varContainers')
     )
 )
-
-
-
-
-
-
-
-
-# fluidRow(
-#   column(width= 3,
-#          HTML("<h5><b>Select station to view</b></h5>"),
-#          uiOutput("station"),
-#          uiOutput("variable_c"),
-#          uiOutput("start_datetime_input"),
-#          uiOutput("end_datetime_input"),
-#          #selectInput('flag_type', label = 'Select flag type', c('good', 'questionable', 'interesting', 'bad')),
-#          #actionButton('flag_btn', label = 'Flag points'),
-#          actionButton("Reset", label = "reset flags")
-#   ),
-#   column(width= 8,
-#          dataTableOutput('selected_data_table'),
-#          downloadButton('download_longer',"Download Data")
-#   )
-# )
