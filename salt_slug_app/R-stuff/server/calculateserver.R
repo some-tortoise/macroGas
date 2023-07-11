@@ -274,7 +274,7 @@
   output$dischargetable <- function() {
     goop$dischargeDF %>%
       knitr::kable("html", col.names =
-          c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Groundwater Exchange (?)")) %>%
+          c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Groundwater Exchange (L/s)")) %>%
       kable_styling("striped", full_width = F)
   }
 }
