@@ -1,11 +1,11 @@
-filteredData <- reactive({
+filteredDataView <- reactive({
   df_plot_view <- goop$combined_df[goop$combined_df$Station %in% input$Station, ]
   selected_dates_view <- input$viewDateRange
   subset(df_plot_view, Date_Time >= selected_dates_view[1] & Date_Time <= selected_dates_view[2])
 })
 
-output$main_plot <- renderPlotly({
-  plot_df_view = filteredData() %>% filter(Variable == input$variable_choice)
+output$main_plot_view <- renderPlotly({
+  plot_df_view = filteredDataView() %>% filter(Variable == input$variable_choice)
   plot_ly(data = plot_df_view, type = 'scatter', mode = 'markers', 
           x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(

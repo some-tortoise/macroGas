@@ -1,5 +1,4 @@
 
-
 # selectedData <- reactive({
 #   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
 #   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
