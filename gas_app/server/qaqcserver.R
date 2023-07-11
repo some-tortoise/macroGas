@@ -23,40 +23,15 @@ radioButtons('Station', label = '', choices = setNames(num_station, num_station)
 # Reactive expression for filtered data
 filteredData <- reactive({
   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station, ]
+  selected_dates_qaqc <- input$qaqcDateRange
+  subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
 })
-
-output$start_datetime_input <- renderUI({
-  if (!is.null(goop$combined_df)) {
-    default_value <- as.character(min(goop$combined_df$Date_Time))
-  } else {
-    default_value <- ""
-  }
-  textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
-})
-
-output$end_datetime_input <- renderUI({
-  if (!is.null(goop$combined_df)) {
-    default_value <- as.character(max(goop$combined_df$Date_Time))
-  } else {
-    default_value <- ""
-  }
-  textInput("end_datetime", "End Date and Time", value = default_value)
-})
-
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
-  start_time = tryCatch(as.POSIXct(input$start_datetime, "UTC"), 
-                        error = function(e) min(goop$combined_df$Date_Time))
-  end_time = tryCatch(as.POSIXct(input$end_datetime, "UTC"), 
-                      error = function(e) max(goop$combined_df$Date_Time))
-  plot_df = filteredData() %>% filter(Variable == input$variable_choice,
-                                      Date_Time >= start_time,
-                                      Date_Time <= end_time)
-  print(end_time)
+  plot_df = filteredData() %>% filter(Variable == input$variable_choice)
   plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
               x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
-      range = c(start_time - hours(1), end_time + hours(1)),  # Set the desired range from start date and time to end date and time
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>
     config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>

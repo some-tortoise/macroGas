@@ -7,7 +7,7 @@ div(class = 'upload-panel-container panel-container',
     ),
     #column for sidebar options
     column(width = 3,
-                 bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "extra-small"),
+                 bsButton("q1", label = "Instructions", icon = icon("question"), style = "info", size = "default"),
        bsPopover(id = "q1", title = "",
                  content = paste0("The “Download File” button contains a CSV with an example breakthrough curve in the required formatting. Feel free to use this data to get familiar with using the app.<br><br>",
                                   "Match CSV files to the example formatting. If your data is missing certain fields, you can create the respective column and leave it blank (except for ’Station’). Column naming conventions must match. If each experiment station is saved as an individual CSV, you can either upload them one at a time (allowing us to validate formatting for each), or create one large CSV that identifies each station. Either way — there must be a station column! <em>Please only upload data from a single tracer injection experiment at a time!</em><br><br>",
@@ -75,3 +75,4 @@ div(class = 'upload-panel-container panel-container',
        )
       )
 )
+
