@@ -42,10 +42,11 @@ varContainerServer <- function(id, variable, goop) {
       })
       
       output$main_plot <- renderPlotly({
+        color_mapping <- c("bad" = "red", "interesting" = "yellow", "questionable" = "orange", "good" = "blue")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
         plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
-                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = c('lightblue', 'yellow'), source = paste0("typegraph_",variable)) |>
+                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = color_mapping, source = paste0("typegraph_",variable)) |>
           layout(xaxis = list(
             type = "date"  # Specify the x-axis type as date
           ), dragmode = 'select') |>
