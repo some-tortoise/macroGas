@@ -11,7 +11,7 @@ observe({
     })
     
     output$station <- renderUI({
-      num_station <- unique(goop$combined_df$station)
+      num_station <- sort(unique(goop$combined_df$station)) 
       radioButtons('station', label = "Select station to graph", num_station)
     })
     
@@ -20,15 +20,15 @@ observe({
                    choices = c("Low Range, µs/cm" = "Low_Range", "Full Range, µs/cm" = 'Full_Range', "Temp, C" = 'Temp_C'))
     })
       
-    output$start_datetime_input <- renderUI({
-      default_value <- as.character(goop$combined_df$Date_Time[1])
-      textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
-    })
-    
-    output$end_datetime_input <- renderUI({
-      default_value <- as.character(goop$combined_df$Date_Time[1])
-      textInput("end_datetime", "End date and time", value = default_value)
-    })
+    # output$start_datetime_input <- renderUI({
+    #   default_value <- as.character(goop$combined_df$Date_Time[1])
+    #   textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+    # })
+    # 
+    # output$end_datetime_input <- renderUI({
+    #   default_value <- as.character(goop$combined_df$Date_Time[1])
+    #   textInput("end_datetime", "End date and time", value = default_value)
+    # })
     
     output$main_plot <- renderUI({
       plotlyOutput("flag_plot")
@@ -87,3 +87,4 @@ observeEvent(input$flag_btn, {
 #
 # EXPORT STUFF
 #
+

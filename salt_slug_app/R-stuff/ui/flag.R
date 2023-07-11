@@ -15,8 +15,8 @@ div(class = 'flag-panel-container panel-container',
              br(),
              uiOutput("station"),
              uiOutput("variable_c"),
-             uiOutput("start_datetime_input"),
-             uiOutput("end_datetime_input"),
+             # uiOutput("start_datetime_input"),
+             # uiOutput("end_datetime_input"),
              selectInput('flag_type', label = 'Select Flag Type', c('good', 'questionable', 'interesting', 'bad')),
              actionButton('flag_btn', label = 'Flag points')
       ),
@@ -26,3 +26,4 @@ div(class = 'flag-panel-container panel-container',
       )
     )
 )
+
