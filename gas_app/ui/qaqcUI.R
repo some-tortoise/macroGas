@@ -42,7 +42,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       })
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF", "good" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF000", "good" = "#9EC1CF")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
         plot_df <- subset(plot_df, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
