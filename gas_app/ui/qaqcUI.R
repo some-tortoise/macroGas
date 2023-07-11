@@ -32,18 +32,15 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       }) 
       
       output$summary <- renderUI({
-        values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
-        full_mean <- round(mean(values, na.rm = TRUE), 2)
-        full_median <- median(values, na.rm = TRUE)
-        print(mean)
+        full_values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
+        custom_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time >= input$summary_custom_dateRange[1] & goop$combined_df$Date_Time <= input$summary_custom_dateRange[2]), 'Value']
+        full_mean <- round(mean(full_values, na.rm = TRUE), 2)
+        full_median <- median(full_values, na.rm = TRUE)
+        custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
+        custom_median <- median(custom_values, na.rm = TRUE)
+        start_date_summary = min(goop$combined_df$Date_Time)
+        end_date_summary = max(goop$combined_df$Date_Time)
         div(class = 'summary-container',
-            div(class = 'summary-sub-container',
-                h1('Daily'),
-                p(paste0('Mean: ','Unknown')),
-                p(paste0('Median: ','Unknown')),
-                p(paste0('Standard deviation: ','Unknown')),
-                dateInput('summary_daily_date', 'Date: ')
-                ),
             div(class = 'summary-sub-container',
                 h1('Full'),
                 p(paste0('Mean: ',full_mean)),
@@ -52,10 +49,10 @@ varContainerServer <- function(id, variable, goop, dateRange) {
               ),
             div(class = 'summary-sub-container',
                 h1('Custom'),
-                p(paste0('Mean: ','Unknown')),
-                p(paste0('Median: ','Unknown')),
+                p(paste0('Mean: ',custom_mean)),
+                p(paste0('Median: ',custom_median)),
                 p(paste0('Standard deviation: ','Unknown')),
-                dateRangeInput('summary_custom_dateRange', 'Date Range:')
+                dateRangeInput('summary_custom_dateRange', 'Date Range:', start = start_date_summary, end = end_date_summary)
               )
             )
         
