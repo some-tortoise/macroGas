@@ -36,12 +36,12 @@ Quality Assurance/Quality Control page allows you to select a station and view t
 
 1. Select a station you would like to view.
 2. Once selected, you can change the variable you are viewing.
-3. Click on a point or select multiple points on the plot to the right.
-4. Use the buttons on the left to flag the selected points.
+3. Click on one or multiple points on the plot.
+4. Use the button above to flag the selected points.
 
 **Calculate**
 
-Calculate page performs area calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the calculated discharges for each stations.
+Calculate page performs *discharge*  and *time to half height* calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the results.
 
 ## Getting Started
 To get started with the Salt Slug App, make sure you have R Studio installed on your computer. Then, clone the repository by running the following command: 
