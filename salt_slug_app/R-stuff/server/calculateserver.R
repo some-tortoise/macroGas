@@ -322,12 +322,14 @@
     p(paste0(mean,' L/s'))
   })
   
-  output$dischargetable <- function() {
-    goop$dischargeDF %>%
-      knitr::kable("html", col.names =
-          c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
-      kable_styling("striped", full_width = F)
-  }
+  observeEvent(goop$combined_df, {
+    output$dischargetable <- function() {
+      goop$dischargeDF %>%
+        knitr::kable("html", col.names =
+                       c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
+        kable_styling("striped", full_width = F)
+    }
+  })
 }
 
 #
