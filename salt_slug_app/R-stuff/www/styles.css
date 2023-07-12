@@ -520,11 +520,40 @@ CALCULATE
   width: 100%;
   display: flex;
   flex-direction: column;
+  gap: 20px;
 }
 
 .general-stats-out{
   border-radius: 5px;
   background-color: #F4F4F4;
+  padding: 10px;
+}
+
+.calculate--downloads-container{
+  border-radius: 5px;
+  background-color: #F4F4F4;
+  padding: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 50px;
+}
+
+#downloadFlaggedDataset, #downloadOutputTable{
+  background-color: #F8AD1BA6;
+  border-radius: 10px;
+  border: none;
+  color: #71480B;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.75px;
+  transition-duration: 0.2s;
+}
+
+
+#downloadFlaggedDataset:hover, #downloadOutputTable:hover{
+  background-color: #8d6310a6;
 }
 
 
