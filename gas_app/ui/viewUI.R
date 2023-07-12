@@ -1,8 +1,14 @@
 varViewUI <- function (id, var = 'Unknown Variable'){
   ns <- NS(id)
+  variable_names <- list(
+    'Temp_C' = 'Temp C',
+    'DO_conc' = 'DO Concentration'
+  )
+  
+  alias <- variable_names[var]
   tagList(
     div(class = 'view--type-container',
-        h1(var),
+        h1(alias),
         plotlyOutput(ns('main_plot_view'))
     )
   )
