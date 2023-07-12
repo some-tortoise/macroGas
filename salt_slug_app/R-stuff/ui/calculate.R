@@ -9,8 +9,8 @@ div(class = 'calculate panel-container',
         div(class = 'calculate--sidebar',
             uiOutput("calc_station"),
             uiOutput("background_out"),
-            numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000),
-            checkboxInput('advancedEditing', 'Advanced Editing')
+            numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000)#,
+            #checkboxInput('advancedEditing', 'Advanced Editing')
             ),
         div(class = 'calculate--graph-stuff',
             plotlyOutput("dischargecalcplot"),
@@ -20,7 +20,6 @@ div(class = 'calculate panel-container',
             )
         ),
     div(class = 'calculate--box2',
-        tableOutput("dischargetable"),
         div(class = 'calculate--box3',
             div(class = 'general-stats-out',
                 p('Groundwater exchange: 5')),
@@ -28,7 +27,8 @@ div(class = 'calculate panel-container',
                 actionButton('downloadFlaggedDataset', 'Download Flagged Dataset'),
                 actionButton('downloadOutputTable', 'Download Output Table')
                 )
-            )
+            ),
+        tableOutput("dischargetable")
         ),
     div(class = 'instructions-container', '?')
     )

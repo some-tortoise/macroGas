@@ -3,23 +3,23 @@
 #
 {
   
-  output$start_time <- renderUI({
-    if (!is.null(goop$combined_df)) {
-      default_value <- as.character(goop$combined_df$Date_Time[1])
-    } else {
-      default_value <- ""
-    }
-    textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
-  }) #start time renderUI
-  
-  output$end_time <- renderUI({
-    if (!is.null(goop$combined_df)) {
-      default_value <- as.character(goop$combined_df$Date_Time[1])
-    } else {
-      default_value <- ""
-    }
-    textInput("end_datetime", "End Date and Time", value = default_value)
-  }) #end time renderUI
+  # output$start_time <- renderUI({
+  #   if (!is.null(goop$combined_df)) {
+  #     default_value <- as.character(goop$combined_df$Date_Time[1])
+  #   } else {
+  #     default_value <- ""
+  #   }
+  #   textInput("start_datetime", "Enter Start Date and Time (YYYY-MM-DD HH:MM:SS)", value = default_value)
+  # }) #start time renderUI
+  # 
+  # output$end_time <- renderUI({
+  #   if (!is.null(goop$combined_df)) {
+  #     default_value <- as.character(goop$combined_df$Date_Time[1])
+  #   } else {
+  #     default_value <- ""
+  #   }
+  #   textInput("end_datetime", "End Date and Time", value = default_value)
+  # }) #end time renderUI
   
   output$background_out <- renderUI({
     req(goop$calc_curr_station_df)
@@ -47,14 +47,10 @@
 # PLOT STUFF
 #
 {
-    
-  observe({
+  
+  observeEvent(input$calc_station_picker, {
     goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
   }) #filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
-  
-  observe({
-    goop$calc_curr_station_df$Date_Time <- goop$calc_curr_station_df$Date_Time
-  })
   
   observe({
     goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
@@ -62,9 +58,8 @@
   }) #assigns date/time to the x-axis, conductivity to the y-axis 
   
   observe({
-    goop$calc_xLeft <- goop$calc_xValue[1]
-    goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1]
-    goop$calc_xOne <- as.numeric(goop$calc_xValue[1])
+    goop$calc_xLeft <- goop$calc_xValue[1] # This is our starting guess for the left bar
+    goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1] #  This is our starting guess for the right bar
   })
   
   # observeEvent(input$calc_station_picker,{
@@ -91,13 +86,8 @@
   #   goop$background <- background_cond
   # })
   
-    
   observeEvent(input$calc_station_picker, {
-    goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
-  })
-  
-  observe({
-    goop$background <- ((mean(goop$calc_curr_station_df$Low_Range)) - 10)
+    goop$background <- round(((mean(goop$calc_curr_station_df$Low_Range)) - 10), 2)
   })
   
   observeEvent(input$background,{
@@ -105,20 +95,20 @@
   })
   
   # this observe makes the left bar manually inputtable as well
-  observeEvent(input$start_datetime, {
-    inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
-    if(!is.null(inputtedLeft)){
-      goop$calc_xLeft <- inputtedLeft
-    }
-  })
+  # observeEvent(input$start_datetime, {
+  #   inputtedLeft <- ymd_hms(input$start_datetime, tz = 'GMT')
+  #   if(!is.null(inputtedLeft)){
+  #     goop$calc_xLeft <- inputtedLeft
+  #   }
+  # })
   
   # this observe makes the right bar manually inputtable as well
-  observeEvent(input$end_datetime, {
-    inputtedLeft <- ymd_hms(input$end_datetime, tz = 'GMT')
-    if(!is.null(inputtedLeft)){
-      goop$calc_xLeft <- inputtedLeft
-    }
-  })
+  # observeEvent(input$end_datetime, {
+  #   inputtedLeft <- ymd_hms(input$end_datetime, tz = 'GMT')
+  #   if(!is.null(inputtedLeft)){
+  #     goop$calc_xLeft <- inputtedLeft
+  #   }
+  # })
   
   output$dischargecalcplot <- renderPlotly({
     
@@ -126,8 +116,9 @@
     req(goop$calc_xLeft)
     req(goop$calc_xRight)
     
-    xVal <- goop$calc_curr_station_df$Date_Time
-    yVal <- goop$calc_curr_station_df$Low_Range
+    #some relabeling for shorter code
+    xVal <- goop$calc_xValue
+    yVal <- goop$calc_yValue
     xLeft <- goop$calc_xLeft
     xRight <- goop$calc_xRight
     
@@ -150,17 +141,14 @@
              y0 = 0, y1 = 1, yref = "paper"),
         # right line
         list(type = "line", x0 = xRight, x1 = xRight,
-             y0 = 0, y1 = 1, yref = "paper"),
+             y0 = 0, y1 = 1, yref = "paper")
         # background conductivity
-        list(type = "line", x0 = xLeft, x1 = xRight,
-             y0 = goop$background, y1 = goop$background)
+        # list(type = "line", x0 = xLeft, x1 = xRight,
+        #      y0 = goop$background, y1 = goop$background)
       )) %>%
       config(edits = list(shapePosition = TRUE))
     
-    event_data("plotly_relayout", source = "dischargecalcplot")
-    p <- event_register(p, 'plotly_relayout')
     p
-    
   })
   
   
@@ -183,11 +171,12 @@
     }else if(barNum == 1){
       goop$calc_xRight <- 0
       goop$calc_xRight <- pts[1]
-    }else if(barNum == 2){
-      new_background <- ed[grepl("^shapes.*y0$", names(ed))][[1]]
-      goop$background <- 0
-      goop$background <- new_background
     }
+    # else if(barNum == 2){
+    #   new_background <- ed[grepl("^shapes.*y0$", names(ed))][[1]]
+    #   goop$background <- 0
+    #   goop$background <- new_background
+    # }
   })
 }
 
