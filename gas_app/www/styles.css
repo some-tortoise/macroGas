@@ -175,6 +175,7 @@ QAQC: Summary
 **/
 
 .summary-container{
+    position: relative;
     background-color: #F4F4F4;
     display: flex;
     flex-direction: row;
@@ -183,7 +184,7 @@ QAQC: Summary
     font-family: Inter;
     padding-left: 67px;
     padding-right: 67px;
-    padding-top: 35px;
+    padding-top: 85px;
     padding-bottom: 51px;
 }
 
@@ -201,6 +202,15 @@ QAQC: Summary
 .summary-sub-container > p{
     font-weight: 400;
     font-size: 14px;
+}
+
+.summary-flag-container{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    top: 30px;
+    justify-content: center;
 }
 
 

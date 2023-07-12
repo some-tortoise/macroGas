@@ -41,18 +41,50 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       }) 
       
       output$summary <- renderUI({
-        full_values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
-        custom_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time >= input$summary_custom_dateRange[1] & goop$combined_df$Date_Time <= input$summary_custom_dateRange[2]), 'Value']
-        full_mean <- round(mean(full_values, na.rm = TRUE), 2)
-        full_median <- median(full_values, na.rm = TRUE)
-        custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
-        custom_median <- median(custom_values, na.rm = TRUE)
-        full_sd <- sd(full_values, na.rm = TRUE)
-        custom_sd <- sd(custom_values, na.rm = TRUE)
+        
         start_date_summary = min(goop$combined_df$Date_Time)
         end_date_summary = max(goop$combined_df$Date_Time)
         
+        summary_daily_dateValue <- input$summary_daily_date
+        if(is.null(input$summary_daily_date)){
+          summary_daily_dateValue <- start_date_summary
+        }
+        
+        summary_custom_startValue <- input$summary_custom_dateRange[1]
+        if(is.null(input$summary_custom_dateRange[1])){
+          summary_custom_startValue <- start_date_summary
+        }
+        
+        summary_custom_endValue <- input$summary_custom_dateRange[2]
+        if(is.null(input$summary_custom_dateRange[2])){
+          summary_custom_endValue <- end_date_summary
+        }
+        
+        full_values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
+        full_mean <- round(mean(full_values, na.rm = TRUE), 2)
+        full_median <- median(full_values, na.rm = TRUE)
+        full_sd <- round(sd(full_values, na.rm = TRUE), 2)
+        
+        daily_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time == summary_daily_dateValue), 'Value']
+        daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
+        daily_median <- median(daily_values, na.rm = TRUE)
+        daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
+        
+        custom_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time >= summary_custom_startValue & goop$combined_df$Date_Time <= summary_custom_endValue), 'Value']
+        custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
+        custom_median <- median(custom_values, na.rm = TRUE)
+        custom_sd <- round(sd(custom_values, na.rm = TRUE), 2)
+        
         div(class = 'summary-container',
+            div(class = 'summary-flag-container',
+                checkboxInput(paste0(variable,'-summaryFlag'), 'Include Flags?')),
+            div(class = 'summary-sub-container',
+                h1('Daily'),
+                p(paste0('Mean: ',daily_mean)),
+                p(paste0('Median: ',daily_median)),
+                p(paste0('Standard deviation: ', daily_sd)),
+                dateInput(paste0(variable,'-summary_daily_date'), 'Date:', value = summary_daily_dateValue)
+            ),
             div(class = 'summary-sub-container',
                 h1('Full'),
                 p(paste0('Mean: ',full_mean)),
@@ -64,7 +96,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
                 p(paste0('Mean: ',custom_mean)),
                 p(paste0('Median: ',custom_median)),
                 p(paste0('Standard deviation: ', custom_sd)),
-                dateRangeInput('summary_custom_dateRange', 'Date Range:', start = start_date_summary, end = end_date_summary)
+                dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue)
               )
             )
         
