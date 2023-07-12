@@ -71,11 +71,17 @@ output$varContainers <- renderUI({
   return(LL)  
 })
 
+variable_names <- list(
+  'Temp_C' = 'Temp C',
+  'DO_conc' = 'DO Concentration'
+)
 observe({
   lapply(unique(goop$combined_df$Variable), function(i) {
-    varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$date_range_qaqc}))
+    alias <- variable_names[i]  # Move the assignment of 'alias' here
+    varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$date_range_qaqc}), alias = alias)
   })
 })
+
 
 # Download Clean Data in Longer Format
 # output$download_longer <- downloadHandler(
