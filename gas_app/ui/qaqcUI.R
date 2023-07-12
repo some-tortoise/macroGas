@@ -95,10 +95,10 @@ varContainerServer <- function(id, variable, goop, dateRange) {
 div(class = 'qaqc page',
     div(class = 'qaqc--intro-container',
         div(class = 'qaqc--intro',
-          p(class = 'qaqc--intro-instructions', "Instructions: Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text
-  ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five 
-  centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset 
-  sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."),
+          p(class = 'qaqc--intro-instructions', "Instructions: Once you have uploaded your data, the variables will appear below. Select the ‘Summary’ tabset to view summary statistics of each variable.
+                                                To flag points, make sure that the ‘box select’ option is selected in the top right of graph. Once you have box selected the points you would like to flag, 
+                                                select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’. The flagged points will appear in a new color on the graph. 
+                                                To remove flagged points, repeat the same process but set the flag type to ‘good’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points."),
           uiOutput('qaqcDateRange')
         )
       ),
