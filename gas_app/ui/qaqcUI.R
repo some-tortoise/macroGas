@@ -1,8 +1,17 @@
 varContainerUI <- function (id, var = 'Unknown Variable'){
   ns <- NS(id)
+  
+  variable_names <- list(
+    'Temp_C' = 'Temp C',
+    'DO_conc' = 'DO Concentration'
+  )
+  
+  alias <- variable_names[var]
+  
+  
   tagList(
     div(class = 'qaqc--type-container',
-        h1(var),
+        h1(alias),
         tabsetPanel(
           tabPanel('Graph',plotlyOutput(ns('main_plot'))),
           tabPanel('Summary',uiOutput(ns('summary')))
@@ -38,20 +47,23 @@ varContainerServer <- function(id, variable, goop, dateRange) {
         full_median <- median(full_values, na.rm = TRUE)
         custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
         custom_median <- median(custom_values, na.rm = TRUE)
+        full_sd <- sd(full_values, na.rm = TRUE)
+        custom_sd <- sd(custom_values, na.rm = TRUE)
         start_date_summary = min(goop$combined_df$Date_Time)
         end_date_summary = max(goop$combined_df$Date_Time)
+        
         div(class = 'summary-container',
             div(class = 'summary-sub-container',
                 h1('Full'),
                 p(paste0('Mean: ',full_mean)),
                 p(paste0('Median: ',full_median)),
-                p(paste0('Standard deviation: ','Unknown'))
+                p(paste0('Standard deviation: ', full_sd))
               ),
             div(class = 'summary-sub-container',
                 h1('Custom'),
                 p(paste0('Mean: ',custom_mean)),
                 p(paste0('Median: ',custom_median)),
-                p(paste0('Standard deviation: ','Unknown')),
+                p(paste0('Standard deviation: ', custom_sd)),
                 dateRangeInput('summary_custom_dateRange', 'Date Range:', start = start_date_summary, end = end_date_summary)
               )
             )
