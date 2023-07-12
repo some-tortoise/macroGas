@@ -41,7 +41,7 @@ Quality Assurance/Quality Control page allows you to select a station and view t
 
 **Calculate**
 
-Calculate page performs *discharge*  and *time to half height* calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the results.
+Calculate page performs *discharge*  and *time to half height* calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the result. Users can download flagged dataset and output table.
 
 ## Getting Started
 To get started with the Salt Slug App, make sure you have R Studio installed on your computer. Then, clone the repository by running the following command: 
