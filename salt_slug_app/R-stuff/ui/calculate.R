@@ -9,7 +9,7 @@ div(class = 'calculate panel-container',
         div(class = 'calculate--sidebar',
             uiOutput("calc_station"),
             uiOutput("background_out"),
-            numericInput("salt_mass", label = "Enter NaCl Mass Here", value = 1000)#,
+            numericInput("salt_mass", label = "NaCl Mass:", value = 1000)#,
             #checkboxInput('advancedEditing', 'Advanced Editing')
             ),
         div(class = 'calculate--graph-stuff',

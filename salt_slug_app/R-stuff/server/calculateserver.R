@@ -184,10 +184,6 @@
 {
   
   observe({
-    goop$calc_discharge_table <- NULL
-  }) 
-  
-  observe({
     goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
   }) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
   
@@ -195,69 +191,88 @@
   observeEvent(goop$combined_df, {
     zero <- c()
     which_station <- c()
-
-        for(i in unique(goop$combined_df$station)){
+    
+    for(i in unique(goop$combined_df$station)){
       zero <- c(zero, 0) #assigns discharge value of 0 initially to each column
       which_station <- c(which_station, paste0('Station ', i))
     } #for loop to name the columns after each unique station in goop$combined_df 
 
     a <- data.frame('Station' = which_station,
                     'Discharge' = zero,
-                    'Half_Height' = zero,
-                    'Gwater_exchange' = zero)
+                    'Half_Height' = zero)
     goop$dischargeDF <- a
   })
   
   
   output$dischargeOutput <- renderText({
-    if(!is.null(goop$combined_df)){
-      station_slug <- goop$trimmed_slug #using trimmed_slug which is only the values between two vertical bars
-      
-      station_slug <- station_slug %>%
-        mutate(NaCl_Conc = (Low_Range - as.numeric(goop$background)) * 0.00047,
-               Area = NaCl_Conc * 5)
-      
-      Area <- sum(station_slug$Area)
-      Mass_NaCl <- input$salt_mass
-      Discharge <- Mass_NaCl/Area
-      
-      goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
-      
-      return(paste0('Discharge: ', Discharge)) 
-      
-    }
-    else{
+    
+    #requirements
+    
+    req(goop$combined_df)
+    req(goop$trimmed_slug)
+    
+    if(is.null(goop$combined_df) || is.null(goop$trimmed_slug)){
       return('Discharge: N/A')
     }
+    
+    #basic renaming
+    
+    station_slug <- goop$trimmed_slug #using trimmed_slug which is only the values between two vertical bars
+    
+    #grab how many seconds are between consecutive observations
+    diff_time_btwn_observations = as.numeric(goop$combined_df$Date_Time[2]) - as.numeric(goop$combined_df$Date_Time[1])
+    
+    station_slug <- station_slug %>%
+      mutate(NaCl_Conc = 
+               ifelse((Low_Range - as.numeric(goop$background)) > 0, 
+                      (Low_Range - as.numeric(goop$background)) * 0.00047,
+                      0),
+             Area = NaCl_Conc * diff_time_btwn_observations)
+    
+    Area <- sum(station_slug$Area)
+    Mass_NaCl <- as.numeric(input$salt_mass)
+    Discharge <- round(Mass_NaCl / Area, 2)
+    
+    goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
+    
+    return(paste0('Discharge: ', Discharge)) 
+     
    }) #the math.R stuff that prints a final discharge value
   
   output$halfheightOutput <- renderText({
-    if(!is.null(goop$combined_df)){
-      station_slug <- goop$trimmed_slug
-      
-      Cmax <- max(station_slug$Low_Range)
-      index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
-
-      start_time <- goop$calc_xLeft
-      index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
-
-      Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
-
-      distances_to_half_height <- abs(station_slug$Low_Range[index_start_time:(index_Cmax)] - Chalf) #finds the difference between points before the max and the half height
-      index_Chalf <- which.min(distances_to_half_height) #identifies the index of the smallest difference -- the point closest to being half height
-
-      start_time <- station_slug$Date_Time[index_start_time]
-      Chalf_time <- station_slug$Date_Time[index_Chalf]
-      time_to_half <- ((Chalf_time - start_time)*60)
-      
-      goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
-      
-      return(paste0('Time to half height: ', time_to_half, " seconds"))
-      
-    }
-    else{
+    
+    #requirements
+    
+    req(goop$combined_df)
+    req(goop$trimmed_slug)
+    
+    if(is.null(goop$combined_df) || is.null(goop$trimmed_slug)){
       return('Time to half height: N/A')
     }
+    
+    #basic renaming
+    station_slug <- goop$trimmed_slug
+    start_time <- goop$calc_xLeft
+    
+    
+    Cmax <- max(station_slug$Low_Range)
+    index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
+
+    index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
+
+    Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
+
+    index_Chalf <- which.min(abs(station_slug$Low_Range[index_start_time:index_Cmax] - Chalf)) #identifies the index of the smallest difference -- the point closest to being half height
+
+    start_time <- station_slug$Date_Time[index_start_time]
+    Chalf_time <- station_slug$Date_Time[index_Chalf]
+    time_to_half <- ((as.numeric(Chalf_time) - as.numeric(start_time)))
+    
+    goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
+    
+    return(paste0('Time to half height: ', time_to_half, " seconds"))
+    
+  
   }) #half height math
   
   output$dischargetable <- function() {
