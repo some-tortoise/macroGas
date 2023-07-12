@@ -25,7 +25,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
   )
 }
 
-varContainerServer <- function(id, variable, goop, dateRange, alias) {
+varContainerServer <- function(id, variable, goop, dateRange) {
   moduleServer(
     id,
     function(input, output, session) {
@@ -39,15 +39,6 @@ varContainerServer <- function(id, variable, goop, dateRange, alias) {
         
         return(df_chosen)
       }) 
-      
-      variable_names <- list(
-        'Temp_C' = 'Temp C',
-        'DO_conc' = 'DO Concentration'
-      )
-      
-      alias_reactive <- reactive({
-        variable_names[[variable]]
-      })
       
       output$summary <- renderUI({
         
@@ -117,7 +108,6 @@ varContainerServer <- function(id, variable, goop, dateRange, alias) {
       })
       
       output$main_plot <- renderPlotly({
-        current_alias <- alias_reactive()
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "good" = "#9EC1CF")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
@@ -128,7 +118,7 @@ varContainerServer <- function(id, variable, goop, dateRange, alias) {
             type = "date"  # Specify the x-axis type as date
           ), dragmode = 'select') |>
           config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
-          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = current_alias))
+          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = variable))
       })
     }
   )
