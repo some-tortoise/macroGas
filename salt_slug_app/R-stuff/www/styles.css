@@ -526,7 +526,21 @@ CALCULATE
 .general-stats-out{
   border-radius: 5px;
   background-color: #F4F4F4;
-  padding: 10px;
+  padding: 20px;
+}
+
+.general-val-title{
+  margin: 0 0 0 0;
+  font-weight: bold;
+  display: inline;
+}
+
+.general-val{
+  font-weight: 400;
+}
+
+#dischargetable{
+  min-width: 500px;
 }
 
 .calculate--downloads-container{
@@ -555,51 +569,3 @@ CALCULATE
 #downloadFlaggedDataset:hover, #downloadOutputTable:hover{
   background-color: #8d6310a6;
 }
-
-
-/*CALCULATE PANEL*/
-/*
-.calculate-top-container{
-  margin: 0;
-  padding: 0;
-  height: 55vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.calculate-input-container{
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-  width: 150px;
-  flex-grow: 1.5;
-  height: 400px;
-  padding: 20px;
-}
-
-.calculate-graph-container{
-  flex-grow: 5;
-  width: 400px;
-  height: 400px;
-}
-
-.calculate-output-dt-container{
-  margin: 0;
-  margin-top: 70px;
-  padding: 0;
-  height: 35vh;
-}
-
-#dischargeOutput{
-  font-size: 15px;
-  font-weight: bold;
-  color: #105687;
-}
-
-#halfheightOutput{
-  font-size: 15px;
-  font-weight: bold;
-  color: #105687;
-}
-*/

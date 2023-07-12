@@ -161,7 +161,7 @@
     if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
     
     row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
-    print(substring(shape_anchors,1,19))
+    
     pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
     
     
@@ -235,7 +235,7 @@
     
     goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
     
-    return(paste0('Discharge: ', Discharge)) 
+    return(paste0('Discharge: ', Discharge, ' L/s')) 
      
    }) #the math.R stuff that prints a final discharge value
   
@@ -261,7 +261,11 @@
     index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
 
     Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
-
+    
+    if(index_start_time >= index_Cmax){
+      return(paste0('Time to half height: ', "NA seconds"))
+    }
+    
     index_Chalf <- which.min(abs(station_slug$Low_Range[index_start_time:index_Cmax] - Chalf)) #identifies the index of the smallest difference -- the point closest to being half height
 
     start_time <- station_slug$Date_Time[index_start_time]
@@ -275,10 +279,53 @@
   
   }) #half height math
   
+  output$groundwaterOutput <- renderUI({
+    req(goop$combined_df)
+    if(!('1' %in% unique(goop$combined_df$station))){
+      return(p('Please make sure you have a station 1.'))
+    }
+    
+    last_station <- max(as.numeric(unique(goop$combined_df$station)))
+    
+    if(last_station == 1){
+      return(p('Need more than one station.'))
+    }
+    
+    first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == 'Station 1', 'Discharge'])
+    last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'Discharge'])
+    
+    if(first_station_discharge == 0 || last_station_discharge == 0){
+      return(p('NA'))
+    }
+    
+    diff <- first_station_discharge - last_station_discharge
+    
+    p(paste0(diff, ' L/s'))
+  })
+  
+  output$avgDischargeOutput <- renderUI({
+    if(length(unique(goop$combined_df$station)) == 0){
+      return(p('Need at least one station'))
+    }
+    
+    sum <- 0
+    for(i in as.numeric(unique(goop$combined_df$station))){
+      curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'Discharge'])
+      if(is.null(curr_discharge) || is.na(curr_discharge) || curr_discharge == 0){
+        return(p('Get discharge for all stations'))
+      }
+      sum <- sum + curr_discharge
+    }
+    
+    
+    mean <- sum / length(unique(goop$combined_df$station))
+    p(paste0(mean,' L/s'))
+  })
+  
   output$dischargetable <- function() {
     goop$dischargeDF %>%
       knitr::kable("html", col.names =
-          c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Groundwater Exchange (L/s)")) %>%
+          c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
       kable_styling("striped", full_width = F)
   }
 }
@@ -301,7 +348,7 @@ turn_file_to_csv <- function(clean_df, name){
   write.csv(clean_df, paste('./processed_',name, sep=''), row.names=FALSE)
 }
 
-observeEvent(input$download, {
+observeEvent(input$downloadFlaggedDataset, {
   showModal(modalDialog(
     title = 'How do you want to download your dataset?',
     downloadButton('downloadBtn', 'Download'),
@@ -312,6 +359,11 @@ observeEvent(input$download, {
     )
   ))
 })
+
+observeEvent(input$downloadOutputTable, {
+  showModal(modalDialog('This feature is still being worked on.'))
+})
+
 
 output$downloadBtn <- downloadHandler(
   filename = function() {

@@ -22,7 +22,11 @@ div(class = 'calculate panel-container',
     div(class = 'calculate--box2',
         div(class = 'calculate--box3',
             div(class = 'general-stats-out',
-                p('Groundwater exchange: 5')),
+                p(class = 'general-val-title', 'Groundwater Exchange: '),
+                p(class = 'general-val', uiOutput('groundwaterOutput')),
+                p(class = 'general-val-title', 'Average Discharge: '),
+                p(class = 'general-val', uiOutput('avgDischargeOutput'))
+                ),
             div(class = 'calculate--downloads-container',
                 actionButton('downloadFlaggedDataset', 'Download Flagged Dataset'),
                 actionButton('downloadOutputTable', 'Download Output Table')
