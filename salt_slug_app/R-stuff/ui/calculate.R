@@ -33,7 +33,30 @@ div(class = 'calculate panel-container',
             ),
         tableOutput("dischargetable")
         ),
-    div(class = 'instructions-container', '?')
+    div(class = 'instructions-container', id = 'calcInstructionsBtn', '?'),
+    div(id = 'calc-modal-container',
+        div(id = 'calc-modal',
+            div(class="modal-header",
+                span(class="closeCalc close-modal","x"),
+                h2("Instructions")
+            ),
+            p('some instructions')
+        )
+    ),
+    tags$script(HTML("
+    document.getElementById('calcInstructionsBtn').addEventListener('click', calcInstructions);
+    
+    function calcInstructions(){
+      document.getElementById('calc-modal').style.display = 'block';
+    }
+    
+    document.getElementsByClassName('closeCalc')[0].addEventListener('click', modalCloseCalc);
+    
+    function modalCloseCalc(){
+      document.getElementById('calc-modal').style.display = 'none';
+    }
+                     ")
+    )
     )
 # 
 # div(class = 'calculate-panel-container panel-container',

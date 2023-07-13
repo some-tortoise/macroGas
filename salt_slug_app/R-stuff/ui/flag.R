@@ -20,7 +20,30 @@ div(class = 'qaqc panel-container',
                 )
             )
         ),
-    div(class = 'instructions-container', '?')
+    div(class = 'instructions-container', id = 'flagInstructionsBtn', '?'),
+    div(id = 'flag-modal-container',
+        div(id = 'flag-modal',
+            div(class="modal-header",
+                span(class="closeFlag close-modal","x"),
+                h2("Instructions")
+            ),
+            p('some instructions')
+        )
+    ),
+    tags$script(HTML("
+    document.getElementById('flagInstructionsBtn').addEventListener('click', flagInstructions);
+    
+    function flagInstructions(){
+      document.getElementById('flag-modal').style.display = 'block';
+    }
+    
+    document.getElementsByClassName('closeFlag')[0].addEventListener('click', modalCloseFlag);
+    
+    function modalCloseFlag(){
+      document.getElementById('flag-modal').style.display = 'none';
+    }
+                     ")
+    )
     )
 
 # tags$style(

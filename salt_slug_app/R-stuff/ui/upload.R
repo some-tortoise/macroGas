@@ -36,26 +36,27 @@ div(class = 'upload panel-container',
             )
         ),
     div(class = 'instructions-container', id = 'uploadInstructionsBtn', '?'),
-    div(id = 'uploadInstructionsModal-container',
-      div(id = 'uploadInstructionsModal',
-            div(class="modal-header",
-                span(class="close","x"),
-                h2("Instructions")
-            ),
-            p('some instructions')
-          )
-      ),
+    div(id = 'upload-modal-container',
+      div(id = 'upload-modal',
+          div(class="modal-header",
+              h2("Instructions"),
+              div(class="closeUpload close-modal","x")
+          ),
+          p('some instructions')
+        )
+    ),
     tags$script(HTML("
     document.getElementById('uploadInstructionsBtn').addEventListener('click', uploadInstructions);
     
     function uploadInstructions(){
-      document.getElementById('uploadInstructionsModal').style.display = 'block';
+      document.getElementById('upload-modal').style.display = 'block';
     }
     
-    document.getElementsByClassName('close')[0].addEventListener('click', modalClose);
+    document.getElementsByClassName('closeUpload')[0].addEventListener('click', modalCloseUpload);
     
-    function modalClose(){
-      document.getElementById('uploadInstructionsModal').style.display = 'none';
+    function modalCloseUpload(){
+    console.log('erf')
+      document.getElementById('upload-modal').style.display = 'none';
     }
                      ")
                 )

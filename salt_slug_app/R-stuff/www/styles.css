@@ -605,7 +605,9 @@ CALCULATE
 Instructions
 **/
 
-#uploadInstructionsModal{
+
+
+#flag-modal{
   width: 600px;
   padding: auto;
   background-color: #CFDDF1;
@@ -615,7 +617,7 @@ Instructions
   padding: 20px;
 }
 
-#uploadInstructionsModal-container{
+#flag-modal-container{
   position: absolute;
   width: 100%;
   height: 100%;
@@ -624,4 +626,75 @@ Instructions
   display: flex;
   align-items: center;
   justify-content: center;
+  pointer-events: none;
+}
+
+#upload-modal{
+  width: 600px;
+  padding: auto;
+  background-color: #CFDDF1;
+  display: none;
+  box-shadow: 0px 0px 10px 2px #AAA;
+  border-radius: 5px;
+  padding: 20px;
+  z-index: 20;
+}
+
+#upload-modal-container{
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+#calc-modal{
+  width: 600px;
+  padding: auto;
+  background-color: #CFDDF1;
+  display: none;
+  box-shadow: 0px 0px 10px 2px #AAA;
+  border-radius: 5px;
+  padding: 20px;
+  z-index: 20;
+}
+
+#calc-modal-container{
+  position: absolute;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.modal-header{
+  position: relative;
+}
+
+.close-modal{
+  position: absolute;
+  pointer-events: all;
+  width: 30px;
+  height: 30px;
+  right: 0px;
+  top: 0px;
+  background-color: #9aa5b5;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-modal:hover{
+  cursor: pointer;
 }

@@ -1,5 +1,5 @@
 //navbar code
-function openTab(evt, name) {
+/*function openTab(evt, name) {
     tablinks = document.getElementsByClassName("nav-el-circle");
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" active-nav-el", "");
@@ -70,26 +70,4 @@ function scrollOpenTab() {
   document.getElementsByClassName(nav_show)[0].children[0].className += " active-nav-el";
   document.getElementsByClassName(nav_show)[0].children[1].className += " active-nav-text";
 }
-
-
-/*** 
- * INSTRUCTIONS
-***/
-
-// Get the button that opens the modal
-
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName('close')[0];
-
-
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = 'none';
-}
-
-window.onclick = function(event) {
-if (event.target == modal) {
-  modal.style.display = 'none';
-  }
-}
+*/
