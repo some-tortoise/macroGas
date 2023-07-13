@@ -22,7 +22,9 @@ output$trim_plot <- renderPlotly({
   trim_xRight <- as.POSIXct(goop$trim_xRight, tz = 'GMT', origin = "1970-01-01")
   
   plot <- plot_ly(data = goop$combined_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9, source = "D") %>%
-    layout(showlegend = FALSE, shapes = list(
+    layout(xaxis = list(title = "Date and Time"), 
+           yaxis = list(title = "Low Range Conductivity"),
+      showlegend = FALSE, shapes = list(
       # left line
       list(type = "line", x0 = trim_xLeft, x1 = trim_xLeft,
            y0 = 0, y1 = 1, yref = "paper"),
@@ -30,7 +32,7 @@ output$trim_plot <- renderPlotly({
       list(type = "line", x0 = trim_xRight, x1 = trim_xRight,
            y0 = 0, y1 = 1, yref = "paper")
     )) %>%
-    config(edits = list(shapePosition = TRUE))
+    config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
   plot
   
