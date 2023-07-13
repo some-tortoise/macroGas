@@ -24,18 +24,19 @@ div(class = 'upload panel-container',
                                 ".csv")
                      )
              ),
-          selectInput("select",'Your uploaded files', NULL, choices = NULL, width = "100%")
+          selectInput("select",'Your uploaded files', NULL, choices = NULL, width = "100%"),
+          actionButton("delete", "Remove selected dataset")
           ),
         div(class = 'upload--box-2',
             div(class = 'upload--dt-container',
                 DTOutput("contents")),
-            div(class = 'upload--continue-container',
+            div(id = "conditional", class = 'upload--continue-container',
                 p('When you have uploaded all your files, press continue.'),
                 actionButton('uploadContinue', class='continue-btn disabled', 'Continue'))
             )
         ),
     div(class = 'instructions-container', '?')
-    )
+)
 
 
 
