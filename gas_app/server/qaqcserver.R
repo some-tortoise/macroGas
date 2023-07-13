@@ -58,7 +58,7 @@ observeEvent(input$flag_btn, {
 # })
 # 
 # observeEvent(input$reset_Yes,{
-#   goop$combined_df$Flag = "good"
+#   goop$combined_df$Flag = "NA"
 #   removeModal()
 # })
 

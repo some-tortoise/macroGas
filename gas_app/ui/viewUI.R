@@ -20,7 +20,7 @@ varViewServer <- function(id, variable, goop, dateRange) {
     function(input, output, session) {
       
       output$main_plot_view <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF000", "good" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF000", "NA" = "#9EC1CF")
         plotdf_view <- goop$combined_df %>% filter(Variable == variable)
         plotdf_view <- subset(plotdf_view, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         plot_ly(data = plotdf_view, type = 'scatter', mode = 'markers', 

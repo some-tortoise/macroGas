@@ -18,7 +18,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
         ),
         div(class = 'qaqc--type-flag-container',
             h3('Flag Type'),
-            selectInput(ns('flag_type'), label = '', choices = c('good', 'questionable', 'interesting', 'bad')),
+            selectInput(ns('flag_type'), label = '', choices = c('NA', 'questionable', 'interesting', 'bad')),
             actionButton(ns('flag_btn'), class = 'flag-btn', 'Flag selected points')
         )
     )
@@ -108,7 +108,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       })
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "good" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
         filteredData <- goop$combined_df
         plot_df = filteredData %>% filter(Variable == variable)
         plot_df <- subset(plot_df, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
@@ -130,7 +130,7 @@ div(class = 'qaqc page',
           p(class = 'qaqc--intro-instructions', "Instructions: Once you have uploaded your data, the variables will appear below. Select the ‘Summary’ tabset to view summary statistics of each variable.
                                                 To flag points, make sure that the ‘box select’ option is selected in the top right of graph. Once you have box selected the points you would like to flag, 
                                                 select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’. The flagged points will appear in a new color on the graph. 
-                                                To remove flagged points, repeat the same process but set the flag type to ‘good’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points."),
+                                                To remove flagged points, repeat the same process but set the flag type to ‘NA’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points."),
           uiOutput('qaqcDateRange')
         )
       ),

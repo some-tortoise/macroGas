@@ -51,7 +51,7 @@ combined_df <- combined_df |>
   rename(Variable = variable,
          Station = station,
          Value = value)
-combined_df <- combined_df %>% mutate(Flag = "good", id = row.names(.))
+combined_df <- combined_df %>% mutate(Flag = "NA", id = row.names(.))
 
 ui <- fluidPage(
   class = 'body-container',
