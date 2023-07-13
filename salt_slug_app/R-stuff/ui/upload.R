@@ -34,7 +34,30 @@ div(class = 'upload panel-container',
                 actionButton('uploadContinue', class='continue-btn disabled', 'Continue'))
             )
         ),
-    div(class = 'instructions-container', '?')
+    div(class = 'instructions-container', id = 'uploadInstructionsBtn', '?'),
+    div(id = 'uploadInstructionsModal-container',
+      div(id = 'uploadInstructionsModal',
+            div(class="modal-header",
+                span(class="close","x"),
+                h2("Instructions")
+            ),
+            p('some instructions')
+          )
+      ),
+    tags$script(HTML("
+    document.getElementById('uploadInstructionsBtn').addEventListener('click', uploadInstructions);
+    
+    function uploadInstructions(){
+      document.getElementById('uploadInstructionsModal').style.display = 'block';
+    }
+    
+    document.getElementsByClassName('close')[0].addEventListener('click', modalClose);
+    
+    function modalClose(){
+      document.getElementById('uploadInstructionsModal').style.display = 'none';
+    }
+                     ")
+                )
     )
 
 
