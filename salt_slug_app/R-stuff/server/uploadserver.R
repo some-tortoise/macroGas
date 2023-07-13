@@ -13,7 +13,7 @@ uploaded_data <- reactiveValues(csv_names = NULL,
                                   index = 1,
                                   station_names = NULL,
                                   combined_df = NULL)
-  
+
 # template stuff
 output$downloadFile <- downloadHandler( #data template download button
     filename = "slugtemplate.csv",
@@ -183,4 +183,7 @@ observeEvent(input$uploadContinue,{
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) #rbind all the uploaded data frames
 
-
+observe({
+  onclick("instructions", paste0("my instructions"))
+})
+            

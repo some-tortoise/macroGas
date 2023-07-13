@@ -18,6 +18,7 @@ library(knitr)
 library(kableExtra)
 
 reactlog_enable()
+combined_df <- NULL
 
 js_code <- HTML("shinyjs.enableUpload = function() {
                document.getElementById('uploadContinue').classList.remove('disabled')

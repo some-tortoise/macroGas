@@ -88,3 +88,83 @@ observeEvent(input$flag_btn, {
 # EXPORT STUFF
 #
 
+  upload_csv_file <- function(clean_df, name, folder_path){
+    file <- paste('processed_',name, sep='')
+    file <- drive_put(
+      media = file,
+      name = file,
+      type = 'csv',
+      path = as_id(folder_path))
+    return('success')
+  }
+
+turn_file_to_csv <- function(clean_df, name){
+  write.csv(clean_df, paste('./processed_',name, sep=''), row.names=FALSE)
+}
+
+observeEvent(input$downloadFlaggedDataset, {
+  showModal(modalDialog(
+    title = 'How do you want to download your dataset?',
+    downloadButton('downloadBtn', 'Download'),
+    actionButton('upload_to_gdrive', 'Upload to Google Drive'),
+    easyClose = FALSE,
+    footer = tagList(
+      modalButton("Close")
+    )
+  ))
+})
+
+
+output$downloadBtn <- downloadHandler(
+  filename = function() {
+    # Set the filename of the downloaded file
+    "processed.csv"
+  },
+  content = function(file) {
+    # Generate the content of the file
+    write.csv(goop$combined_df, file, row.names = FALSE)
+  }
+)
+
+observeEvent(input$upload_to_gdrive, {
+  showModal(modalDialog(
+    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
+    actionButton('path_ok', 'OK')
+  ))
+})
+
+observeEvent(input$path_ok,{
+  name <- 'processed.csv'
+  turn_file_to_csv(goop$trimmed_slug, name)
+  res = tryCatch(upload_csv_file(goop$trimmed_slug, name, input$drivePath), error = function(i) NA)
+  if(is.na(res)){
+    showModal(modalDialog(
+      h3('The path you entered is invalid!'),
+      easyClose = FALSE,
+      footer = tagList(
+        modalButton('Back')
+      )
+    ))      
+  }
+  else{
+    if(paste0('processed_', name) %in% (drive_ls(input$drivePath)[['name']])){
+      showModal(modalDialog(
+        h3('File has been uploaded successfully!'),
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))
+    }
+    else{
+      showModal(modalDialog(
+        h3('File upload failed!'),
+        easyClose = FALSE,
+        footer = tagList(
+          modalButton('Back')
+        )
+      ))
+    }
+  }
+}
+)
