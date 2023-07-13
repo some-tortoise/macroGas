@@ -1,7 +1,10 @@
 fluidPage(
   sidebarLayout(
     sidebarPanel("",
-                 uiOutput("do_date_viewer")),
+                 uiOutput("do_date_viewer"),
+                 numericInput("hypoxia_math", "Input your hypoxia baseline here", value = 2)
+                 ),
+                  
     mainPanel("",
               tabsetPanel(
                 tabPanel("Selected Range",
