@@ -125,13 +125,20 @@ varContainerServer <- function(id, variable, goop, dateRange) {
 }
 
 div(class = 'qaqc page',
+    div(class = 'qaqc--pick-container',
+        div(class = 'qaqc--pick',
+            selectInput('qaqcSiteSelect', 'Select Site', c('NHC', 'Russia'))
+            )
+        ),
     div(class = 'qaqc--intro-container',
         div(class = 'qaqc--intro',
           p(class = 'qaqc--intro-instructions', "Instructions: Once you have uploaded your data, the variables will appear below. Select the ‘Summary’ tabset to view summary statistics of each variable.
                                                 To flag points, make sure that the ‘box select’ option is selected in the top right of graph. Once you have box selected the points you would like to flag, 
                                                 select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’. The flagged points will appear in a new color on the graph. 
                                                 To remove flagged points, repeat the same process but set the flag type to ‘NA’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points."),
-          uiOutput('qaqcDateRange')
+          uiOutput('qaqcDateRange'),
+          p('When you are finished flagging, save your data.'),
+          actionButton('qaqcSave', 'Save')
         )
       ),
     div(class = 'qaqc--main',

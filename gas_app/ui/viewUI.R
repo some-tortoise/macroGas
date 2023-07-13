@@ -31,6 +31,11 @@ varViewServer <- function(id, variable, goop, dateRange) {
 }
 
 div(class = 'view page',
+    div(class = 'view--pick-container',
+        div(class = 'view--pick',
+            selectInput('viewSiteSelect', 'Select Site', c('NHC', 'Russia'))
+        )
+    ),
     div(class = 'view--intro-container',
         div(class = 'view--intro',
             p(class = 'view--intro-instructions', "Select the date range you would like to view data from"),

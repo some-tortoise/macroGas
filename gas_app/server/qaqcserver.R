@@ -62,6 +62,10 @@ observeEvent(input$flag_btn, {
 #   removeModal()
 # })
 
+observeEvent(input$qaqcSave, {
+  alert('Data has been \'saved\'')
+})
+
 output$varContainers <- renderUI({
   vars <- unique(goop$combined_df$Variable)
   LL <- vector("list",length(vars))       
