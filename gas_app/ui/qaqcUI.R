@@ -3,7 +3,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
   
   variable_names <- list(
     'Temp_C' = 'Temp C',
-    'DO_conc' = 'DO Concentration'
+    'DO_conc' = 'DO Concentration (mg/L)'
   )
   
   alias <- variable_names[var]
