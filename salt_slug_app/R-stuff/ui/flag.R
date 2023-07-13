@@ -8,7 +8,7 @@ div(class = 'qaqc panel-container',
         div(class = 'qaqc--graph-stuff',
             div(class = 'flag-container',
                 h3('Flag Type'),
-                selectInput('flag_type', label = '', c('good', 'questionable', 'interesting', 'bad')),
+                selectInput('flag_type', label = '', c('NA', 'questionable', 'interesting', 'bad')),
                 actionButton('flag_btn', label = 'Flag selected points')
                 ),
             uiOutput('main_plot'),
