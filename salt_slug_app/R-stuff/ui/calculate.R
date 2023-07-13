@@ -28,7 +28,6 @@ div(class = 'calculate panel-container',
                 p(class = 'general-val', uiOutput('avgDischargeOutput'))
                 ),
             div(class = 'calculate--downloads-container',
-                actionButton('downloadFlaggedDataset', 'Download Flagged Dataset'),
                 actionButton('downloadOutputTable', 'Download Output Table')
                 )
             ),
