@@ -146,7 +146,7 @@
         # list(type = "line", x0 = xLeft, x1 = xRight,
         #      y0 = goop$background, y1 = goop$background)
       )) %>%
-      config(edits = list(shapePosition = TRUE))
+      config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
     
     p
   })

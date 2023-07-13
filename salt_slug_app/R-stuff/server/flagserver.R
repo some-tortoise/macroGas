@@ -38,6 +38,7 @@ observe({
       plot_ly(data = filteredData(), type = 'scatter', x = ~Date_Time, y = as.formula(paste0('~', input$variable_choice)), 
               key = ~(paste0(as.character(Date_Time),"_",as.character(station))), color = ~as.character(station), opacity = 0.8) |>
         layout(dragmode = 'select') |>
+        config(displaylogo = FALSE, modeBarButtonsToRemove = c("toImage", "sendDataToCloud", "pan2d", "lasso2d", "zoomIn2d", "zoomOut2d", "resetScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>%
         event_register(event = "plotly_selected")
     })
   }

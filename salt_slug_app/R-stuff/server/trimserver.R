@@ -30,7 +30,7 @@ output$trim_plot <- renderPlotly({
       list(type = "line", x0 = trim_xRight, x1 = trim_xRight,
            y0 = 0, y1 = 1, yref = "paper")
     )) %>%
-    config(edits = list(shapePosition = TRUE))
+    config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
   plot
   
