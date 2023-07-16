@@ -48,13 +48,30 @@ print(dark_prob_dens)
 nhr <- (dark_prob_dens/light_prob_dens)
 print(nhr)
 
+##### PROBABILITY DENSITY OF BOTH #####
+cleaned_data <- combined_df[!is.na(combined_df$DO_conc), ]
+kde <- density(cleaned_data$DO_conc)
+plot_data <- data.frame(DO = kde$x, Density = kde$y)
+ggplot(plot_data, aes(x = DO, y = Density)) +
+  geom_line() +
+  labs(x = "DO (% saturation)", y = "Probability Density") +
+  ggtitle("Probability Density of Dissolved Oxygen (BOTH)")
+
+
 ##### PROBABILITY DENSITY OF NIGHT ######
 kde_dark <- density(dark_df$DO_conc)
-plot_dark <- data.frame(DO = kde_dark$x, Density = kde$y)
+plot_dark <- data.frame(DO = kde_dark$x, Density = kde_dark$y)
 ggplot(plot_dark, aes(x = DO, y = Density)) +
   geom_line() +
   labs(x = "DO (% saturation)", y = "Probability Density") +
-  ggtitle("Probability Density of Dissolved Oxygen at Night")
+  ggtitle("Probability Density of Dissolved Oxygen (NIGHT)")
 
 ##### PROB DENSITY OF DAY #####
-kde_light <- density(light_df$DO_conc)
+cleaned_light_df <- light_df[!is.na(light_df$DO_conc), ]
+kde_light <- density(cleaned_light_df$DO_conc)
+plot_dark <- data.frame(DO = kde_light$x, Density = kde_light$y)
+ggplot(plot_dark, aes(x = DO, y = Density)) +
+  geom_line() +
+  labs(x = "DO (% saturation)", y = "Probability Density") +
+  ggtitle("Probability Density of Dissolved Oxygen (LIGHT)")
+
