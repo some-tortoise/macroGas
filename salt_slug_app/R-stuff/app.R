@@ -19,6 +19,7 @@ library(kableExtra)
 library(reshape2)
 
 reactlog_enable()
+combined_df <- NULL
 
 
 js_code <- HTML("shinyjs.enableUpload = function() {
