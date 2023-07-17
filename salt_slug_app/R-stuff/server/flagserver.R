@@ -1,9 +1,3 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyjs)
-source(knitr::purl("../updated_cleaning.R", output = tempfile(), quiet = TRUE))
-
 observe({
   if(!is.null(goop$combined_df)){
     filteredData <- reactive({
@@ -19,16 +13,6 @@ observe({
       radioButtons("variable_choice",label = 'Select variable to graph',
                    choices = c("Low Range, µs/cm" = "Low_Range", "Full Range, µs/cm" = 'Full_Range', "Temp, C" = 'Temp_C'))
     })
-      
-    # output$start_datetime_input <- renderUI({
-    #   default_value <- as.character(goop$combined_df$Date_Time[1])
-    #   textInput("start_datetime", "Enter start date and time (YYYY-MM-DD HH:MM:SS)", value = default_value)
-    # })
-    # 
-    # output$end_datetime_input <- renderUI({
-    #   default_value <- as.character(goop$combined_df$Date_Time[1])
-    #   textInput("end_datetime", "End date and time", value = default_value)
-    # })
     
     output$main_plot <- renderUI({
       plotlyOutput("flag_plot")
@@ -68,8 +52,7 @@ observe({
        textInput("end_datetime", "End date and time", value = "")
     })
     
-    output$main_plot <- renderUI({
-    })
+    output$main_plot <- renderUI({})
   }
 })
 
@@ -94,15 +77,15 @@ observeEvent(input$flag_btn, {
 # EXPORT STUFF
 #
 
-  upload_csv_file <- function(clean_df, name, folder_path){
-    file <- paste('processed_',name, sep='')
-    file <- drive_put(
-      media = file,
-      name = file,
-      type = 'csv',
-      path = as_id(folder_path))
-    return('success')
-  }
+upload_csv_file <- function(clean_df, name, folder_path){
+  file <- paste('processed_',name, sep='')
+  file <- drive_put(
+    media = file,
+    name = file,
+    type = 'csv',
+    path = as_id(folder_path))
+  return('success')
+}
 
 turn_file_to_csv <- function(clean_df, name){
   write.csv(clean_df, paste('./processed_',name, sep=''), row.names=FALSE)

@@ -5,23 +5,27 @@ observe({
 observe({
   goop$trim_xValue <- goop$trim_stations_df$Date_Time
   goop$trim_yValue <- goop$trim_stations_df$Low_Range
-}) #creates goop$trim_xValue and goop$trim_Yvalue from DateTime and Low_Range
+}) #creates goop$trim_xValue and goop$trim_yValue from DateTime and Low_Range
 
 observe({
     goop$trim_xLeft <- goop$trim_xValue[1] #sets vertical bar to farthest left
-    goop$trim_xRight <- goop$trim_xValue[length(goop$trim_xValue) - 1]
+    goop$trim_xRight <- goop$trim_xValue[length(goop$trim_xValue) - 1] #sets vertical bar to farthest right
 })
-
-observe({
-  goop$first_trim <- goop$combined_df[(as.numeric(goop$trim_xValue) >= as.numeric(goop$trim_xLeft)) & (as.numeric(goop$trim_xValue) <= as.numeric(goop$trim_xRight)), ]
-}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
 
 output$trim_plot <- renderPlotly({
   req(goop$trim_xLeft)
   trim_xLeft <- as.POSIXct(goop$trim_xLeft, tz = 'GMT', origin = "1970-01-01")
   trim_xRight <- as.POSIXct(goop$trim_xRight, tz = 'GMT', origin = "1970-01-01")
   
-  plot <- plot_ly(data = goop$combined_df, type = 'scatter', mode = 'lines', x = ~Date_Time, y = ~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9, source = "D") %>%
+  plot <- plot_ly(data = goop$combined_df, 
+                  type = 'scatter', 
+                  mode = 'lines', 
+                  x = ~Date_Time, 
+                  y = ~Low_Range, 
+                  key = ~(paste0(as.character(Date_Time),"-",as.character(station))), 
+                  color = ~as.character(station), 
+                  opacity = 0.9, 
+                  source = "D") %>%
     layout(xaxis = list(title = "Date and Time"), 
            yaxis = list(title = "Low Range Conductivity"),
       showlegend = FALSE, shapes = list(
@@ -44,8 +48,16 @@ observe({
 })
 
 output$trimmed_plot <- renderPlotly({
-  plot <- plot_ly(data = goop$trimmed_combined_df, type = 'scatter', mode = 'lines', x=~Date_Time, y=~Low_Range, key = ~(paste0(as.character(Date_Time),"-",as.character(station))), color = ~as.character(station), opacity = 0.9)
-  plot
+  plotKey <- paste0(as.character(goop$trimmed_combined_dfDate_Time),"-",as.character(station))
+  plot <- plot_ly(data = goop$trimmed_combined_df, 
+          type = 'scatter', 
+          mode = 'lines', 
+          x = ~Date_Time, 
+          y = ~Low_Range, 
+          key = ~(plotKey), 
+          color = ~as.character(station), 
+          opacity = 0.9)
+  return(plot)
 })
 
 

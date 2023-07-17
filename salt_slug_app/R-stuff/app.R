@@ -19,7 +19,7 @@ library(kableExtra)
 library(reshape2)
 
 reactlog_enable()
-combined_df <- NULL
+
 
 js_code <- HTML("shinyjs.enableUpload = function() {
                document.getElementById('uploadContinue').classList.remove('disabled')
@@ -75,7 +75,6 @@ server <-  function(input, output, session) {
     goop$combined_df <- combined_df
     
     # Call the server functions from the included files
-    source("server/homeserver.R", local = TRUE)
     source("server/uploadserver.R", local = TRUE)
     source("server/trimserver.R", local = TRUE)
     source("server/flagserver.R", local = TRUE)

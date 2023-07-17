@@ -101,10 +101,33 @@ observeEvent(input$import_button, {
 })
 
 #import data from local
+# observeEvent(input$upload, {
+#   req(input$upload)
+#   tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+#   check_format(df, input$upload$name)
+#   
+# })
+
 observeEvent(input$upload, {
   req(input$upload)
-  tryCatch({df = read.csv(input$upload$datapath)}, error = function(e) df=NULL) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
-  check_format(df, input$upload$name)
+  tryCatch(
+    {
+      for(i in 1:length(input$upload[,1])){
+        df <- read.csv(input$upload[[i, 'datapath']])
+        fileName <- input$upload[[i, 'name']]
+        print(fileName)
+        check_format(df, fileName)
+      }
+      #df = read.csv(input$upload$datapath)
+    },
+    error = function(e) df=NULL
+  ) #using the df value just to check formatting, usin a new variable to save to uploaded_data later
+
+  #   print(df[1])
+  # for(fileName in input$upload$name){
+  #   check_format(df, fileName)
+  # }
+
 })
 
 observe({
@@ -168,9 +191,11 @@ observeEvent(uploaded_data$data,  {
 })
 
 observeEvent(input$uploadContinue,{
+  
   if(is.na(uploaded_data$data) || is.null(uploaded_data$data)){
-    return();
+    return()
   }
+  
   comb_df <- do.call(rbind, uploaded_data$data)
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
   comb_df <- comb_df %>% #saves following code as loaded
