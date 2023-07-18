@@ -103,17 +103,24 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       })
       
       observeEvent(input$flag_btn, {
-        View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station))])
+        #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station))])
         goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
       })
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
-        filteredData <- goop$combined_df
-        plot_df = filteredData %>% filter(Variable == variable)
-        plot_df <- subset(plot_df, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
-        plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
-                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = color_mapping, source = paste0("typegraph_",variable)) |>
+        plot_df <- subset(goop$combined_df %>% filter(Variable == variable), 
+                          Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
+        
+        plot_ly(data = plot_df, 
+                type = 'scatter', 
+                mode = 'markers', 
+                x = ~Date_Time, 
+                y = ~Value, 
+                color = ~as.character(Flag), 
+                key = ~(paste0(as.character(id),"_",as.character(Station))), 
+                colors = color_mapping, 
+                source = paste0("typegraph_",variable)) |>
           layout(xaxis = list(
             type = "date"  # Specify the x-axis type as date
           ), dragmode = 'select') |>

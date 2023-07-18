@@ -201,10 +201,22 @@ observeEvent(input$uploadContinue,{
   comb_df <- comb_df %>% #saves following code as loaded
     mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
     mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) %>%#changes date_time to a mdy_hms format in gmt time zone
-    mutate(Low_Range_Flag = "good", Full_Range_Flag = "good",
-           High_Range_Flag = "good", Temp_C_Flag = "good", id = row.names(.))
-    #View(comb_df)
+     mutate(Low_Range_Flag = "good", Full_Range_Flag = "good",
+            High_Range_Flag = "good", Temp_C_Flag = "good", id = row.names(.))
+  
   goop$combined_df <- comb_df
+
+  melted_comb_df <- melt(comb_df,
+                         id.vars = c("Date_Time", "station"),
+                         measure.vars = c("Low_Range",
+                                          "Full_Range",
+                                          "High_Range",
+                                          "Temp_C")) |>
+    rename(Variable = variable,
+           Station = station,
+           Value = value) %>% mutate(Flag = "NA", id = row.names(.))
+
+  goop$melted_combined_df <- melted_comb_df
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) #rbind all the uploaded data frames
 
