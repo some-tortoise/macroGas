@@ -134,7 +134,8 @@ varContainerServer <- function(id, variable, goop, dateRange) {
 div(class = 'qaqc page',
     div(class = 'qaqc--pick-container',
         div(class = 'qaqc--pick',
-            selectInput('qaqcSiteSelect', 'Select Site', c('NHC', 'Russia'))
+            selectInput('qaqcStationSelect', "Select Station", c("Erwin", "CB", "WB")),
+            selectInput('qaqcSiteSelect', 'Select Site', c("poolDown", "poolUp", "riffle"))
             )
         ),
     div(class = 'qaqc--intro-container',
