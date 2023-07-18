@@ -46,10 +46,10 @@ library(janitor)
 
 # clean_dataframe_list <- get_and_clean_data()
 combined_df <- do.call(rbind, clean_dataframe_list)
-combined_df <- melt(combined_df, id.vars = c("Date_Time", "station", "site")#, measure.vars = c("DO_conc", "Temp_C"))
+combined_df <- melt(combined_df, id.vars = c("Date_Time", "location", "site"))#, measure.vars = c("DO_conc", "Temp_C"))
 combined_df <- combined_df |>
   rename(Variable = variable,
-         Station = station,
+         Location = location,
          Site = site,
          Value = value)
 combined_df <- combined_df %>% mutate(Flag = "NA", id = row.names(.))

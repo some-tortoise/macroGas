@@ -24,7 +24,7 @@ varViewServer <- function(id, variable, goop, dateRange) {
         plotdf_view <- goop$combined_df %>% filter(Variable == variable)
         plotdf_view <- subset(plotdf_view, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         plot_ly(data = plotdf_view, type = 'scatter', mode = 'markers', 
-                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Station))), colors = color_mapping, source = paste0("viewgraph_",variable))
+                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Site))), colors = color_mapping, source = paste0("viewgraph_",variable))
       })
     }
   )
@@ -33,7 +33,7 @@ varViewServer <- function(id, variable, goop, dateRange) {
 div(class = 'view page',
     div(class = 'view--pick-container',
         div(class = 'view--pick',
-            selectInput('viewSiteSelect', 'Select Site', c('NHC', 'Russia'))
+            selectInput('viewSiteSelect', 'Select Site'#, c('NHC', 'Russia'))
         )
     ),
     div(class = 'view--intro-container',
