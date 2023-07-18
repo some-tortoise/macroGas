@@ -198,9 +198,9 @@ observeEvent(input$uploadContinue,{
   
   comb_df <- do.call(rbind, uploaded_data$data)
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns
-  comb_df <- comb_df %>% #saves following code as loaded
+  comb_df <- comb_df %>% #saves following code
     mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
-    mutate(Date_Time = mdy_hms(Date_Time, tz='GMT')) %>%#changes date_time to a mdy_hms format in gmt time zone
+    mutate(Date_Time = mdy_hms(Date_Time, tz='EST')) %>%#changes date_time to a mdy_hms format in gmt time zone
      mutate(Low_Range_Flag = "good", Full_Range_Flag = "good",
             High_Range_Flag = "good", Temp_C_Flag = "good", id = row.names(.))
   

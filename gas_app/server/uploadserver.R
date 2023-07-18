@@ -74,3 +74,35 @@ observeEvent(input$submit_delete, {
 observeEvent(uploaded_data$data,  {
   js$enableUpload()
 })
+
+observeEvent(input$uploadContinue,{
+  
+  if(is.na(uploaded_data$data) || is.null(uploaded_data$data)){
+    return()
+  }
+  
+  
+  comb_df <- do.call(rbind, uploaded_data$data)
+  colnames(comb_df) <- c('Date_Time', 'station', "site", 'Low_Range', 'Full_Range', 'High_Range', "Do_Conc", 'Temp_C') #naming columns
+  comb_df <- comb_df %>% #saves following code
+    mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
+    mutate(Date_Time = mdy_hms(Date_Time, tz='EST')) %>%#changes date_time to a mdy_hms format in EST time zone
+  
+  goop$combined_df <- comb_df
+  
+  melted_comb_df <- melt(comb_df,
+                         id.vars = c("Date_Time", "station", "site"),
+                         measure.vars = c("Low_Range",
+                                          "Full_Range",
+                                          "High_Range",
+                                          "DO_Conc",
+                                          "Temp_C")) |>
+    rename(Variable = variable,
+           Station = station,
+           Site = site,
+           Value = value) %>% mutate(Flag = "NA", id = row.names(.))
+})
+observe({
+  onclick("instructions", paste0("my instructions"))
+})
+
