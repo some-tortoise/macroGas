@@ -4,25 +4,9 @@ library(tidyr)
 library(ggplot2)
 library(pracma) #integrals
 
-path <- "/Users/annacspitzer/Desktop/erwin_downstream_DO.csv" 
+path <- "/Users/annacspitzer/Desktop/erwin_downstream_DO.csv" #change this to your own CSV and delete all the extra columns
 exampledata <- read.csv(path)
 exampledata$Date_Time <- mdy_hms(exampledata$Date_Time)
-
-#inputs
-start_date_time <- "2023-06-15 00:00:00"
-end_date_time <- "2023-06-17 11:59:00"
-sunrise <- "06:00:00"
-sunset <- "20:00:00"
-h <- 4
-data <- exampledata
-
-## can run all these in order and will get you new light/dark dataframes and calculate all the probabilities ##
-clean_DO_data(data, start_date_time, end_date_time)
-get_dark_light_df(clean_data, sunrise, sunset)
-light_prob_fxn(light_df, h)
-dark_prob_fxn(dark_df, h)
-night_hyp_ratio(dark_prob_dens, light_prob_dens)
-
 
 ## functions ##
 clean_DO_data <- function(data, start_date_time, end_date_time) {
@@ -35,10 +19,10 @@ clean_DO_data <- function(data, start_date_time, end_date_time) {
   clean_data <<- clean_data
   return(clean_data)
   
-  }
+}
 get_dark_light_df <- function(clean_data, sunrise, sunset) {
-
-#Fix formatting of dates and add an hour and minute column 
+  
+  #Fix formatting of dates and add an hour and minute column 
   sunrise_time <- hms(sunrise)
   sunset_time <- hms(sunset)
   
@@ -61,43 +45,37 @@ dark_prob_fxn <- function(dark_df, h) {
   n_dark <- nrow(dark_df)
   hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
   dark_prob_dens <<- (hypoxic_n_dark/n_dark)
-  print("Night probability density")
+  print("Dark probability density")
   print(dark_prob_dens)
 }
 night_hyp_ratio <- function(dark_prob_dens, light_prob_dens) {
   nhr <<- (dark_prob_dens/light_prob_dens)
   
   print("Night Hypoxia Ratio")
-  print(nhr)
   return(nhr)
 }
+
+#inputs
+start_date_time <- "2023-06-15 00:00:00"
+end_date_time <- "2023-06-17 11:59:00"
+sunrise <- "06:00:00"
+sunset <- "20:00:00"
+h <- 4
+data <- exampledata
+
+## can run all these in order and will get you new light/dark dataframes and calculate all the probabilities ##
+clean_DO_data(data, start_date_time, end_date_time)
+get_dark_light_df(clean_data, sunrise, sunset)
+light_prob_fxn(light_df, h)
+dark_prob_fxn(dark_df, h)
+night_hyp_ratio(dark_prob_dens, light_prob_dens)
+
 
 ## GRAPH AND INTEGRAL FUNCTION ##
 plot_density <- function(df) {
   kde <- density(df$DO_conc)
   plot <- data.frame(DO = kde$x, Density = kde$y)
-  ggplot(plot, aes(x = DO, y = Density)) +
-    geom_line() +
-    geom_vline(xintercept = h, color = "red") +
-    geom_ribbon(data = subset(plot, DO <= h), aes(x = DO, ymin = 0, ymax = Density),
-                fill = "darkblue", alpha = 0.3) +
-    labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
-    ggtitle("Erwin Downstream June 15-17")
-  
-  subset_df <- subset(plot, DO >= min(DO) & DO <= h)
-  integral <<- trapz(subset_df$DO, subset_df$Density)
-  
-}
-
-## define your dataframe (either light, dark, or whole) and then run this function
-# input example: df <- light_df
-plot_density(df)
-
-##### PROBABILITY DENSITY OF NIGHT PLOT FXN ######
-plot_density <- function(df) {
-  kde <- density(df$DO_conc)
-  plot <- data.frame(DO = kde$x, Density = kde$y)
-  ggplot(plot, aes(x = DO, y = Density)) +
+  new_plot <- ggplot(plot, aes(x = DO, y = Density)) +
     geom_line() +
     geom_vline(xintercept = h, color = "red") +
     geom_ribbon(data = subset(plot, DO <= h), aes(x = DO, ymin = 0, ymax = Density),
@@ -108,8 +86,16 @@ plot_density <- function(df) {
   subset_df <- subset(plot, DO >= min(DO) & DO <= h)
   integral_prob <<- trapz(subset_df$DO, subset_df$Density)
   
+  return(integral_prob)
+  return(new_plot)
   
 }
+
+## define your dataframe (either light, dark, or whole) and then run this function
+# input example: df <- light_df
+plot_density(df)
+
+##### PROBABILITY DENSITY OF NIGHT PLOT FXN ######
  
 
 
