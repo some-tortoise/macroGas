@@ -5,8 +5,7 @@ fluidPage(
                  numericInput("h_threshold", "Input hypoxia threshold (mg/L)", value = 2),
                  conditionalPanel(
                    condition = "input.tabs == 'hypoxiatab'",
-                    timeInput("sunrise", "Input sunrise time", value = hms::as_hms("06:00:00"), seconds = FALSE),
-                    timeInput("sunset", "Input sunset time", value = hms::as_hms("20:00:00"), seconds = FALSE)
+                    numericInput("latitude", "Latitude:", value = "35")
                  )
     ),
                

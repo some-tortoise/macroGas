@@ -4,8 +4,9 @@ combined_df <- pivot_wider(combined_df, # this code is problematic in that it do
                         values_from = Value)
 
 combined_df <- combined_df %>%
-  filter(!is.na(DO_conc) | !is.na(Temp_C)) # a little cleany cleany
-
+  filter(!is.na(DO_conc) | !is.na(Temp_C))  #a little cleany cleany
+#  mutate(daytime = calc_is_daytime(Date_Time, lat = 35))
+  
 output$do_date_viewer <- renderUI({
   start_date = min(combined_df$Date_Time)
   end_date = max(combined_df$Date_Time)
@@ -54,25 +55,22 @@ output$do_metrics_range <- renderDT({
 
 light_df <- reactive({
   selected_dates <- input$date_range_input
-  sunrise_time <- input$sunrise
-  sunset_time <- input$sunset
-  
+  combined_df <- combined_df%>%
+    mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
   subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
-           (hour(Date_Time) > hour(sunrise_time) | 
-              (hour(Date_Time) == hour(sunrise_time) & minute(Date_Time) >= minute(sunrise_time))) &
-           (hour(Date_Time) < hour(sunset_time) | 
-              (hour(Date_Time) == hour(sunset_time) & minute(Date_Time) <= minute(sunset_time))))
-  
-
+           daytime == TRUE)
 })
 
 dark_df <- reactive({
-  light <- light_df()
-  dark <- subset(combined_df, !(Date_Time %in% light$Date_Time))
-})
+  selected_dates <- input$date_range_input
+  combined_df <- combined_df%>%
+    mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
+  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+           daytime == FALSE)
+    })
 
 output$light_kernel <- renderPlotly({
-  light_data <- light_df() # Retrieve the data frame using light_df()
+  light_data <- light_df() # Retrieve the data frame from reactive light_df
   
   kde <- density(light_data$DO_conc)
   plot <- data.frame(DO = kde$x, Density = kde$y)
@@ -82,13 +80,14 @@ output$light_kernel <- renderPlotly({
     geom_ribbon(data = subset(plot, DO <= input$h_threshold), aes(x = DO, ymin = 0, ymax = Density),
                 fill = "darkblue", alpha = 0.3) +
     labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
-    ggtitle("Daytime Kernel Density Estimation")
+    ggtitle("Light Kernel Density Estimation")
   
-  plotly::ggplotly(light_plot) # Convert ggplot to Plotly plot
+  plotly::ggplotly(light_plot) %>%
+    config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
 })
 
 output$dark_kernel <- renderPlotly({
-    dark_data <- dark_df() # Retrieve the data frame using light_df()
+    dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
     
     kde <- density(dark_data$DO_conc)
     plot <- data.frame(DO = kde$x, Density = kde$y)
@@ -98,18 +97,11 @@ output$dark_kernel <- renderPlotly({
       geom_ribbon(data = subset(plot, DO <= input$h_threshold), aes(x = DO, ymin = 0, ymax = Density),
                   fill = "darkblue", alpha = 0.3) +
       labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
-      ggtitle("Nighttime Kernel Density Estimation")
+      ggtitle("Dark Kernel Density Estimation")
     
-    plotly::ggplotly(dark_plot) # Convert ggplot to Plotly plot
+    plotly::ggplotly(dark_plot) %>%
+      config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
   })
-
-# output$light <- renderPlotly({
-#   plot_ly(light_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
-# })
-# 
-# output$dark <- renderPlotly({
-#   plot_ly(dark_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
-# })
 
 output$do_hypoxia_metrics <- renderDT({
   light_df <- light_df()
@@ -117,11 +109,8 @@ output$do_hypoxia_metrics <- renderDT({
   h <- input$h_threshold
   
   light_prob_fxn <- function(light_df, h) {
-    view(light_df)
     n_light <- nrow(light_df)
-    print(n_light)
     hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) #gets number of hypoxic observations
-    print(hypoxic_n_light)
     light_prob_dens <- (hypoxic_n_light/n_light)
   }
   
@@ -129,8 +118,6 @@ output$do_hypoxia_metrics <- renderDT({
     n_dark <- nrow(dark_df)
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
-    print("Dark probability density")
-    print(dark_prob_dens)
   }
   
   night_hyp_ratio <- function(dark_prob_dens, light_prob_dens) {
@@ -143,8 +130,6 @@ output$do_hypoxia_metrics <- renderDT({
   nhr <- night_hyp_ratio(dark_prob_dens, light_prob_dens)
   
   hypoxia <- data.frame( 
-    sunrise = format(input$sunrise, "%H:%M"),
-    sunset = format(input$sunset,"%H:%M"),
     light_probability = light_prob_dens,
     dark_probability = dark_prob_dens,
     night_hypoxia_ratio = nhr
@@ -152,7 +137,4 @@ output$do_hypoxia_metrics <- renderDT({
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
   
 })
-
-
-
 
