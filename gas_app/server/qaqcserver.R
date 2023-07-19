@@ -1,10 +1,10 @@
 
 # selectedData <- reactive({
-#   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
+#   df_plot <- goop$combined_df[goop$combined_df$Location %in% input$Location,]
 #   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
 #   event.selected.data <- event_data(event = "plotly_selected", source = "imgLink")
-#   df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$Station) %in% event.click.data$key) | 
-#                           (paste0(df_plot$id,'_',df_plot$Station) %in% event.selected.data$key)),]
+#   df_chosen <- df_plot[((paste0(df_plot$id,'_',df_plot$Location) %in% event.click.data$key) | 
+#                           (paste0(df_plot$id,'_',df_plot$Location) %in% event.selected.data$key)),]
 #   df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
 #   return(df_chosen)
 # }) 
@@ -14,9 +14,9 @@
 #                choices = unique(goop$combined_df$Variable))
 # })
 # 
-# output$station <- renderUI({
-# num_station <- unique(goop$combined_df$Station)
-# radioButtons('Station', label = '', choices = setNames(num_station, num_station))
+# output$Location <- renderUI({
+# num_Location <- unique(goop$combined_df$Location)
+# radioButtons('Location', label = '', choices = setNames(num_Location, num_Location))
 # })
 
 # Reactive expression for filtered data
@@ -29,7 +29,7 @@ filteredData <- reactive({
 output$main_plot <- renderPlotly({
   plot_df = filteredData() %>% filter(Variable == input$variable_choice)
   plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
-              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Station))), color = ~as.character(Station), opacity = 0.5, source = "imgLink") |>
+              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Location))), color = ~as.character(Location), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>
@@ -42,7 +42,7 @@ output$main_plot <- renderPlotly({
 # })
 
 observeEvent(input$flag_btn, {
-  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
+  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location)), "Flag"] <- input$flag_type  # Set the flag
 })
 
 #reset all flags

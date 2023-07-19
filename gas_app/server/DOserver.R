@@ -10,7 +10,21 @@ output$do_date_viewer <- renderUI({
                  start = start_date, end = end_date)
 })
 
+output$station <- renderUI({
+  station_names <- unique(goop$combined_df$Station)
+  radioButtons('station', label = "Select station to graph", station_name)
+})
+
+output$site <- renderUI({
+  site_name <- unique(goop$combined_df$Site)
+  radioButtons('site', label = "Select site to graph", site_name)
+})
+
 filtered_df <- reactive({
+    df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
+    df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
+    df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
+    return(df_chosen)
   selected_dates <- input$date_range_input
   subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
 })

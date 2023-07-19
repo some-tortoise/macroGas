@@ -34,7 +34,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
         df_plot <- goop$combined_df
         #event.click.data <- event_data(event = "plotly_click", source = paste0("typegraph_",variable))
         event.selected.data <- event_data(event = "plotly_selected", source = paste0("typegraph_",variable))
-        df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Station) %in% event.selected.data$key),]
+        df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Location) %in% event.selected.data$key),]
         df_chosen <- df_chosen[df_chosen$Variable == variable,]
         
         return(df_chosen)
@@ -103,13 +103,13 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       })
       
       observeEvent(input$flag_btn, {
-        #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station))])
-        goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
+        #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location))])
+        goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location)), "Flag"] <- input$flag_type  # Set the flag
       })
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
-        plot_df <- subset(goop$combined_df %>% filter(Variable == variable), 
+        plot_df <- subset(goop$combined_df %>% filter(Variable == variable, #Station == , Site ==), 
                           Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         
         plot_ly(data = plot_df, 
@@ -118,7 +118,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
                 x = ~Date_Time, 
                 y = ~Value, 
                 color = ~as.character(Flag), 
-                key = ~(paste0(as.character(id),"_",as.character(Station))), 
+                key = ~(paste0(as.character(id),"_",as.character(Location))), 
                 colors = color_mapping, 
                 source = paste0("typegraph_",variable)) |>
           layout(xaxis = list(
@@ -134,7 +134,8 @@ varContainerServer <- function(id, variable, goop, dateRange) {
 div(class = 'qaqc page',
     div(class = 'qaqc--pick-container',
         div(class = 'qaqc--pick',
-            selectInput('qaqcSiteSelect', 'Select Site', c('NHC', 'Russia'))
+            selectInput('qaqcStationSelect', "Select Station", c("Erwin", "CB", "WB")),
+            selectInput('qaqcSiteSelect', 'Select Site', c("poolDown", "poolUp", "riffle"))
             )
         ),
     div(class = 'qaqc--intro-container',
