@@ -72,27 +72,27 @@ ui <- fluidPage(
                       source("ui/homeUI.R")[1]),
              tabPanel('Upload',
                       source("ui/uploadUI.R")[1]),
-             tabPanel('QA/QC',
-                      source("ui/qaqcUI.R")[1]),
-            
-             tabPanel("View",
-                     source("ui/viewUI.R")[1]),
-             tabPanel("DO Data and Metrics",
-                      source("ui/DOUI.R")[1])
-             )
+             # tabPanel('QA/QC',
+             #          source("ui/qaqcUI.R")[1]),
+             # 
+             # tabPanel("View",
+             #         source("ui/viewUI.R")[1]),
+             # tabPanel("DO Data and Metrics",
+             #          source("ui/DOUI.R")[1])
+              )
   
   )
 
 server <- function(input, output, session) {
   goop <- reactiveValues()
-  goop$combined_df <- combined_df
+  #goop$combined_df <- combined_df
   
   # Call the server functions from the included files
   source("server/homeserver.R", local = TRUE)
   source("server/uploadserver.R", local = TRUE)
-  source("server/qaqcserver.R", local = TRUE)
-  source("server/viewserver.R", local = TRUE)
-  source("server/DOserver.R", local = TRUE)
+  # source("server/qaqcserver.R", local = TRUE)
+  # source("server/viewserver.R", local = TRUE)
+  # source("server/DOserver.R", local = TRUE)
 }
 
 
