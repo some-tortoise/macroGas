@@ -180,8 +180,10 @@ output$halfheightOutput <- renderText({
   req(goop$combined_df)
   req(goop$trimmed_slug)
   
-  if(is.null(goop$combined_df) || is.null(goop$trimmed_slug)){
-    return('Time to half height: N/A')
+  if(length(goop$trimmed_slug) <= 1){
+    if(is.null(goop$combined_df) || is.null(goop$trimmed_slug) || is.na(goop$trimmed_slug)){
+      return('Time to half height: N/A')
+    }
   }
   
   #basic renaming

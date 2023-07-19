@@ -82,11 +82,12 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
 observeEvent(input$trimContinue, {
   #trim goop$combined_df between goop$trim_xLeft and goop$trim_xRight here
   temp <- subset(goop$combined_df, Date_Time > goop$trim_xLeft)
-  if(length(temp) > 1){
-    temp <- subset(temp, Date_Time > goop$trim_xLeft)
-  }
+  temp <- subset(temp, Date_Time < goop$trim_xRight)
+  temp_melted <- subset(goop$melted_combined_df, Date_Time > goop$trim_xLeft)
+  temp_melted <- subset(temp_melted, Date_Time < goop$trim_xRight)
   if(length(temp) > 1){
     goop$combined_df <- temp
+    goop$melted_combined_df <- temp_melted
     updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel")
   }else{
     print('make sure some data remains in trim')

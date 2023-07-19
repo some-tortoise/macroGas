@@ -191,10 +191,12 @@ observeEvent(uploaded_data$data,  {
 })
 
 observeEvent(input$uploadContinue,{
-  
-  if(is.na(uploaded_data$data) || is.null(uploaded_data$data)){
-    return()
+  if(length(uploaded_data$data) <= 1){
+    if(is.na(uploaded_data$data) || is.null(uploaded_data$data)){
+      return()
+    }
   }
+  
   
   comb_df <- do.call(rbind, uploaded_data$data)
   colnames(comb_df) <- c('Date_Time', 'station', 'Low_Range', 'Full_Range', 'High_Range', 'Temp_C') #naming columns

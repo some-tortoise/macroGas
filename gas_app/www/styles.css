@@ -14,8 +14,18 @@ body > .body-container{
     padding-left: 0;
     padding-right: 0;
     width: 100%;
+    height: 100vh;
+}
+
+/*
+.body-container > .container-fluid{
     height: 100%;
 }
+
+.body-container > .container-fluid > .tab-content{
+    height: 100%;
+}
+*/
 
 .page{
     width: 100%;
@@ -76,9 +86,39 @@ HOME PAGE
 }
 
 /***
-QAQC
+UPLOAD
 ***/
 
+.upload .page{
+    margin: 0;
+    padding: 0;
+    font-family: Inter;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+.upload-box-1{
+    display: flex;
+    margin: 0 30px 0 30px;
+    background-color: #7BACF4;
+    border-radius: 5px;
+    align-items: center;
+    padding: 20px;
+}
+
+.upload-box-3{
+    display: flex;
+    background-color: aqua;
+    margin: 0 30px 0 30px;
+}
+
+
+/***
+QAQC
+***/
 
 
 .qaqc .page{

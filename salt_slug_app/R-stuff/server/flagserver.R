@@ -1,8 +1,7 @@
 observe({
   if(!is.null(goop$combined_df)){
     filteredData <- reactive({
-      df_plot <- goop$melted_combined_df
-      
+      df_plot <- goop$melted_combined_df[goop$melted_combined_df$Station == input$station,]
       #df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
     })
     
