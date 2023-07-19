@@ -53,7 +53,6 @@ output$do_metrics_range <- renderDT({
 
 
 light_df <- reactive({
-  view(combined_df)
   selected_dates <- input$date_range_input
   sunrise_time <- input$sunrise
   sunset_time <- input$sunset
@@ -69,18 +68,48 @@ light_df <- reactive({
 
 dark_df <- reactive({
   light <- light_df()
-  view(light)
   dark <- subset(combined_df, !(Date_Time %in% light$Date_Time))
-  view(dark)
 })
 
-output$light <- renderPlotly({
-  plot_ly(light_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
+output$light_kernel <- renderPlotly({
+  light_data <- light_df() # Retrieve the data frame using light_df()
+  
+  kde <- density(light_data$DO_conc)
+  plot <- data.frame(DO = kde$x, Density = kde$y)
+  light_plot <- ggplot(plot, aes(x = DO, y = Density)) +
+    geom_line() +
+    geom_vline(xintercept = input$h_threshold, color = "red") +
+    geom_ribbon(data = subset(plot, DO <= input$h_threshold), aes(x = DO, ymin = 0, ymax = Density),
+                fill = "darkblue", alpha = 0.3) +
+    labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
+    ggtitle("Daytime Kernel Density Estimation")
+  
+  plotly::ggplotly(light_plot) # Convert ggplot to Plotly plot
 })
 
-output$dark <- renderPlotly({
-  plot_ly(dark_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
-})
+output$dark_kernel <- renderPlotly({
+    dark_data <- dark_df() # Retrieve the data frame using light_df()
+    
+    kde <- density(dark_data$DO_conc)
+    plot <- data.frame(DO = kde$x, Density = kde$y)
+    dark_plot <- ggplot(plot, aes(x = DO, y = Density)) +
+      geom_line() +
+      geom_vline(xintercept = input$h_threshold, color = "red") +
+      geom_ribbon(data = subset(plot, DO <= input$h_threshold), aes(x = DO, ymin = 0, ymax = Density),
+                  fill = "darkblue", alpha = 0.3) +
+      labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
+      ggtitle("Nighttime Kernel Density Estimation")
+    
+    plotly::ggplotly(dark_plot) # Convert ggplot to Plotly plot
+  })
+
+# output$light <- renderPlotly({
+#   plot_ly(light_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
+# })
+# 
+# output$dark <- renderPlotly({
+#   plot_ly(dark_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
+# })
 
 output$do_hypoxia_metrics <- renderDT({
   light_df <- light_df()
@@ -108,7 +137,6 @@ output$do_hypoxia_metrics <- renderDT({
     nhr <<- (dark_prob_dens/light_prob_dens)
     return(nhr)
   }
-  
   
   light_prob_dens <- light_prob_fxn(light_df, h)
   dark_prob_dens <- dark_prob_fxn(dark_df, h)
