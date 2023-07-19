@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 /Applications/Utilities/Adobe Creative Cloud/Components/Fonts/resources/index.css="49D9884A"
 /Users/alejandrobreen/Desktop/Data+/macroGas/gas_app/NC_NHC_2023-03-06_HD.csv="3F3E417F"
 /Users/alejandrobreen/Desktop/Data+/macroGas/gas_app/gasapp.R="4B3CDC7A"
@@ -21,11 +22,17 @@
 /Users/alejandrobreen/Desktop/Data+/macroGas/salt_slug_app/R-stuff/ui/upload.R="3C92F8C2"
 /Users/alejandrobreen/Desktop/Data+/macroGas/salt_slug_app/R-stuff/www/styles.css="A1E8E281"
 /Users/alejandrobreen/Desktop/Data+/macroGas/salt_slug_app/updated_cleaning.R="DE93E7D7"
+=======
+C:/Users/sperl/Documents/GitHub/macroGas/gas_app/gasapp.R="BA32E30E"
+>>>>>>> Stashed changes
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/server/DOserver.R="7F3C1762"
+C:/Users/sperl/Documents/GitHub/macroGas/gas_app/server/homeserver.R="CC94A05B"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/server/qaqcserver.R="57280AA4"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/server/uploadserver.R="00B581A1"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/server/viewserver.R="D303249D"
+C:/Users/sperl/Documents/GitHub/macroGas/gas_app/ui/DOUI.R="76C95D1D"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/ui/qaqcUI.R="68047807"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/ui/uploadUI.R="C8F41AC5"
 C:/Users/sperl/Documents/GitHub/macroGas/gas_app/ui/viewUI.R="7F7E9009"
+C:/Users/sperl/Documents/GitHub/macroGas/salt_slug_app/R-stuff/server/flagserver.R="A9ACD6B7"
 C:/Users/sperl/Documents/GitHub/macroGas/salt_slug_app/R-stuff/server/uploadserver.R="C5C0EA39"
