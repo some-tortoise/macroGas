@@ -19,9 +19,9 @@ fluidPage(
                          plotlyOutput("do_plot_full"),
                          dataTableOutput("do_metrics_full")),
                 tabPanel("Hypoxia Metrics", value = "hypoxiatab",
-                        # plotlyOutput("do_plot_hypoxia"),
-                         plotlyOutput("light"),
-                         dataTableOutput("do_hypoxia_metrics"))
+                        plotlyOutput("light"),
+                        plotlyOutput("dark"),
+                        dataTableOutput("do_hypoxia_metrics"))
                 )
             )
     )
