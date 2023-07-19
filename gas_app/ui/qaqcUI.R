@@ -100,12 +100,12 @@ varContainerServer <- function(id, variable, goop, dateRange) {
               )
             )
         
-      })
+      }) #summary statistics
       
       observeEvent(input$flag_btn, {
         #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station))])
         goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  # Set the flag
-      })
+      }) #flagging
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
@@ -126,7 +126,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
           ), dragmode = 'select') |>
           config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
           layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = variable))
-      })
+      }) #main plot
     }
   )
 }

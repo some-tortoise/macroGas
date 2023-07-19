@@ -31,10 +31,11 @@ output$do_metrics_full <- renderDT({
     Minimum = min(combined_df$DO_conc, na.rm = TRUE),
     Maximum = max(combined_df$DO_conc, na.rm = TRUE),
     Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(combined_df$DO_conc <= input$hypoxia_math, na.rm = TRUE)/(length(combined_df$DO_conc))
+    Hypoxia_Prob = sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
   )
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  })
+
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
   metrics <- data.frame(
@@ -42,7 +43,50 @@ output$do_metrics_range <- renderDT({
     Minimum = min(metrics_df$DO_conc, na.rm = TRUE),
     Maximum = max(metrics_df$DO_conc, na.rm = TRUE),
     Amplitude = max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(metrics_df$DO_conc <= input$hypoxia_math, na.rm = TRUE)/(length(metrics_df$DO_conc))
+    Hypoxia_Prob = sum(metrics_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(metrics_df$DO_conc))
   )
   datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 })
+
+
+light_df <- reactive({
+  selected_dates <- input$date_range_input
+  sunrise_time <- input$sunrise
+  sunset_time <- input$sunset
+  
+  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+           (hour(Date_Time) > hour(sunrise_time) | 
+              (hour(Date_Time) == hour(sunrise_time) & minute(Date_Time) >= minute(sunrise_time))) &
+           (hour(Date_Time) < hour(sunset_time) | 
+              (hour(Date_Time) == hour(sunset_time) & minute(Date_Time) <= minute(sunset_time))))
+})
+
+dark_df <- reactive({
+  light <- light_df()
+  
+  dark <- subset(combined_df, !(Date_Time %in% light$Date_Time))
+  dark
+})
+
+output$do_plot_hypoxia <- renderDT({
+  })
+
+output$light <- renderPlotly({
+  plot_ly(light_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines")
+})
+
+output$do_hypoxia_metrics <- renderDT({
+  hypoxia <- data.frame( 
+    sunrise = format(input$sunrise, "%H:%M"),
+    sunset = format(input$sunset,"%H:%M"),
+    light_probability = 10,
+    dark_probability = 11,
+    night_hypoxia_ratio = 12
+  )    
+    datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
+  
+})
+
+
+
+

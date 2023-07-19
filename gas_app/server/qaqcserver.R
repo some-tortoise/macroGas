@@ -1,4 +1,3 @@
-
 # selectedData <- reactive({
 #   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$Station,]
 #   event.click.data <- event_data(event = "plotly_click", source = "imgLink")
@@ -25,6 +24,7 @@ filteredData <- reactive({
   selected_dates_qaqc <- input$qaqcDateRange
   #subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
 })
+
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
   plot_df = filteredData() %>% filter(Variable == input$variable_choice)
