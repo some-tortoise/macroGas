@@ -105,6 +105,8 @@ observeEvent(input$uploadBtn, {
   
   goop$combined_df <- stacked_data
   
+  View(goop$combined_df)
+  
   print('Dataset Added!')
   goop$curr_df <- NULL
   goop$siteName <- ''

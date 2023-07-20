@@ -102,22 +102,22 @@ UPLOAD
 
 .upload-box-1{
     display: flex;
-    margin: 0px 100px 0px 100px;
+    margin: 0 auto;
     background-color: #CFDDF1;
-    gap: 30px;
+    gap: 20px;
     border-radius: 5px;
     align-items: center;
-    padding: 0 50px;
+    padding: 0 20px;
     justify-content: space-between;
+    width: fit-content;
 }
 
 .upload--box1-1{
-    min-width: 150px;
     font-weight: bold;
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 20px;
+    gap: 10px;
 }
 
 .upload--box1-1 div:nth-child(2){
