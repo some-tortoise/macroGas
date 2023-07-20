@@ -10,7 +10,7 @@ for (file_name in file_names) {
   base_name <- basename(file_name)  # Extract the file name from the full path
   file_data <- read.csv(file_name, header = FALSE)  # Change the function according to the file type
   file_data <- file_data[-1]  # Deleting the first column
-  file_data <- slice(file_data, -(1))
+  file_data <- slice(file_data, -(1)) #deleting the first row
   new_col_names <- sapply(file_data, function(x) as.character(x[1]))
   colnames(file_data) <- new_col_names
   data_list[[base_name]] <- file_data  # Store the data using the extracted file name
@@ -44,5 +44,13 @@ for (file_name in file_names) {
 }
 
 df <- bind_rows(df_list)  # Combine the filtered data frames into a single data frame
+stacked_data <- gather(df, key = "Variable", value = "Value", -1)
+stacked_data <- slice(stacked_data, -(1))
+stacked_data$Variable <- ifelse(grepl("Temp C", stacked_data$Variable), "Temp_C", stacked_data$Variable)
+stacked_data$Variable <- ifelse(grepl("Low Range", stacked_data$Variable), "Low_Range", stacked_data$Variable)
+stacked_data$Variable <- ifelse(grepl("High Range", stacked_data$Variable), "High_Range", stacked_data$Variable)
+stacked_data$Variable <- ifelse(grepl("Full Range", stacked_data$Variable), "Full_Range", stacked_data$Variable)
+stacked_data$Variable <- ifelse(grepl("Abs", stacked_data$Variable), "Abs_Pres", stacked_data$Variable)
+stacked_data$Variable <- ifelse(grepl("DO", stacked_data$Variable), "DO_Conc", stacked_data$Variable)
 
-View(df)  # Display the filtered data frame
+view(stacked_data)
