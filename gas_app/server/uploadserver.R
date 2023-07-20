@@ -1,29 +1,79 @@
+getGuesses <- function(df) {
+  keywords <- c("DO", "Date", "Range", "Temp", "Abs")
+  returnList <- c()
+  
+  for (i in 1:length(colnames(file_data))) {
+    colName <- colnames(file_data)[i]
+    returnList[i*2-1] <- colName
+    for (keyword in keywords) {
+      if (str_detect(colName, keyword)) {
+        returnList[i*2] <- keyword
+      }
+    }
+  }
+  goop$guessList <- returnList
+  return(returnList)
+}
+
+observeEvent(goop$guessList, {
+  output$guesses <- renderUI({
+    div('Our guesses are: ')
+    # vars <- unique(goop$combined_df$Variable)
+    # LL <- vector("list",length(vars))       
+    # for(i in vars){
+    #   LL[[i]] <- list(varContainerUI(id = i, var = i))
+    # }      
+    # return(LL)  
+  })
+})
+# 
+# observe({
+#   lapply(unique(goop$combined_df$Variable), function(i) {
+#     varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$date_range_qaqc}))
+#   })
+# })
+
 add_df <- function(df, fileName) {
-  # Step 1: CHECK COLUMN NAMES AND REMOVE UNWANTED COLUMNS
-  # Step 2: ADD TO GOOP (COMBINE DF's AS NECESSARY HERE)
-  # Step 3: 
+  
+  siteGuess <- str_split(fileName, '_')[[1]][2]
+  stationGuess <- str_split(fileName, '_')[[1]][3]
+  goop$siteName <- siteGuess
+  goop$stationName <- stationGuess
+  
+  
+  guessList <- getGuesses(df)
+  print(guessList)
   goop$curr_df <- df
-  print(df)
-  print(fileName)
-  print('-----------------------------')
 }
 
 observeEvent(input$df_upload, {
   tryCatch({
     for(i in 1:length(input$df_upload[,1])){
-      df <- read.csv(input$df_upload[[i, 'datapath']])
+      filePath <- input$df_upload[[i, 'datapath']]
+      df <- read.csv(filePath, skip = 1)
       fileName <- input$df_upload[[i, 'name']]
       add_df(df, fileName)
       }
     })
 })
 
+goop$siteName <- 'Placeholder'
+goop$stationName <- 'Placeholder'
+
 output$siteNameUI <- renderUI({
-  textInput('siteName','', value = 'Placeholder')
+  textInput('siteName','', value = goop$siteName)
 })
 
 output$stationNameUI <- renderUI({
-  textInput('stationName','', value = 'Placeholder')
+  textInput('stationName','', value = goop$stationName)
+})
+
+observeEvent(input$siteName,{
+  goop$siteName <- input$siteName
+})
+
+observeEvent(input$stationName,{
+  goop$stationName <- input$stationName
 })
 
 output$contents <- renderDT({
