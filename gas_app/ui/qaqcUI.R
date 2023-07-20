@@ -100,7 +100,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
               )
             )
         
-      })
+      }) #summary statistics
       
       observeEvent(input$flag_btn, {
         #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location))])
@@ -126,7 +126,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
           ), dragmode = 'select') |>
           config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
           layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = variable))
-      })
+      }) #main plot
     }
   )
 }
