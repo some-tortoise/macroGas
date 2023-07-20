@@ -22,14 +22,15 @@
 filteredData <- reactive({
   df_plot <- goop$combined_df
   selected_dates_qaqc <- input$qaqcDateRange
-  #subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
+  subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
+  filter(df_plot, Site == input$qaqcSiteSelect & Station == input$qaqcStationSelect)
 })
 
 # Render the Plotly graph with updated start and end date and time
 output$main_plot <- renderPlotly({
   plot_df = filteredData() %>% filter(Variable == input$variable_choice)
   plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
-              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Location))), color = ~as.character(Location), opacity = 0.5, source = "imgLink") |>
+              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Variable))), color = ~as.character(Variable), opacity = 0.5, source = "imgLink") |>
     layout(xaxis = list(
       type = "date"  # Specify the x-axis type as date
     ), dragmode = 'select') |>

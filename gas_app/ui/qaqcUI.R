@@ -3,7 +3,11 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
   
   variable_names <- list(
     'Temp_C' = 'Temp C',
-    'DO_conc' = 'DO Concentration (mg/L)'
+    'DO_conc' = 'DO Concentration (mg/L)',
+    'Low_Range' = 'Low Range (µS/cm)',
+    'Full_Range' = 'Full Range (µS/cm)',
+    'High_Range' = 'High Range (µS/cm)',
+    'Abs_Pres' = 'Abs Pressure (kPa)',
   )
   
   alias <- variable_names[var]
@@ -109,7 +113,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
-        plot_df <- subset(goop$combined_df %>% filter(Variable == variable, #Station == , Site ==), 
+        plot_df <- subset(goop$combined_df %>% filter(Variable == variable, Site == input$qaqcSiteSelect, Station == input$qaqcStationSelect), 
                           Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
         
         plot_ly(data = plot_df, 
@@ -134,8 +138,8 @@ varContainerServer <- function(id, variable, goop, dateRange) {
 div(class = 'qaqc page',
     div(class = 'qaqc--pick-container',
         div(class = 'qaqc--pick',
-            selectInput('qaqcStationSelect', "Select Station", c("Erwin", "CB", "WB")),
-            selectInput('qaqcSiteSelect', 'Select Site', c("poolDown", "poolUp", "riffle"))
+            selectInput('qaqcSiteSlect', "Select Site", c("Erwin", "CB", "WB")),
+            selectInput('qaqcStationSelect', 'Select Station', c("poolDown", "poolUp", "riffle"))
             )
         ),
     div(class = 'qaqc--intro-container',
