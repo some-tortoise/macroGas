@@ -129,11 +129,12 @@ output$do_hypoxia_metrics <- renderDT({
   dark_prob_dens <- dark_prob_fxn(dark_df, h)
   nhr <- night_hyp_ratio(dark_prob_dens, light_prob_dens)
   
-  hypoxia <- data.frame( 
-    light_probability = light_prob_dens,
-    dark_probability = dark_prob_dens,
-    night_hypoxia_ratio = nhr
-  )    
+  hypoxia <- data.hypoxia <- data.frame(
+    light_probability = round(light_prob_dens, digits = 4),
+    dark_probability = round(dark_prob_dens, digits = 4),
+    night_hypoxia_ratio = round(nhr, digits = 4)
+  )
+  
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
   
 })
