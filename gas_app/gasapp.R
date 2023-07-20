@@ -17,7 +17,7 @@ library(reshape2)
 library(janitor)
 library(remotes)
 # remotes::install_github("USGS-R/streamMetabolizer") # RUN THIS TO INSTALL STREAMMETABOLIZER
-library(streamMetabolizer)
+#library(streamMetabolizer)
 
 
 # raw_folder <- 'https://drive.google.com/drive/u/0/folders/1hniqK4ouIs3mFC8utRoiRfWgk1Ct-m9k'

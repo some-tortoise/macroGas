@@ -1,39 +1,51 @@
 getGuesses <- function(df) {
   keywords <- c("DO", "Date", "Range", "Temp", "Abs")
-  returnList <- c()
+  
+  goop$guessList <- c()
+  for(i in 1:length(colnames(file_data))){
+    goop$guessList[i] <- NA
+  }
+  
+  goop$colList <- colnames(file_data)
+  
   
   for (i in 1:length(colnames(file_data))) {
     colName <- colnames(file_data)[i]
-    returnList[i*2-1] <- colName
     for (keyword in keywords) {
       if (str_detect(colName, keyword)) {
-        returnList[i*2] <- keyword
+        goop$guessList[i] <- keyword
       }
     }
   }
-  goop$guessList <- returnList
-  return(returnList)
+  
 }
 
-observeEvent(goop$guessList, {
+observeEvent(goop$fileEntered, {
   output$guesses <- renderUI({
-    div('Our guesses are: ')
-    # vars <- unique(goop$combined_df$Variable)
-    # LL <- vector("list",length(vars))       
-    # for(i in vars){
-    #   LL[[i]] <- list(varContainerUI(id = i, var = i))
-    # }      
-    # return(LL)  
+    LL <- vector("list",length(goop$colList))   
+    ids <- c(1:length(goop$colList))
+    for(i in 1:length(goop$colList)){
+      LL[[i]] <- list(
+        guessUI(id = ids[i], 
+                colName = goop$colList[i], 
+                guess = goop$guessList[i], 
+                guessList = unique(goop$guessList)
+                )
+        )
+    }
+    return(LL)
+  })
+  
+  ids <- c(1:length(goop$colList))
+  lapply(ids, function(i) {
+    guessServer(id = i)
   })
 })
-# 
-# observe({
-#   lapply(unique(goop$combined_df$Variable), function(i) {
-#     varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$date_range_qaqc}))
-#   })
-# })
 
 add_df <- function(df, fileName) {
+  
+  goop$fileEntered <- 0
+  goop$fileEntered <- 1
   
   siteGuess <- str_split(fileName, '_')[[1]][2]
   stationGuess <- str_split(fileName, '_')[[1]][3]
@@ -41,8 +53,7 @@ add_df <- function(df, fileName) {
   goop$stationName <- stationGuess
   
   
-  guessList <- getGuesses(df)
-  print(guessList)
+  getGuesses(df)
   goop$curr_df <- df
 }
 
@@ -78,6 +89,27 @@ observeEvent(input$stationName,{
 
 output$contents <- renderDT({
   datatable(goop$curr_df)
+})
+
+observeEvent(input$uploadBtn, {
+  
+  df <- bind_rows(c(goop$combined_df, goop$curr_df))  # Combine the filtered data frames into a single data frame
+  stacked_data <- gather(df, key = "Variable", value = "Value", -1)
+  stacked_data <- slice(stacked_data, -(1))
+  stacked_data$Variable <- ifelse(grepl("Temp C", stacked_data$Variable), "Temp_C", stacked_data$Variable)
+  stacked_data$Variable <- ifelse(grepl("Low Range", stacked_data$Variable), "Low_Range", stacked_data$Variable)
+  stacked_data$Variable <- ifelse(grepl("High Range", stacked_data$Variable), "High_Range", stacked_data$Variable)
+  stacked_data$Variable <- ifelse(grepl("Full Range", stacked_data$Variable), "Full_Range", stacked_data$Variable)
+  stacked_data$Variable <- ifelse(grepl("Abs", stacked_data$Variable), "Abs_Pres", stacked_data$Variable)
+  stacked_data$Variable <- ifelse(grepl("DO", stacked_data$Variable), "DO_Conc", stacked_data$Variable)
+  
+  goop$combined_df <- stacked_data
+  
+  print('Dataset Added!')
+  goop$curr_df <- NULL
+  goop$siteName <- ''
+  goop$stationName <- ''
+  output$guesses <- renderUI({})
 })
 
 

@@ -1,43 +1,24 @@
-# div(class = 'upload page',
-#     div(class = "upload-box-container",
-#       div(class="area",
-#           div(class = 'area-back',
-#               ),
-#           tags$input(type="file", id="upload")
-#       )
-#       )
-#     ,
-# tags$script(
-#   HTML("
-# 
-# var upload = document.getElementById('upload');
-# 
-# function onFile() {
-#     var me = this,
-#         file = upload.files[0],
-#         name = file.name.replace(/.[^/.]+$/, '');
-#     console.log('upload code goes here', file, name);
-# }
-# 
-# upload.addEventListener('dragenter', function (e) {
-#     upload.parentNode.className = 'area dragging';
-# }, false);
-# 
-# upload.addEventListener('dragleave', function (e) {
-#     upload.parentNode.className = 'area';
-# }, false);
-# 
-# upload.addEventListener('dragdrop', function (e) {
-#     onFile();
-# }, false);
-# 
-# upload.addEventListener('change', function (e) {
-#     onFile();
-# }, false);
-#        
-# ")
-#   )
-# )
+guessUI <- function (id, colName, guess, guessList){
+  ns <- NS(id)
+ 
+  tagList(
+    div(
+      p(colName),
+      selectInput(ns('guessInput'), label='', choices = guessList, selected = guess)
+    )
+  )
+}
+
+guessServer <- function(id) {
+  moduleServer(
+    id,
+    function(input, output, session) {
+      observeEvent(input$guessInput, {
+        #print(id)
+      })
+    }
+      )
+}
 
 
 div(class = 'upload page',
@@ -61,7 +42,7 @@ div(class = 'upload page',
               'Station'),
           uiOutput("stationNameUI")
       ),
-      actionButton("df_delete", "Add dataset")
+      actionButton("uploadBtn", "Add dataset")
       ),
   div(class = 'upload-box-2',
       uiOutput("guesses")
