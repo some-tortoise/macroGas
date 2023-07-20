@@ -11,7 +11,8 @@ output$do_date_viewer <- renderUI({
   start_date = min(combined_df$Date_Time)
   end_date = max(combined_df$Date_Time)
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
-                 start = start_date, end = end_date)
+                 start = start_date, end = end_date,
+                 min = start_date, max = end_date)
 })
 
 filtered_df <- reactive({
@@ -115,6 +116,7 @@ output$do_hypoxia_metrics <- renderDT({
   }
   
   dark_prob_fxn <- function(dark_df, h) {
+    view(dark_df)
     n_dark <- nrow(dark_df)
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
@@ -136,6 +138,23 @@ output$do_hypoxia_metrics <- renderDT({
   )
   
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
+  
+})
+
+output$durationcurve <- renderText({
+  # Modal undersaturation is the most frequently observed state of oxygen depletion 
+  # of the system, calculated as 100% saturation minus the most often observed DO saturation 
+  # and visually represented as the inflection point on the DO duration plot
+  
+  df <- filtered_df()
+  
+  DO_mode <- as.numeric(names(table(df$DO_conc))[which.max(table(df$DO_conc))])
+  print("DO Mode")
+  print(DO_mode)
+  #need to convert to DO sat here but pulling temp/pressure data is so difficult
+  modal_DO_undersat <- (1 - DO_mode)
+  print("modal DO undersat")
+  print(modal_DO_undersat)
   
 })
 

@@ -17,13 +17,17 @@ fluidPage(
                 tabPanel("Full Range",
                          plotlyOutput("do_plot_full"),
                          dataTableOutput("do_metrics_full")),
-                tabPanel("Hypoxia Metrics", value = "hypoxiatab",
+                tabPanel("Night Hypoxia Ratio", value = "hypoxiatab",
                          plotlyOutput("light_kernel"),
                          plotlyOutput("dark_kernel"),
-                         dataTableOutput("do_hypoxia_metrics"))
+                         dataTableOutput("do_hypoxia_metrics")),
+                tabPanel("DO Duration Curve",
+                         textOutput("durationcurve")
                 )
             )
     )
 )
+)
+
 
 
