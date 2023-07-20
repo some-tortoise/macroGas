@@ -2,7 +2,11 @@ varViewUI <- function (id, var = 'Unknown Variable'){
   ns <- NS(id)
   variable_names <- list(
     'Temp_C' = 'Temp C',
-    'DO_conc' = 'DO Concentration'
+    'DO_conc' = 'DO Concentration (mg/L)',
+    'Low_Range' = 'Low Range (µS/cm)',
+    'Full_Range' = 'Full Range (µS/cm)',
+    'High_Range' = 'High Range (µS/cm)',
+    'Abs_Pres' = 'Abs Pressure (kPa)',
   )
   
   alias <- variable_names[var]
@@ -33,7 +37,8 @@ varViewServer <- function(id, variable, goop, dateRange) {
 div(class = 'view page',
     div(class = 'view--pick-container',
         div(class = 'view--pick',
-            selectInput('viewSiteSelect', 'Select Site'#, c('NHC', 'Russia'))
+            selectInput('viewSiteSelect', 'Select Site', c('CB', 'WB', "Erwin")),
+            selectInput('viewStationSelect', 'Select Station', c('poolUp', 'poolDown', 'riffle'))
         )
     ),
     div(class = 'view--intro-container',

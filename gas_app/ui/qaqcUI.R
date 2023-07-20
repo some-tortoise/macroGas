@@ -122,14 +122,14 @@ varContainerServer <- function(id, variable, goop, dateRange) {
                 x = ~Date_Time, 
                 y = ~Value, 
                 color = ~as.character(Flag), 
-                key = ~(paste0(as.character(id),"_",as.character(Location))), 
+                key = ~(paste0(as.character(id),"_",as.character(Site))), 
                 colors = color_mapping, 
                 source = paste0("typegraph_",variable)) |>
           layout(xaxis = list(
             type = "date"  # Specify the x-axis type as date
           ), dragmode = 'select') |>
           config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
-          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = variable))
+          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = Variable))
       }) #main plot
     }
   )
