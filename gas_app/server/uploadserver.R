@@ -92,20 +92,47 @@ output$contents <- renderDT({
 })
 
 observeEvent(input$uploadBtn, {
+  df <- goop$curr_df
+  colnames(df) <- goop$guessList
+  df <- df[, !is.na(names(df))]
   
-  df <- bind_rows(c(goop$combined_df, goop$curr_df))  # Combine the filtered data frames into a single data frame
-  stacked_data <- gather(df, key = "Variable", value = "Value", -1)
-  stacked_data <- slice(stacked_data, -(1))
-  stacked_data$Variable <- ifelse(grepl("Temp C", stacked_data$Variable), "Temp_C", stacked_data$Variable)
-  stacked_data$Variable <- ifelse(grepl("Low Range", stacked_data$Variable), "Low_Range", stacked_data$Variable)
-  stacked_data$Variable <- ifelse(grepl("High Range", stacked_data$Variable), "High_Range", stacked_data$Variable)
-  stacked_data$Variable <- ifelse(grepl("Full Range", stacked_data$Variable), "Full_Range", stacked_data$Variable)
-  stacked_data$Variable <- ifelse(grepl("Abs", stacked_data$Variable), "Abs_Pres", stacked_data$Variable)
-  stacked_data$Variable <- ifelse(grepl("DO", stacked_data$Variable), "DO_Conc", stacked_data$Variable)
   
-  goop$combined_df <- stacked_data
+  names(df)[names(df) == 'Date'] <- 'Date_Time'
+  names(df)[names(df) == 'Temp'] <- 'Temp_C'
+  names(df)[names(df) == 'DO'] <- 'DO_conc'
   
-  View(goop$combined_df)
+  df <- gather(df, key = "Variable", value = "Value", -1)
+  
+  df <- df %>% mutate(Date_Time = parse_date_time(Date_Time, "%m/%d/%y %I:%M:%S %p"))
+  
+  df <- na.omit(df)
+  
+  df['Site'] <- goop$siteName
+  df['Station'] <- goop$stationName
+  df['Flag'] <- 'NA'
+  
+  if(is.null(goop$combined_df)){
+    goop$combined_df <- df
+  }else{
+    goop$combined_df <- rbind(goop$combined_df[1:ncol(goop$combined_df)-1], df)
+  }
+  
+  goop$combined_df$id <- 1:nrow(goop$combined_df)
+  #View(goop$combined_df)
+  
+  # df <- bind_rows(c(goop$combined_df, goop$curr_df))  # Combine the filtered data frames into a single data frame
+  # stacked_data <- gather(df, key = "Variable", value = "Value", -1)
+  # 
+  # stacked_data <- slice(stacked_data, -(1))
+  # stacked_data$Variable <- ifelse(grepl("Temp C", stacked_data$Variable), "Temp_C", stacked_data$Variable)
+  # stacked_data$Variable <- ifelse(grepl("Low Range", stacked_data$Variable), "Low_Range", stacked_data$Variable)
+  # stacked_data$Variable <- ifelse(grepl("High Range", stacked_data$Variable), "High_Range", stacked_data$Variable)
+  # stacked_data$Variable <- ifelse(grepl("Full Range", stacked_data$Variable), "Full_Range", stacked_data$Variable)
+  # stacked_data$Variable <- ifelse(grepl("Abs", stacked_data$Variable), "Abs_Pres", stacked_data$Variable)
+  # stacked_data$Variable <- ifelse(grepl("DO", stacked_data$Variable), "DO_Conc", stacked_data$Variable)
+  # goop$combined_df <- stacked_data
+  # 
+  # View(goop$combined_df)
   
   print('Dataset Added!')
   goop$curr_df <- NULL

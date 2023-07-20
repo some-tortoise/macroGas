@@ -19,32 +19,32 @@
 # })
 
 # Reactive expression for filtered data
-filteredData <- reactive({
-  df_plot <- goop$combined_df
-  selected_dates_qaqc <- input$qaqcDateRange
-  subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
-  filter(df_plot, Site == input$qaqcSiteSelect & Station == input$qaqcStationSelect)
-})
+# filteredData <- reactive({
+#   df_plot <- goop$combined_df
+#   selected_dates_qaqc <- input$date_range_qaqc
+#   subset(df_plot, Date_Time >= selected_dates_qaqc[1] & Date_Time <= selected_dates_qaqc[2])
+#   #filter(df_plot, Site == input$qaqcSiteSelect & Station == input$qaqcStationSelect)
+# })
 
 # Render the Plotly graph with updated start and end date and time
-output$main_plot <- renderPlotly({
-  plot_df = filteredData() %>% filter(Variable == input$variable_choice)
-  plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
-              x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Variable))), color = ~as.character(Variable), opacity = 0.5, source = "imgLink") |>
-    layout(xaxis = list(
-      type = "date"  # Specify the x-axis type as date
-    ), dragmode = 'select') |>
-    config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
-    layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = input$variable_choice))
-})
+# output$main_plot <- renderPlotly({
+#   plot_df = filteredData() %>% filter(Variable == input$variable_choice)
+#   plot_ly(data = plot_df, type = 'scatter', mode = 'markers', 
+#               x = ~Date_Time, y = ~Value, key = ~(paste0(as.character(id),"_",as.character(Variable))), color = ~as.character(Variable), opacity = 0.5, source = "imgLink") |>
+#     layout(xaxis = list(
+#       type = "date"  # Specify the x-axis type as date
+#     ), dragmode = 'select') |>
+#     config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
+#     layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = input$variable_choice))
+# })
 
 # output$selected_data_table <- renderDT({
 #   datatable(selectedData() %>% select(-c(id)), options = list(pageLength = 5, searching = FALSE, lengthChange = FALSE, paging = TRUE, info = FALSE, ordering = FALSE), rownames = FALSE)
 # })
-
-observeEvent(input$flag_btn, {
-  goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location)), "Flag"] <- input$flag_type  # Set the flag
-})
+# 
+# observeEvent(input$flag_btn, {
+#   goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location)), "Flag"] <- input$flag_type  # Set the flag
+# })
 
 #reset all flags
 # observeEvent(input$Reset,{
@@ -63,24 +63,43 @@ observeEvent(input$flag_btn, {
 #   removeModal()
 # })
 
+output$qaqcSiteStationSelects <- renderUI({
+  div(
+    selectInput('qaqcSiteSelect', "Select Site", unique(goop$combined_df$Site), selected = unique(goop$combined_df$Site)[0]),
+    selectInput('qaqcStationSelect', 'Select Station', unique(goop$combined_df$Station), selected = unique(goop$combined_df$Station)[0])
+  )
+})
+  
+  
+
 observeEvent(input$qaqcSave, {
   alert('Data has been \'saved\'')
 })
 
-output$varContainers <- renderUI({
-  vars <- unique(goop$combined_df$Variable)
-  LL <- vector("list",length(vars))       
-  for(i in vars){
-    LL[[i]] <- list(varContainerUI(id = i, var = i))
-  }      
-  return(LL)  
-})
-
-observe({
-  lapply(unique(goop$combined_df$Variable), function(i) {
-    varContainerServer(id = i, variable = i, goop = goop, dateRange = reactive({input$date_range_qaqc}))
+observeEvent(input$uploadBtn, {
+  output$varContainers <- renderUI({
+    vars <- unique(goop$combined_df$Variable)
+    LL <- vector("list",length(vars))       
+    for(i in vars){
+      LL[[i]] <- list(varContainerUI(id = i, var = i))
+    }      
+    return(LL)  
+  })
+  
+  observe({
+    lapply(unique(goop$combined_df$Variable), function(i) {
+      varContainerServer(id = i, 
+                         variable = i, 
+                         goop = goop, 
+                         dateRange = reactive({input$date_range_qaqc}),
+                         pickedSite = reactive({input$qaqcSiteSelect}),
+                         pickedStation = reactive({input$qaqcStationSelect}))
+    })
   })
 })
+
+
+
 
 # Download Clean Data in Longer Format
 # output$download_longer <- downloadHandler(
@@ -95,8 +114,8 @@ observe({
 # )
 
 output$qaqcDateRange <- renderUI({
-  start_date = min(combined_df$Date_Time)
-  end_date = max(combined_df$Date_Time)
+  start_date = min(goop$combined_df$Date_Time)
+  end_date = max(goop$combined_df$Date_Time)
   dateRangeInput("date_range_qaqc", "Select Date(s) To View/Calculate",
                  start = start_date, end = end_date)
 })
