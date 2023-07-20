@@ -39,7 +39,7 @@ varContainerServer <- function(id, variable, goop, dateRange) {
         #event.click.data <- event_data(event = "plotly_click", source = paste0("typegraph_",variable))
         event.selected.data <- event_data(event = "plotly_selected", source = paste0("typegraph_",variable))
         df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Location) %in% event.selected.data$key),]
-        df_chosen <- df_chosen[df_chosen$Variable == variable,]
+        df_chosen <- df_chosen[df_chosen$Variable == variable, df_chosen$Site == input$qaqcSiteSelect, df_chosen$Station == input$qaqcStationSelect]
         
         return(df_chosen)
       }) 
