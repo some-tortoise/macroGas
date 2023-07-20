@@ -8,12 +8,12 @@ The MacroGas project aims to make analyzing stream ecological data easier throug
 
 The Salt Slug App has been designed for conservative tracer injection studies which use NaCl (salt slugs). It allows researchers to upload their data, perform quality assurance/quality control (QA/QC) functions, then calculate stream discharge (Q), groundwater exchange  (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>).
 
-The GHG Visualization App is designed to take raw sensor data collected about dissolved oxygen and greenhouse gas (GHG) levels in streams, then perform QA/QC functions, visualize these data, and calculate various metrics such as hypoxia probability and summary statistics.
+The GHG Visualization App is designed to take raw sensor data collected about dissolved oxygen (DO) and greenhouse gas (GHG) levels in streams, then perform QA/QC functions, visualize these data, and calculate various metrics such as hypoxia probability and summary statistics.
 
 Both apps will create a more efficient and user-friendly platform for analyzing data, thereby contributing to the advancement of stream ecology research and environmental understanding.
 
 
-  ## Salt Slug App
+  ## Salt Slug App Functions
 **Home**
 
 The home page serves as a hub for the Salt Slug App, providing users with an overview of its features and functionality. It also includes a [resource link](http://dx.doi.org/10.1029/2011WR010942) to the publication by *Covino et al. (2011)* where our calculation methods are used , along with any other relevant information.
@@ -51,7 +51,7 @@ Quality Assurance/Quality Control page allows you to select a station and view t
 Calculate page performs stream discharge (Q), groundwater exchange  (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>) calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the result. Users can download flagged dataset and output table.
 
 
-  ## GHG Visualization Project
+  ## GHG App Functions
     
 **Home**
 
@@ -83,12 +83,14 @@ This page allows you to view the variables associated with your selected site an
 
 The DO Data and Metrics page provides functionality to assess hypoxia probability and summary statistics within your dataset. You have the flexibility to input the hypoxia threshold (in mg/L) for conducting thorough analyses. 
 
+## Gap Filling - Missing Values Imputation
+  
 ## Getting Started
 
-To get started with the Salt Slug App, make sure you have R Studio installed on your computer. Then, clone the repository by running the following command: 
+1. Make sure you have R Studio installed on your computer. 
+2. To get started with the Salt Slug App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/salt_slug_app.git'
-
-To get started with this app, clone the repository by running the following command: 
+3. To get started with this app, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/gas_app.git'
 
 #
