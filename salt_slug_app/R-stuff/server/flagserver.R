@@ -136,21 +136,21 @@ output$downloadBtn <- downloadHandler(
   },
   content = function(file) {
     # Generate the content of the file
-    write.csv(goop$combined_df, file, row.names = FALSE)
+    write.csv(goop$melted_combined_df, file, row.names = FALSE)
   }
 )
 
 observeEvent(input$upload_to_gdrive, {
   showModal(modalDialog(
     textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
-    actionButton('path_ok', 'OK')
+    actionButton('flag_path_ok', 'OK')
   ))
 })
 
-observeEvent(input$path_ok,{
+observeEvent(input$flag_path_ok,{
   name <- 'processed.csv'
-  turn_file_to_csv(goop$trimmed_slug, name)
-  res = tryCatch(upload_csv_file(goop$trimmed_slug, name, input$drivePath), error = function(i) NA)
+  turn_file_to_csv(goop$melted_combined_df, name)
+  res = tryCatch(upload_csv_file(goop$melted_combined_df, name, input$drivePath), error = function(i) NA)
   if(is.na(res)){
     showModal(modalDialog(
       h3('The path you entered is invalid!'),
