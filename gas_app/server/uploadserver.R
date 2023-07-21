@@ -1,4 +1,4 @@
-keywords <- c("NA","DO", "Date", "Range", "Temp", "Abs")
+keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs")
 
 getGuesses <- function(df) {
   

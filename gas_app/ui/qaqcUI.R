@@ -9,7 +9,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
     'High_Range' = 'High Range (µS/cm)',
     'Abs_Pres' = 'Abs Pressure (kPa)'
   )
-  
+  print(var)
   alias <- variable_names[var]
   
   
@@ -63,14 +63,14 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
           summary_custom_endValue <- end_date_summary
         }
         
-        df <- goop$combined_df[goop$combined_df$Site == pickedSite() & goop$combined_df$Station == pickedStation()]
+        df <- goop$combined_df[goop$combined_df$Site == pickedSite() & goop$combined_df$Station == pickedStation(),]
         
         full_values <- df[(df$Variable == variable), 'Value']
         full_mean <- round(mean(full_values, na.rm = TRUE), 2)
         full_median <- median(full_values, na.rm = TRUE)
         full_sd <- round(sd(full_values, na.rm = TRUE), 2)
         
-        daily_values  <- df[(df$Variable == variable) & (df$Date_Time == summary_daily_dateValue), 'Value']
+        daily_values  <- df[(df$Variable == variable) & (df$Date_Time > summary_daily_dateValue & df$Date_Time < summary_daily_dateValue + 1), 'Value']
         daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
         daily_median <- median(daily_values, na.rm = TRUE)
         daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
