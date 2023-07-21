@@ -114,6 +114,7 @@ observeEvent(input$uploadBtn, {
   names(df)[names(df) == 'Date'] <- 'Date_Time'
   names(df)[names(df) == 'Temp'] <- 'Temp_C'
   names(df)[names(df) == 'DO'] <- 'DO_conc'
+  names(df)[names(df) == 'Abs'] <- 'Abs_Pres'
   
   df <- gather(df, key = "Variable", value = "Value", -1)
   
