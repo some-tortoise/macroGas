@@ -63,17 +63,19 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
           summary_custom_endValue <- end_date_summary
         }
         
-        full_values <- goop$combined_df[(goop$combined_df$Variable == variable), 'Value']
+        df <- goop$combined_df[goop$combined_df$Site == pickedSite() & goop$combined_df$Station == pickedStation()]
+        
+        full_values <- df[(df$Variable == variable), 'Value']
         full_mean <- round(mean(full_values, na.rm = TRUE), 2)
         full_median <- median(full_values, na.rm = TRUE)
         full_sd <- round(sd(full_values, na.rm = TRUE), 2)
         
-        daily_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time == summary_daily_dateValue), 'Value']
+        daily_values  <- df[(df$Variable == variable) & (df$Date_Time == summary_daily_dateValue), 'Value']
         daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
         daily_median <- median(daily_values, na.rm = TRUE)
         daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
         
-        custom_values  <- goop$combined_df[(goop$combined_df$Variable == variable) & (goop$combined_df$Date_Time >= summary_custom_startValue & goop$combined_df$Date_Time <= summary_custom_endValue), 'Value']
+        custom_values  <- df[(df$Variable == variable) & (df$Date_Time >= summary_custom_startValue & df$Date_Time <= summary_custom_endValue), 'Value']
         custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
         custom_median <- median(custom_values, na.rm = TRUE)
         custom_sd <- round(sd(custom_values, na.rm = TRUE), 2)
@@ -108,7 +110,6 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       observeEvent(input$flag_btn, {
         #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location))])
         goop$combined_df[(goop$combined_df$id %in% selectedData()$id), "Flag"] <- input$flag_type  # Set the flag
-        View(goop$combined_df[(goop$combined_df$id %in% selectedData()$id),])
       })
       
       output$main_plot <- renderPlotly({
@@ -117,12 +118,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         plot_df <- plot_df[plot_df$Date_Time >= dateRange()[1] & plot_df$Date_Time <= dateRange()[2],]
         plot_df <- plot_df[plot_df$Station == pickedStation(),]
         plot_df <- plot_df[plot_df$Site == pickedSite(),]
-      
-        #plot_df <- plot_df[plot_df$Station == input$qaqcStationSelect,]
-        # plot_df <- subset( %>% filter(Variable == variable, Site == input$qaqcSiteSelect, Station == input$qaqcStationSelect), 
-        #                   Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
-        View(plot_df)
-        print(as.character(unique(plot_df$Flag)))
+
         plot_ly(data = plot_df, 
                 type = 'scatter', 
                 mode = 'markers', 

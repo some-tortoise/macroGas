@@ -6,7 +6,7 @@ varViewUI <- function (id, var = 'Unknown Variable'){
     'Low_Range' = 'Low Range (µS/cm)',
     'Full_Range' = 'Full Range (µS/cm)',
     'High_Range' = 'High Range (µS/cm)',
-    'Abs_Pres' = 'Abs Pressure (kPa)',
+    'Abs_Pres' = 'Abs Pressure (kPa)'
   )
   
   alias <- variable_names[var]
@@ -18,17 +18,26 @@ varViewUI <- function (id, var = 'Unknown Variable'){
   )
 }
 
-varViewServer <- function(id, variable, goop, dateRange) {
+varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStation) {
   moduleServer(
     id,
     function(input, output, session) {
       
       output$main_plot_view <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FDF000", "NA" = "#9EC1CF")
-        plotdf_view <- goop$combined_df %>% filter(Variable == variable, Site == input$viewSiteSelect , Station == input$viewStationSelect)
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
+        plotdf_view <- goop$combined_df %>% filter(Variable == variable)
+        plotdf_view <- plotdf_view[plotdf_view$Site == pickedSite() & plotdf_view$Station == pickedStation(), ]
         plotdf_view <- subset(plotdf_view, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
-        plot_ly(data = plotdf_view, type = 'scatter', mode = 'markers', 
-                x = ~Date_Time, y = ~Value, color = ~as.character(Flag), key = ~(paste0(as.character(id),"_",as.character(Site))), colors = color_mapping, source = paste0("viewgraph_",variable))
+        
+        plot_ly(data = plotdf_view, 
+                type = 'scatter', 
+                mode = 'markers', 
+                x = ~Date_Time, 
+                y = ~Value, 
+                color = ~as.character(Flag), 
+                key = ~(paste0(as.character(id),"_",as.character(Site))), 
+                colors = color_mapping, 
+                source = paste0("viewgraph_",variable))
       })
     }
   )
@@ -37,8 +46,7 @@ varViewServer <- function(id, variable, goop, dateRange) {
 div(class = 'view page',
     div(class = 'view--pick-container',
         div(class = 'view--pick',
-            selectInput('viewSiteSelect', 'Select Site', c('CB', 'WB', "Erwin")),
-            selectInput('viewStationSelect', 'Select Station', c('poolUp', 'poolDown', 'riffle'))
+            uiOutput('viewSiteStationSelects')
         )
     ),
     div(class = 'view--intro-container',

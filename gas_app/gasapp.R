@@ -93,7 +93,7 @@ server <- function(input, output, session) {
   source("server/homeserver.R", local = TRUE)
   source("server/uploadserver.R", local = TRUE)
   source("server/qaqcserver.R", local = TRUE)
-  #source("server/viewserver.R", local = TRUE)
+  source("server/viewserver.R", local = TRUE)
   #source("server/DOserver.R", local = TRUE)
 }
 

@@ -9,12 +9,12 @@ guessUI <- function (id, colName, guess, guessList){
   )
 }
 
-guessServer <- function(id) {
+guessServer <- function(id, goop, guessIndex) {
   moduleServer(
     id,
     function(input, output, session) {
       observeEvent(input$guessInput, {
-        #print(id)
+        goop$guessList[guessIndex] <- input$guessInput
       })
     }
       )

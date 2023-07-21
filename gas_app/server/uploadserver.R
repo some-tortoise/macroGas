@@ -1,5 +1,6 @@
+keywords <- c("NA","DO", "Date", "Range", "Temp", "Abs")
+
 getGuesses <- function(df) {
-  keywords <- c("DO", "Date", "Range", "Temp", "Abs")
   
   goop$guessList <- c()
   for(i in 1:length(colnames(file_data))){
@@ -29,7 +30,7 @@ observeEvent(goop$fileEntered, {
         guessUI(id = ids[i], 
                 colName = goop$colList[i], 
                 guess = goop$guessList[i], 
-                guessList = unique(goop$guessList)
+                guessList = keywords
                 )
         )
     }
@@ -38,7 +39,7 @@ observeEvent(goop$fileEntered, {
   
   ids <- c(1:length(goop$colList))
   lapply(ids, function(i) {
-    guessServer(id = i)
+    guessServer(id = i, goop = goop, guessIndex = i)
   })
 })
 
@@ -92,6 +93,13 @@ output$contents <- renderDT({
 })
 
 observeEvent(input$uploadBtn, {
+  
+  for(i in 1:length(goop$guessList)){
+    if(goop$guessList[i] == 'NA'){
+      goop$guessList[i] <- NA
+    }
+  }
+  
   df <- goop$curr_df
   colnames(df) <- goop$guessList
   df <- df[, !is.na(names(df))]
@@ -134,7 +142,6 @@ observeEvent(input$uploadBtn, {
   # 
   # View(goop$combined_df)
   
-  print('Dataset Added!')
   goop$curr_df <- NULL
   goop$siteName <- ''
   goop$stationName <- ''

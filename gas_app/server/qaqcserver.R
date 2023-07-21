@@ -64,9 +64,10 @@
 # })
 
 output$qaqcSiteStationSelects <- renderUI({
+  
   div(
-    selectInput('qaqcSiteSelect', "Select Site", unique(goop$combined_df$Site), selected = unique(goop$combined_df$Site)[0]),
-    selectInput('qaqcStationSelect', 'Select Station', unique(goop$combined_df$Station), selected = unique(goop$combined_df$Station)[0])
+    selectInput('qaqcSiteSelect', "Select Site", unique(goop$combined_df$Site)),
+    selectInput('qaqcStationSelect', 'Select Station', unique(goop$combined_df$Station))
   )
 })
   
