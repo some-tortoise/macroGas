@@ -3,15 +3,15 @@ keywords <- c("NA","DO", "Date", "Range", "Temp", "Abs")
 getGuesses <- function(df) {
   
   goop$guessList <- c()
-  for(i in 1:length(colnames(file_data))){
+  for(i in 1:length(colnames(df))){
     goop$guessList[i] <- NA
   }
   
-  goop$colList <- colnames(file_data)
+  goop$colList <- colnames(df)
   
   
-  for (i in 1:length(colnames(file_data))) {
-    colName <- colnames(file_data)[i]
+  for (i in 1:length(colnames(df))) {
+    colName <- colnames(df)[i]
     for (keyword in keywords) {
       if (str_detect(colName, keyword)) {
         goop$guessList[i] <- keyword
@@ -49,7 +49,13 @@ add_df <- function(df, fileName) {
   goop$fileEntered <- 1
   
   siteGuess <- str_split(fileName, '_')[[1]][2]
-  stationGuess <- str_split(fileName, '_')[[1]][3]
+  stationGuess <- str_split(fileName, '_')[[1]][3] 
+  if(is.na(siteGuess)){
+    siteGuess <- ''
+  }
+  if(is.na(stationGuess)){
+    stationGuess <- ''
+  }
   goop$siteName <- siteGuess
   goop$stationName <- stationGuess
   
