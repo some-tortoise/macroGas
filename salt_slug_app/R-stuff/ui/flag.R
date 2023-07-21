@@ -1,8 +1,8 @@
 div(class = 'qaqc panel-container',
     div(class = 'qaqc--box1',
         uiOutput("station"),
-        uiOutput("variable_c"),
-        actionButton('downloadFlaggedDataset', 'Download Flagged Dataset')
+        uiOutput("variable_c")
+        #actionButton('downloadFlaggedDataset', 'Download Flagged Dataset')
         ),
     div(class = 'qaqc--box2',
         div(class = 'qaqc--graph-stuff',

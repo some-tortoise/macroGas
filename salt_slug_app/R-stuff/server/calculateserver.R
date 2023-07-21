@@ -68,13 +68,13 @@ output$dischargecalcplot <- renderPlotly({
     NA
   )
   
-  xLeft <- as.POSIXct(xLeft, tz = 'GMT', origin = "1970-01-01")
-  xRight <- as.POSIXct(xRight, tz = 'GMT', origin = "1970-01-01")
+  xLeft <- as.POSIXct(xLeft, tz = 'EST', origin = "1970-01-01")
+  xRight <- as.POSIXct(xRight, tz = 'EST', origin = "1970-01-01")
   
   p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines', source = "R") %>%
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~Low_Range) %>%
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'GMT', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(
       xaxis = list(title = "Date and Time"), 
       yaxis = list(title = "Low Range Conductivity"),
@@ -102,7 +102,7 @@ observeEvent(event_data("plotly_relayout", source = "R"), { #R is the name of th
   
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
   
-  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'EST', origin = "1970-01-01")
   
   
   if(barNum == 0){

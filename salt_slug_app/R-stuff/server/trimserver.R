@@ -14,9 +14,12 @@ observe({
 
 output$trim_plot <- renderPlotly({
   req(goop$trim_xLeft)
-  trim_xLeft <- as.POSIXct(goop$trim_xLeft, tz = 'GMT', origin = "1970-01-01")
-  trim_xRight <- as.POSIXct(goop$trim_xRight, tz = 'GMT', origin = "1970-01-01")
-  
+  trim_xLeft <- as.POSIXct(goop$trim_xLeft, tz = 'EST', origin = "1970-01-01")
+  trim_xRight <- as.POSIXct(goop$trim_xRight, tz = 'EST', origin = "1970-01-01")
+  print('//;//')
+  print(trim_xLeft)
+  print(trim_xRight)
+  print('//;//')
   plot <- plot_ly(data = goop$combined_df, 
                   type = 'scatter', 
                   mode = 'lines', 
@@ -47,20 +50,6 @@ observe({
   
 })
 
-output$trimmed_plot <- renderPlotly({
-  plotKey <- paste0(as.character(goop$trimmed_combined_dfDate_Time),"-",as.character(station))
-  plot <- plot_ly(data = goop$trimmed_combined_df, 
-          type = 'scatter', 
-          mode = 'lines', 
-          x = ~Date_Time, 
-          y = ~Low_Range, 
-          key = ~(plotKey), 
-          color = ~as.character(station), 
-          opacity = 0.9)
-  return(plot)
-})
-
-
 observeEvent(event_data("plotly_relayout", source = "D"), {
   ed <- event_data("plotly_relayout", source = "D")
   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
@@ -68,7 +57,7 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
   barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
   if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
-  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'GMT', origin = "1970-01-01")
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'EST', origin = "1970-01-01")
   if(barNum == 0){
     goop$trim_xLeft <- 0
     goop$trim_xLeft <- pts[1]
