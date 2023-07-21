@@ -1,5 +1,5 @@
 #
-# BASIC UI STUFF
+# BASIC UI 
 #
 
 output$background_out <- renderUI({
@@ -10,7 +10,7 @@ output$background_out <- renderUI({
     ),
     column(width = 2,
            actionButton("question", label = "", icon = icon("question")),
-           bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity prior to the breakthrough curve, though it can be changed manually as well.", placement = "bottom", trigger = "hover", options = list(container = "body"))
+           bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity data, though it can be changed manually here", placement = "bottom", trigger = "hover", options = list(container = "body"))
     )
   )
 }) #a renderUI for the background conductivity input, as well as explanation of how we calculate it
@@ -21,11 +21,11 @@ output$calc_station <- renderUI({
   }else{
     HTML("<label>Choose A Station<br></br></label>")
   }
-}) #station picking
+}) #a renderUI that creates a dropdown to select from the stations that have been uploaded
 
 
 #
-# PLOT STUFF
+# PLOT 
 #
 
 observeEvent(input$calc_station_picker, {
@@ -35,76 +35,83 @@ observeEvent(input$calc_station_picker, {
 observe({
   goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
   goop$calc_yValue <- goop$calc_curr_station_df$Low_Range
-}) #assigns date/time to the x-axis, conductivity to the y-axis 
+}) #assigns Date_Time to the x-axis, Low_Range to the y-axis 
 
 observe({
   goop$calc_xLeft <- goop$calc_xValue[1] # This is our starting guess for the left bar
   goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1] #  This is our starting guess for the right bar
-})
+}) #sets the indices of the left and right trim bars 
 
 observeEvent(input$calc_station_picker, {
-  goop$background <- round(((mean(goop$calc_curr_station_df$Low_Range)) - 10), 2)
-})
+  goop$background <- round(((mean(goop$calc_curr_station_df$Low_Range)) - 5), 2)
+}) #setting the background conductivity to a rough mean of the data
 
 observeEvent(input$background,{
   goop$background <- input$background
-})
+}) #assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
 
 output$dischargecalcplot <- renderPlotly({
   
-  req(goop$calc_curr_station_df)
-  req(goop$calc_xLeft)
+  #requirements 
+  req(goop$calc_curr_station_df) 
+  req(goop$calc_xLeft) 
   req(goop$calc_xRight)
   
-  #some relabeling for shorter code
+  #relabeling for shorter code
   xVal <- goop$calc_xValue
   yVal <- goop$calc_yValue
   xLeft <- goop$calc_xLeft
   xRight <- goop$calc_xRight
   
+  #creates xfill column that assigns xVal if it's w/in range set by xLeft and xRight, fills NA otherwise
+  #gets used later to addtrace
   goop$calc_curr_station_df$xfill <- ifelse(
     as.numeric(xVal) > as.numeric(xLeft) & as.numeric(xVal) < as.numeric(xRight),
     xVal,
     NA
   )
   
+  #converts xLeft and xRight to as.POSIXct date/time values
   xLeft <- as.POSIXct(xLeft, tz = 'EST', origin = "1970-01-01")
   xRight <- as.POSIXct(xRight, tz = 'EST', origin = "1970-01-01")
   
+  #plot is based on goop$calc_curr_station_df
   p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines', source = "R") %>%
+    # trace and fill added where xfill isn't NA (between two vertical lines)
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(
       xaxis = list(title = "Date and Time"), 
       yaxis = list(title = "Low Range Conductivity"),
       showlegend = FALSE, shapes = list(
-      # left line
+      # left vertical line
       list(type = "line", x0 = xLeft, x1 = xLeft,
            y0 = 0, y1 = 1, yref = "paper"),
-      # right line
+      # right vertical line
       list(type = "line", x0 = xRight, x1 = xRight,
            y0 = 0, y1 = 1, yref = "paper")
     )) %>%
+    # gets rid of Plotly modebar and allows the vertical lines to be editable by user
     config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
   p
-})
+}) #renders the plot of the breakthrough curve data
 
 
-observeEvent(event_data("plotly_relayout", source = "R"), { #R is the name of the plot
-  ed <- event_data("plotly_relayout", source = "R")
-  shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))]
+observeEvent(event_data("plotly_relayout", source = "R"), { 
+  ed <- event_data("plotly_relayout", source = "R")   # Retrieves  event data when the user interacts with the Plotly ('r' is plot)
+  shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))] # Extracts shape anchors from event data
   
-  if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # gets rid of NA error when not clicking a shape
-  barNum <- as.numeric(substring(names(ed)[1],8,8)) # gets 0 for left bar and 1 for right bar
-  if(is.na(barNum)){ return() } # just some secondary error checking to see if we got any NAs. This line should never be called
+  if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # Checks if the event data contains shapes to get rid of NA error when user isn't clicking a shape
+  barNum <- as.numeric(substring(names(ed)[1],8,8)) # Extract the bar number (0 for left bar and 1 for right bar) from the first shape name
+  if(is.na(barNum)){ return() } # Secondary error checking to see if we got any NAs. This line should never be called
   
-  row_index <- unique(readr::parse_number(names(shape_anchors)) + 1) # get shape number
+  row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)   # Get the index of the row (shape number) from the shape anchors
   
-  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'EST', origin = "1970-01-01")
+  pts <- as.POSIXct(substring(shape_anchors,1,19), tz = 'EST', origin = "1970-01-01") # convert shape anchors to date-time format 
   
-  
+  # Updates the left or right bar position based on the user interaction
   if(barNum == 0){
     goop$calc_xLeft <- 0
     goop$calc_xLeft <- pts[1]
@@ -112,15 +119,16 @@ observeEvent(event_data("plotly_relayout", source = "R"), { #R is the name of th
     goop$calc_xRight <- 0
     goop$calc_xRight <- pts[1]
   }
-})
+}) # Updating the vertical bar positions based on the user interaction
 
 
-### OUTPUT/TABLE STUFF
+#
+# OUTPUT, MATH, TABLE
+#
 
 observe({
   goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
-}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars (calc_xLeft and calc_xRight)
-
+}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars 
 
 observeEvent(goop$combined_df, {
   zero <- c()
@@ -136,7 +144,6 @@ observeEvent(goop$combined_df, {
                   'Half_Height' = zero)
   goop$dischargeDF <- a
 })
-
 
 output$dischargeOutput <- renderText({
   
@@ -269,7 +276,7 @@ observeEvent(goop$combined_df, {
 
 
 #
-#DOWNLOAD STUFF
+# DOWNLOAD OUTPUT
 #
 
 observeEvent(input$downloadOutputTable, {
