@@ -178,7 +178,7 @@ output$contents <- renderDT({
 })
 
 #
-# CONTINUE BUTTON / bINDING DATA
+# CONTINUE BUTTON / BINDING DATA
 # 
 
 #shinyJS code to show/hide a conditional action button to continue on to ordering page using dtRendered T/F value

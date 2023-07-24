@@ -24,12 +24,6 @@ div(class = 'upload panel-container',
                                 ".csv")
                      )
              ),
-          # fluidRow(column(8,
-          #                 selectInput("select", NULL, choices = NULL, width = "100%")),
-          #          column(1,
-          #                 actionButton("delete", icon("trash")),
-          #                 bsTooltip("delete", "Delete the selected dataset", placement = "bottom", trigger = "hover",
-          #                           options = list(container = "body")))),
           selectInput("select",'Your uploaded files', NULL, choices = NULL, width = "100%"),
           actionButton("delete", "Remove selected dataset")
           ),
