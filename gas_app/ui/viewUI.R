@@ -16,7 +16,7 @@ varViewUI <- function (id, var = 'Unknown Variable'){
         plotlyOutput(ns('main_plot_view'))
     )
   )
-}
+} ##generates a user interface (UI) element to display information related to a specific variable.
 
 varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStation) {
   moduleServer(
@@ -41,7 +41,7 @@ varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStati
       })
     }
   )
-}
+} #sets up a server-side logic for the varViewServer module, which generates a plot for a specific variable based on user-selected site, station, and date range. Plot displays flagged points.
 
 div(class = 'view page',
     div(class = 'view--pick-container',

@@ -27,7 +27,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
         )
     )
   )
-}
+} #generates a user interface (UI) element to display information related to a specific variable.
 
 varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pickedSite) {
   moduleServer(
@@ -36,12 +36,11 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       
       selectedData <- reactive({
         df_plot <- goop$combined_df
-        #event.click.data <- event_data(event = "plotly_click", source = paste0("typegraph_",variable))
         event.selected.data <- event_data(event = "plotly_selected", source = paste0("typegraph_",variable))
         df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Site) %in% event.selected.data$key),]
         df_chosen <- df_chosen[df_chosen$Variable == variable & df_chosen$Site == pickedSite() & df_chosen$Station == pickedStation(), ]
         return(df_chosen)
-      }) 
+      }) #filtering the data based on user interactions 
       
       output$summary <- renderUI({
         
@@ -105,12 +104,11 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
               )
             )
         
-      }) #summary statistics
+      }) #calculates and displays summary statistics
       
       observeEvent(input$flag_btn, {
-        #View(goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$Location %in% selectedData()$Location))])
         goop$combined_df[(goop$combined_df$id %in% selectedData()$id), "Flag"] <- input$flag_type  # Set the flag
-      })
+      }) #flags points
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
@@ -136,7 +134,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       }) #main plot
     }
   )
-}
+} #provides dynamic interactivity for exploring and flagging data points in the main plot while displaying summary statistics for the selected variable.
 
 div(class = 'qaqc page',
     div(class = 'qaqc--pick-container',
