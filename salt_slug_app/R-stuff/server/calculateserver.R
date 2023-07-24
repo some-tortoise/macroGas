@@ -2,6 +2,7 @@
 # BASIC UI 
 #
 
+# A renderUI for the background conductivity input, as well as explanation of how we calculate it
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
   fluidRow(
@@ -13,43 +14,50 @@ output$background_out <- renderUI({
            bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity data, though it can be changed manually here", placement = "bottom", trigger = "hover", options = list(container = "body"))
     )
   )
-}) #a renderUI for the background conductivity input, as well as explanation of how we calculate it
+}) 
 
+# A renderUI that creates a dropdown to select from the stations that have been uploaded
 output$calc_station <- renderUI({
   if(!is.null(goop$combined_df)){
     selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
   }else{
     HTML("<label>Choose A Station<br></br></label>")
   }
-}) #a renderUI that creates a dropdown to select from the stations that have been uploaded
+}) 
 
 
 #
 # PLOT 
 #
 
+# Filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
 observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
-}) #filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
+})
 
+# Assigns Date_Time to the x-axis, Low_Range to the y-axis 
 observe({
   goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
   goop$calc_yValue <- goop$calc_curr_station_df$Low_Range
-}) #assigns Date_Time to the x-axis, Low_Range to the y-axis 
+}) 
 
+# Setting the indices of the left and right trim bars 
 observe({
-  goop$calc_xLeft <- goop$calc_xValue[1] # This is our starting guess for the left bar
-  goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1] #  This is our starting guess for the right bar
-}) #sets the indices of the left and right trim bars 
+  goop$calc_xLeft <- goop$calc_xValue[1] # Left bar
+  goop$calc_xRight <- goop$calc_xValue[length(goop$calc_xValue) - 1] # Right bar
+}) 
 
+# Setting the background conductivity to a rough mean of the data
 observeEvent(input$calc_station_picker, {
   goop$background <- round(((mean(goop$calc_curr_station_df$Low_Range)) - 5), 2)
-}) #setting the background conductivity to a rough mean of the data
+}) 
 
+# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
 observeEvent(input$background,{
   goop$background <- input$background
-}) #assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+}) 
 
+# Renders the plot of the breakthrough curve data
 output$dischargecalcplot <- renderPlotly({
   
   #requirements 
@@ -96,9 +104,9 @@ output$dischargecalcplot <- renderPlotly({
     config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
   p
-}) #renders the plot of the breakthrough curve data
+}) 
 
-
+# Updating the vertical bar positions based on the user interaction
 observeEvent(event_data("plotly_relayout", source = "R"), { 
   ed <- event_data("plotly_relayout", source = "R")   # Retrieves  event data when the user interacts with the Plotly ('r' is plot)
   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))] # Extracts shape anchors from event data
@@ -119,17 +127,18 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
     goop$calc_xRight <- 0
     goop$calc_xRight <- pts[1]
   }
-}) # Updating the vertical bar positions based on the user interaction
-
+}) 
 
 #
 # OUTPUT, MATH, TABLE
 #
 
+# Creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars 
 observe({
   goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
-}) #creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars 
+}) 
 
+# Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF
 observeEvent(goop$combined_df, {
   zero <- c()
   which_station <- c()
@@ -143,97 +152,110 @@ observeEvent(goop$combined_df, {
                   'Discharge' = zero,
                   'Half_Height' = zero)
   goop$dischargeDF <- a
-})
+}) 
 
+# Math to calculate discharge
 output$dischargeOutput <- renderText({
   
-  #requirements
-  
+  # Requirements
   req(goop$combined_df)
   req(goop$trimmed_slug)
   
+  # Returns N/A if no data is uploaded
   if(is.null(goop$combined_df) || is.null(goop$trimmed_slug)){
     return('Discharge: N/A')
   }
   
-  #basic renaming
+  # Renaming reactives
+  station_slug <- goop$trimmed_slug # using trimmed_slug which is only the values between two vertical bars
   
-  station_slug <- goop$trimmed_slug #using trimmed_slug which is only the values between two vertical bars
-  
-  #grab how many seconds are between consecutive observations
+  # Get how many seconds are between consecutive observations (important to calculate area under the curve)
   diff_time_btwn_observations = as.numeric(goop$combined_df$Date_Time[2]) - as.numeric(goop$combined_df$Date_Time[1])
   
+  # Creates/calculates an NaCl_Conc and Area column at each observation
   station_slug <- station_slug %>%
     mutate(NaCl_Conc = 
              ifelse((Low_Range - as.numeric(goop$background)) > 0, 
-                    (Low_Range - as.numeric(goop$background)) * 0.00047,
+                    (Low_Range - as.numeric(goop$background)) * 0.00047, # .00047 is a constant to convert to NaCl concentration
                     0),
-           Area = NaCl_Conc * diff_time_btwn_observations)
+           Area = NaCl_Conc * diff_time_btwn_observations) 
   
-  Area <- sum(station_slug$Area)
-  Mass_NaCl <- as.numeric(input$salt_mass)
-  Discharge <- round(Mass_NaCl / Area, 2)
+  Area <- sum(station_slug$Area) # Area under the curve is the sum of the Area column
+  Mass_NaCl <- as.numeric(input$salt_mass) # Mass of the salt slug is an input by the user
+  Discharge <- round(Mass_NaCl / Area, 2) # Round the discharge to 2 points
   
+  # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
   
   return(paste0('Discharge: ', Discharge, ' L/s')) 
    
- }) #the math.R stuff that prints a final discharge value
+ }) 
 
+# Math to calculate time to half height
 output$halfheightOutput <- renderText({
   
-  #requirements
-  
+  # Requirements
   req(goop$combined_df)
   req(goop$trimmed_slug)
   
+  # Return N/A if data is missing
   if(length(goop$trimmed_slug) <= 1){
-    if(is.null(goop$combined_df) || is.null(goop$trimmed_slug) || is.na(goop$trimmed_slug)){
+    if(is.null(goop$combined_df) || is.null(goop$trimmed_slug) || is.na(goop$trimmed_slug)){ 
       return('Time to half height: N/A')
     }
   }
   
-  #basic renaming
+  # Renaming reactive values
   station_slug <- goop$trimmed_slug
   start_time <- goop$calc_xLeft
   
-  
+  # Identify the max conductivity (highest point on the BTC) and its index
   Cmax <- max(station_slug$Low_Range)
   index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
 
+  # Identify the index of the beginning of the salt slug (using the start time from the left vertical bar)
   index_start_time <- which.min(abs(station_slug$Date_Time - start_time))
 
+  # Calculates the half height conductivity value 
   Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
   
+  # Doesn't calculate if the start time is after the breakthrough curve
   if(index_start_time >= index_Cmax){
     return(paste0('Time to half height: ', "NA seconds"))
   }
   
-  index_Chalf <- which.min(abs(station_slug$Low_Range[index_start_time:index_Cmax] - Chalf)) #identifies the index of the smallest difference -- the point closest to being half height
+  # Identifies index of half height by identifying the index of the smallest difference (the point closest to being half height)
+  index_Chalf <- which.min(abs(station_slug$Low_Range[index_start_time:index_Cmax] - Chalf)) 
 
-  start_time <- station_slug$Date_Time[index_start_time]
-  Chalf_time <- station_slug$Date_Time[index_Chalf]
-  time_to_half <- ((as.numeric(Chalf_time) - as.numeric(start_time)))
   
+  # Calculate the time to half height as Chalf_time - start_time
+  start_time <- station_slug$Date_Time[index_start_time] # Extract the start_time from the 'station_slug' data frame using the index 'index_start_time'
+  Chalf_time <- station_slug$Date_Time[index_Chalf] # Extract the Chalf_time from the 'station_slug' data frame using the index 'index_Chalf'
+  time_to_half <- ((as.numeric(Chalf_time) - as.numeric(start_time))) 
+  
+  # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
   
   return(paste0('Time to half height: ', time_to_half, " seconds"))
   
 
-}) #half height math
+})
 
+# Math to calculate groundwater exchange
 output$groundwaterOutput <- renderUI({
   req(goop$combined_df)
   if(!('1' %in% unique(goop$combined_df$station))){
-    return(p('Please make sure you have a station 1.'))
+    return(p('Please make sure you have a station 1.')) # Need to have a station 1 in order to do this calculation, this checks it exists
   }
   
-  last_station <- max(as.numeric(unique(goop$combined_df$station)))
-  
+  last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number by finding the maximum numeric value in the 'station' column.
+
+  # Need more than 1 station, checks that only station available isn't just 'station 1'
   if(last_station == 1){
     return(p('Need more than one station.'))
-  }
+  } 
   
+  # Gets discharge values from goop$dischargeDF for the first and last stations
   first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == 'Station 1', 'Discharge'])
   last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'Discharge'])
   
@@ -241,11 +263,13 @@ output$groundwaterOutput <- renderUI({
     return(p('NA'))
   }
   
+  # Calculate exchange by subtracting last station from first station discharge
   diff <- first_station_discharge - last_station_discharge
   
   p(paste0(diff, ' L/s'))
 })
 
+# Math to calculate average discharge
 output$avgDischargeOutput <- renderUI({
   if(length(unique(goop$combined_df$station)) == 0){
     return(p('Need at least one station'))
@@ -265,9 +289,10 @@ output$avgDischargeOutput <- renderUI({
   p(paste0(mean,' L/s'))
 })
 
+# Updates the output table when goop$combined_df changes and formats it using kableExtra package  
 observeEvent(goop$combined_df, {
   output$dischargetable <- function() {
-    goop$dischargeDF %>%
+    goop$dischargeDF %>% # Pipes goop$dischargeDF into kable function for style purposes 
       knitr::kable("html", col.names =
                      c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
       kable_styling("striped", full_width = F)
@@ -279,6 +304,7 @@ observeEvent(goop$combined_df, {
 # DOWNLOAD OUTPUT
 #
 
+# Modal dialog when someone selects download button
 observeEvent(input$downloadOutputTable, {
   showModal(modalDialog(
     title = 'How do you want to download your dataset?',
@@ -291,7 +317,7 @@ observeEvent(input$downloadOutputTable, {
   ))
 })
 
-
+# Download handler to write the csv
 output$downloadBtnDischarge <- downloadHandler(
   filename = function() {
     # Set the filename of the downloaded file
