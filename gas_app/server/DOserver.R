@@ -4,8 +4,7 @@ combined_df <- pivot_wider(combined_df, # this code is problematic in that it do
                         values_from = Value)
 
 combined_df <- combined_df %>%
-  filter(!is.na(DO_conc) | !is.na(Temp_C))  #a little cleany cleany
-#  mutate(daytime = calc_is_daytime(Date_Time, lat = 35))
+  filter(!is.na(DO_conc) | !is.na(Temp_C))  #cleans data to not include NAs
   
 output$do_date_viewer <- renderUI({
   start_date = min(combined_df$Date_Time)
@@ -28,10 +27,9 @@ filtered_df <- reactive({
     df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
     df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
     df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
-    return(df_chosen)
-  selected_dates <- input$date_range_input
-  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
-})
+    selected_dates <- input$date_range_input
+    subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+}) #filters dataframe based on user inputs
 
 output$do_plot_range <- renderPlotly({
   plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
@@ -52,7 +50,7 @@ output$do_metrics_full <- renderDT({
     Hypoxia_Prob = sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
   )
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
- })
+ }) #renders a datatable with DO metrics for entire dataset
 
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
@@ -64,7 +62,7 @@ output$do_metrics_range <- renderDT({
     Hypoxia_Prob = sum(metrics_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(metrics_df$DO_conc))
   )
   datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
-})
+}) #renders a datatable with DO metrics for selected dates
 
 
 light_df <- reactive({
