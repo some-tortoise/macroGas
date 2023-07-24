@@ -1,36 +1,36 @@
-
-goop$combined_df <- reactive({
-  pivot_wider(goop$combined_df, id_cols = c("Date_Time", "Station"), names_from = Variable, values_from = Value)
-})
-
-observe({
-  goop$combined_df_filtered <- goop$combined_df() %>%
+do_df <- reactive({
+  if (is.null(goop$combined_df)) {
+    stop("Error: Data is NULL or not loaded properly. Check data source and loading process.")
+  }
+  
+  df <- pivot_wider(goop$combined_df(), id_cols = c("Date_Time", "Station"), names_from = Variable, values_from = Value)
+  df <- df %>%
     filter(!is.na(DO_conc) | !is.na(Temp_C))
-})#cleans data to not include NAs
+})
   
 output$do_date_viewer <- renderUI({
-  start_date = min(goop$combined_df$Date_Time)
-  end_date = max(goop$combined_df$Date_Time)
+  start_date = min(do_df()$Date_Time)
+  end_date = max(do_df()$Date_Time)
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
                  start = start_date, end = end_date)
 })
 
 output$station <- renderUI({
-  station_names <- unique(goop$combined_df$Station)
+  station_names <- unique(do_df()$Station)
   radioButtons('station', label = "Select station to graph", station_name)
 })
 
 output$site <- renderUI({
-  site_name <- unique(goop$combined_df$Site)
+  site_name <- unique(do_df()$Site)
   radioButtons('site', label = "Select site to graph", site_name)
 })
 
 filtered_df <- reactive({
-    df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
+    df_plot <- do_df()[do_df()$Station %in% input$station, ]
     df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
     df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
     selected_dates <- input$date_range_input
-    subset(goop$combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+    subset(do_df(), Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
 }) #filters dataframe based on user inputs
 
 output$do_plot_range <- renderPlotly({
@@ -39,17 +39,17 @@ output$do_plot_range <- renderPlotly({
 })
 
 output$do_plot_full <- renderPlotly({
-  plot_ly(goop$combined_df, x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
+  plot_ly(do_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 
 output$do_metrics_full <- renderDT({
   metrics_dt <-  data.frame(
-    Mean = mean(goop$combined_df$DO_conc, na.rm = TRUE),
-    Minimum = min(goop$combined_df$DO_conc, na.rm = TRUE),
-    Maximum = max(goop$combined_df$DO_conc, na.rm = TRUE),
-    Amplitude = max(goop$combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(goop$combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
+    Mean = mean(do_df()$DO_conc, na.rm = TRUE),
+    Minimum = min(do_df()$DO_conc, na.rm = TRUE),
+    Maximum = max(do_df()$DO_conc, na.rm = TRUE),
+    Amplitude = max(do_df()$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
+    Hypoxia_Prob = sum(do_df()$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
   )
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  }) #renders a datatable with DO metrics for entire dataset
@@ -69,17 +69,17 @@ output$do_metrics_range <- renderDT({
 
 light_df <- reactive({
   selected_dates <- input$date_range_input
-  goop$combined_df <- goop$combined_df%>%
+  do_df <- do_df()%>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
-  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+  subset(do_df(), Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == TRUE)
 })
 
 dark_df <- reactive({
   selected_dates <- input$date_range_input
-  goop$combined_df <- goop$combined_df%>%
+  do_df <- do_df()%>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
-  subset(goop$combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+  subset(do_df(), Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == FALSE)
     })
 
