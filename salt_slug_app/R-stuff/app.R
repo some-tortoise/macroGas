@@ -17,6 +17,7 @@ library(lubridate)
 library(knitr)
 library(kableExtra)
 library(reshape2)
+library(ggplot2)
 
 reactlog_enable()
 combined_df <- NULL
