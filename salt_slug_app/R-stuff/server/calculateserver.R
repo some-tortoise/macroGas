@@ -79,28 +79,28 @@ output$dischargecalcplot <- renderPlotly({
     NA
   )
   
-  #converts xLeft and xRight to as.POSIXct date/time values
+  # Converts xLeft and xRight to as.POSIXct date/time values
   xLeft <- as.POSIXct(xLeft, tz = 'EST', origin = "1970-01-01")
   xRight <- as.POSIXct(xRight, tz = 'EST', origin = "1970-01-01")
   
-  #plot is based on goop$calc_curr_station_df
+  # Plot is based on goop$calc_curr_station_df
   p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines', source = "R") %>%
-    # trace and fill added where xfill isn't NA (between two vertical lines)
+    # Trace and fill added where xfill isn't NA (between two vertical lines)
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(
       xaxis = list(title = "Date and Time"), 
       yaxis = list(title = "Low Range Conductivity"),
       showlegend = FALSE, shapes = list(
-      # left vertical line
+      # Left vertical line
       list(type = "line", x0 = xLeft, x1 = xLeft,
            y0 = 0, y1 = 1, yref = "paper"),
-      # right vertical line
+      # Right vertical line
       list(type = "line", x0 = xRight, x1 = xRight,
            y0 = 0, y1 = 1, yref = "paper")
     )) %>%
-    # gets rid of Plotly modebar and allows the vertical lines to be editable by user
+    # Gets rid of Plotly modebar and allows the vertical lines to be editable by user
     config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
   p
@@ -112,7 +112,7 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
   shape_anchors <- ed[grepl("^shapes.*x0$", names(ed))] # Extracts shape anchors from event data
   
   if(substring(names(ed)[1],1,6) != 'shapes'){ return() } # Checks if the event data contains shapes to get rid of NA error when user isn't clicking a shape
-  barNum <- as.numeric(substring(names(ed)[1],8,8)) # Extract the bar number (0 for left bar and 1 for right bar) from the first shape name
+  barNum <- as.numeric(substring(names(ed)[1],8,8)) # Get the bar number (0 for left bar and 1 for right bar) from the first shape name
   if(is.na(barNum)){ return() } # Secondary error checking to see if we got any NAs. This line should never be called
   
   row_index <- unique(readr::parse_number(names(shape_anchors)) + 1)   # Get the index of the row (shape number) from the shape anchors
