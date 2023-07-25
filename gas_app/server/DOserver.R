@@ -1,24 +1,15 @@
-combined_df <- pivot_wider(combined_df, # this code is problematic in that it doesn't keep ID or flag but for now we're keeping it
-                        id_cols = c("Date_Time", "Station"),
-                        names_from = Variable,
-                        values_from = Value)
 
-combined_df <- combined_df %>%
-  filter(!is.na(DO_conc) | !is.na(Temp_C))  #a little cleany cleany
-#  mutate(daytime = calc_is_daytime(Date_Time, lat = 35))
-  
+# Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
 output$do_date_viewer <- renderUI({
-  start_date = min(combined_df$Date_Time)
-  end_date = max(combined_df$Date_Time)
+  start_date = min(goop$combined_df$Date_Time)
+  end_date = max(goop$combined_df$Date_Time)
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
                  start = start_date, end = end_date)
 })
-
 output$station <- renderUI({
   station_names <- unique(goop$combined_df$Station)
-  radioButtons('station', label = "Select station to graph", station_name)
+  radioButtons('station', label = "Select station to graph", station_names)
 })
-
 output$site <- renderUI({
   site_name <- unique(goop$combined_df$Site)
   radioButtons('site', label = "Select site to graph", site_name)
@@ -26,11 +17,16 @@ output$site <- renderUI({
 
 filtered_df <- reactive({
     df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
-    df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
-    df_chosen <- df_chosen[df_chosen$Variable == input$variable_choice,]
-    return(df_chosen)
+    # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
+    df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
+    
+    df_pivoted <- pivot_wider(df_chosen,
+                              id_cols = c("Date_Time", "Station"),
+                              names_from = Variable,
+                              values_from = Value)
+    
   selected_dates <- input$date_range_input
-  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+  subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
 })
 
 output$do_plot_range <- renderPlotly({
@@ -39,7 +35,7 @@ output$do_plot_range <- renderPlotly({
 })
 
 output$do_plot_full <- renderPlotly({
-  plot_ly(combined_df, x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
+  plot_ly(goop$combined_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 

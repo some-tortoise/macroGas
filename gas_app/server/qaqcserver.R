@@ -5,8 +5,6 @@ output$qaqcSiteStationSelects <- renderUI({
     selectInput('qaqcStationSelect', 'Select Station', unique(goop$combined_df$Station))
   )
 })
-  
-  
 
 observeEvent(input$qaqcSave, {
   alert('Data has been \'saved\'')
