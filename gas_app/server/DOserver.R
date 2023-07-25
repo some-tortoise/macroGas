@@ -51,21 +51,6 @@ output$do_plot_full <- renderPlotly({
 })
 
 # 
-# FULL RANGE METRICS
-#
-
-output$do_metrics_full <- renderDT({
-  metrics_dt <-  data.frame(
-    Mean = mean(combined_df$DO_conc, na.rm = TRUE),
-    Minimum = min(combined_df$DO_conc, na.rm = TRUE),
-    Maximum = max(combined_df$DO_conc, na.rm = TRUE),
-    Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
-  )
-  datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
- })
-
-# 
 # SELECTED RANGE METRICS
 #
 
@@ -81,23 +66,47 @@ output$do_metrics_range <- renderDT({
   datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 })
 
+# 
+# FULL RANGE METRICS
+#
+
+output$do_metrics_full <- renderDT({
+  combined_df <- combined_df()
+  metrics_dt <-  data.frame(
+    Mean = mean(combined_df$DO_conc, na.rm = TRUE),
+    Minimum = min(combined_df$DO_conc, na.rm = TRUE),
+    Maximum = max(combined_df$DO_conc, na.rm = TRUE),
+    Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
+    Hypoxia_Prob = sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
+  )
+  datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
+ })
+
+
 #
 # HYPOXIA METRICS
 #
 
 light_df <- reactive({
   selected_dates <- input$date_range_input
-  combined_df <- combined_df%>%
+   
+  hyp_combined_df <- combined_df() %>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
-  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+  
+  light_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == TRUE)
+  
+  view(light_combined_df)
+  
 })
 
 dark_df <- reactive({
   selected_dates <- input$date_range_input
-  combined_df <- combined_df%>%
+  
+  hyp_combined_df <- combined_df() %>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
-  subset(combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
+  
+  dark_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == FALSE)
     })
 
