@@ -38,13 +38,11 @@ ui <- fluidPage(
                       source("ui/uploadUI.R")[1]),
              tabPanel('QA/QC',
                       source("ui/qaqcUI.R")[1]),
-
              tabPanel("View",
                      source("ui/viewUI.R")[1]),
              tabPanel("DO Data and Metrics",
                       source("ui/DOUI.R")[1])
               )
-  
   )
 
 server <- function(input, output, session) {

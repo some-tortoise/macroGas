@@ -118,25 +118,33 @@ observeEvent(input$uploadBtn, {
   names(df)[names(df) == 'DO'] <- 'DO_conc'
   names(df)[names(df) == 'Abs'] <- 'Abs_Pres'
   
+  # Reshape df from wide to long format 
   df <- gather(df, key = "Variable", value = "Value", -1)
   
+  # fix format of the date_time column
   df <- df %>% mutate(Date_Time = parse_date_time(Date_Time, "%m/%d/%y %I:%M:%S %p"))
   
+  # remove rows containing NA
   df <- na.omit(df)
   
+  # add Site, Station, and Flag columns to df
   df['Site'] <- goop$siteName
   df['Station'] <- goop$stationName
   df['Flag'] <- 'NA'
   
-  if(is.null(goop$combined_df)){
+  # Combine df with existing data into goop$combined_df
+  if(is.null(goop$combined_df)){ 
     goop$combined_df <- df
   }else{
     goop$combined_df <- rbind(goop$combined_df[1:ncol(goop$combined_df)-1], df)
   }
   
+  # Add an id column to goop$combined_df
   goop$combined_df$id <- 1:nrow(goop$combined_df)
   
-  
+  # Store in a local variable combined_df
+  combined_df <- goop$combined_df
+
   goop$curr_df <- NULL
   goop$siteName <- ''
   goop$stationName <- ''

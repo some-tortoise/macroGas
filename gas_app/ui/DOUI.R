@@ -3,6 +3,8 @@ fluidPage(
   sidebarLayout(
     sidebarPanel("",
                  uiOutput("do_date_viewer"),
+                 uiOutput("station"),
+                 uiOutput('site'),
                  numericInput("h_threshold", "Input hypoxia threshold (mg/L)", value = 2),
                  conditionalPanel(
                    condition = "input.tabs == 'hypoxiatab'",

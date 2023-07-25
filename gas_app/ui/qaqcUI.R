@@ -1,3 +1,4 @@
+# Generates a user interface (UI) element to display information related to a specific variable.
 varContainerUI <- function (id, var = 'Unknown Variable'){
   ns <- NS(id)
   
@@ -27,21 +28,24 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
         )
     )
   )
-} #generates a user interface (UI) element to display information related to a specific variable.
+} 
 
+# Provides dynamic interactivity for exploring and flagging data points in the main plot while displaying summary statistics for the selected variable.
 varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pickedSite) {
   moduleServer(
     id,
     function(input, output, session) {
       
+      # Create reactive selectedData from goop$combined_df based on user selections
       selectedData <- reactive({
         df_plot <- goop$combined_df
         event.selected.data <- event_data(event = "plotly_selected", source = paste0("typegraph_",variable))
         df_chosen <- df_plot[(paste0(df_plot$id,'_',df_plot$Site) %in% event.selected.data$key),]
         df_chosen <- df_chosen[df_chosen$Variable == variable & df_chosen$Site == pickedSite() & df_chosen$Station == pickedStation(), ]
         return(df_chosen)
-      }) #filtering the data based on user interactions 
+      })  
       
+      # Calculate and display summary statistics
       output$summary <- renderUI({
         
         start_date_summary = min(goop$combined_df$Date_Time)
@@ -100,15 +104,16 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 p(paste0('Mean: ',custom_mean)),
                 p(paste0('Median: ',custom_median)),
                 p(paste0('Standard deviation: ', custom_sd)),
-                dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue)
+                dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue, min = summary_custom_startValue, max = summary_custom_endValue)
               )
             )
         
-      }) #calculates and displays summary statistics
+      }) 
       
+      # Assign respective flags user selects in goop$combined_df
       observeEvent(input$flag_btn, {
-        goop$combined_df[(goop$combined_df$id %in% selectedData()$id), "Flag"] <- input$flag_type  # Set the flag
-      }) #flags points
+        goop$combined_df[(goop$combined_df$id %in% selectedData()$id), "Flag"] <- input$flag_type  
+      }) 
       
       output$main_plot <- renderPlotly({
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
@@ -134,7 +139,11 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       }) #main plot
     }
   )
-} #provides dynamic interactivity for exploring and flagging data points in the main plot while displaying summary statistics for the selected variable.
+} 
+
+#
+# THE SIMPLE UI
+#
 
 div(class = 'qaqc page',
     div(class = 'qaqc--pick-container',
