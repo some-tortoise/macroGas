@@ -15,15 +15,28 @@ output$site <- renderUI({
   radioButtons('site', label = "Select site to graph", site_name)
 })
 
+combined_df <- reactive({
+  combined_df <- goop$combined_df
+  
+  combined_df_pivoted <- pivot_wider(combined_df,
+                            id_cols = c("Date_Time", "Station", "Site"),
+                            names_from = Variable,
+                            values_from = Value)
+  
+})
+
 filtered_df <- reactive({
     df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
     # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
-    df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
+    # df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
     
-    df_pivoted <- pivot_wider(df_chosen,
-                              id_cols = c("Date_Time", "Station"),
+    # THIS NEEDS TO BE FIXED -- NO FLAG, ID, ETC.
+    df_pivoted <- pivot_wider(df_plot,
+                              id_cols = c("Date_Time", "Station", "Site"),
                               names_from = Variable,
                               values_from = Value)
+    
+    view(df_pivoted)
     
   selected_dates <- input$date_range_input
   subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
@@ -35,7 +48,7 @@ output$do_plot_range <- renderPlotly({
 })
 
 output$do_plot_full <- renderPlotly({
-  plot_ly(goop$combined_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
+  plot_ly(combined_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 
@@ -81,7 +94,7 @@ dark_df <- reactive({
 
 output$light_kernel <- renderPlotly({
   light_data <- light_df() # Retrieve the data frame from reactive light_df
-  
+
   kde <- density(light_data$DO_conc)
   plot <- data.frame(DO = kde$x, Density = kde$y)
   light_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -91,14 +104,14 @@ output$light_kernel <- renderPlotly({
                 fill = "darkblue", alpha = 0.3) +
     labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
     ggtitle("Light Kernel Density Estimation")
-  
+
   plotly::ggplotly(light_plot) %>%
     config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
 })
 
 output$dark_kernel <- renderPlotly({
     dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
-    
+
     kde <- density(dark_data$DO_conc)
     plot <- data.frame(DO = kde$x, Density = kde$y)
     dark_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -108,7 +121,7 @@ output$dark_kernel <- renderPlotly({
                   fill = "darkblue", alpha = 0.3) +
       labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
       ggtitle("Dark Kernel Density Estimation")
-    
+
     plotly::ggplotly(dark_plot) %>%
       config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
   })
@@ -117,35 +130,35 @@ output$do_hypoxia_metrics <- renderDT({
   light_df <- light_df()
   dark_df <- dark_df()
   h <- input$h_threshold
-  
+
   light_prob_fxn <- function(light_df, h) {
     n_light <- nrow(light_df)
     hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) #gets number of hypoxic observations
     light_prob_dens <- (hypoxic_n_light/n_light)
   }
-  
+
   dark_prob_fxn <- function(dark_df, h) {
     n_dark <- nrow(dark_df)
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
   }
-  
+
   night_hyp_ratio <- function(dark_prob_dens, light_prob_dens) {
     nhr <<- (dark_prob_dens/light_prob_dens)
     return(nhr)
   }
-  
+
   light_prob_dens <- light_prob_fxn(light_df, h)
   dark_prob_dens <- dark_prob_fxn(dark_df, h)
   nhr <- night_hyp_ratio(dark_prob_dens, light_prob_dens)
-  
+
   hypoxia <- data.hypoxia <- data.frame(
     light_probability = round(light_prob_dens, digits = 4),
     dark_probability = round(dark_prob_dens, digits = 4),
     night_hypoxia_ratio = round(nhr, digits = 4)
   )
-  
+
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
-  
+
 })
 
