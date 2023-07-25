@@ -9,18 +9,21 @@ output$station <- renderUI({
   station_names <- unique(goop$combined_df$Station)
   radioButtons('station', label = "Select station to graph", station_names)
 })
-output$site <- renderUI({
-  site_name <- unique(goop$combined_df$Site)
-  radioButtons('site', label = "Select site to graph", site_name)
-})
+# output$site <- renderUI({
+#   site_name <- unique(goop$combined_df$Site)
+#   radioButtons('site', label = "Select site to graph", site_name)
+# })
 
 combined_df <- reactive({
-  combined_df <- goop$combined_df
+  combined_df <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
   
   combined_df_pivoted <- pivot_wider(combined_df,
                             id_cols = c("Date_Time", "Station", "Site"),
                             names_from = Variable,
                             values_from = Value)
+  
+  print("pony")
+  view(combined_df_pivoted)
   
 })
 
@@ -35,9 +38,15 @@ filtered_df <- reactive({
                               names_from = Variable,
                               values_from = Value)
     
+    view(df_plot)
+    
   selected_dates <- input$date_range_input
-  subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
-})
+  df_pivoted <- subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+  
+  print("horse")
+  view(df_pivoted)
+  
+  })
 
 output$do_plot_range <- renderPlotly({
   plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%

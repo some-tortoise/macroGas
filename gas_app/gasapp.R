@@ -17,6 +17,7 @@ library(lubridate)
 library(reshape2)
 library(janitor)
 library(remotes)
+library(streamMetabolizer)
 
 ui <- fluidPage(
   class = 'body-container',
