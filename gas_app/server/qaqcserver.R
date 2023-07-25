@@ -36,6 +36,6 @@ output$qaqcDateRange <- renderUI({
   start_date = min(goop$combined_df$Date_Time)
   end_date = max(goop$combined_df$Date_Time)
   dateRangeInput("date_range_qaqc", "Select Date(s) To View/Calculate",
-                 start = start_date, end = end_date)
+                 start = start_date, end = end_date, min = start_date, max = end_date)
 })
 

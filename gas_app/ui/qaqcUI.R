@@ -104,7 +104,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 p(paste0('Mean: ',custom_mean)),
                 p(paste0('Median: ',custom_median)),
                 p(paste0('Standard deviation: ', custom_sd)),
-                dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue)
+                dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue, min = summary_custom_startValue, max = summary_custom_endValue)
               )
             )
         

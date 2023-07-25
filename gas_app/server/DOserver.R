@@ -4,7 +4,7 @@ output$do_date_viewer <- renderUI({
   start_date = min(goop$combined_df$Date_Time)
   end_date = max(goop$combined_df$Date_Time)
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
-                 start = start_date, end = end_date)
+                 start = start_date, end = end_date, min = start_date, max = end_date)
 })
 output$station <- renderUI({
   station_names <- unique(goop$combined_df$Station)
@@ -36,8 +36,6 @@ filtered_df <- reactive({
                               names_from = Variable,
                               values_from = Value)
     
-    view(df_pivoted)
-    
   selected_dates <- input$date_range_input
   subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
 })
@@ -52,6 +50,10 @@ output$do_plot_full <- renderPlotly({
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 
+# 
+# FULL RANGE METRICS
+#
+
 output$do_metrics_full <- renderDT({
   metrics_dt <-  data.frame(
     Mean = mean(combined_df$DO_conc, na.rm = TRUE),
@@ -62,6 +64,10 @@ output$do_metrics_full <- renderDT({
   )
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  })
+
+# 
+# SELECTED RANGE METRICS
+#
 
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
@@ -75,6 +81,9 @@ output$do_metrics_range <- renderDT({
   datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 })
 
+#
+# HYPOXIA METRICS
+#
 
 light_df <- reactive({
   selected_dates <- input$date_range_input
