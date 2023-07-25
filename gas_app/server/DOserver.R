@@ -1,4 +1,3 @@
-
 # Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
 output$do_date_viewer <- renderUI({
   start_date = min(goop$combined_df$Date_Time)
@@ -11,7 +10,7 @@ output$station <- renderUI({
   radioButtons('station', label = "Select station to graph", station_names)
 })
 output$site <- renderUI({
-  site_name <- unique(do_df()$Site)
+  site_name <- unique(goop$combined_df$Site)
   radioButtons('site', label = "Select site to graph", site_name)
 })
 
