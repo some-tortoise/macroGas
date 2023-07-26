@@ -102,17 +102,26 @@ UPLOAD
 
 .upload-box-1{
     display: flex;
+    flex-direction: column;
     margin: 0 auto;
     background-color: #CFDDF1;
     gap: 20px;
     border-radius: 5px;
     align-items: center;
     padding: 0 20px;
-    justify-content: space-between;
+    justify-content: center;
     width: fit-content;
+    padding: 20px;
+}
+
+.upload--aBox{
+    display: flex;
+    flex-direction: row;
+    gap:10px
 }
 
 .upload--box1-1{
+    width: auto;
     font-weight: bold;
     display: flex;
     flex-direction: row;

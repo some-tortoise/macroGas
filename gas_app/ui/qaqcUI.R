@@ -10,7 +10,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
     'High_Range' = 'High Range (µS/cm)',
     'Abs_Pres' = 'Abs Pressure (kPa)'
   )
-  print(var)
+  
   alias <- variable_names[var]
   
   

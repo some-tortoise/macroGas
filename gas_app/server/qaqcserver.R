@@ -14,7 +14,6 @@ observeEvent(input$qaqcSave, {
     for(station in unique(goop$combined_df$Station)){
       date <- str_split(min(goop$combined_df$Date_Time), pattern = ' ')[[1]][1]
       file_name <- paste0('processed_',site,'_',station,'_',date,'.csv')
-      print(file_name)
       exportDF <- goop$combined_df
       exportDF['Date_Time'] <- format(exportDF['Date_Time'], "%m/%d/%y %I:%M:%S %p")
       write.csv(exportDF, file_name, row.names = FALSE)

@@ -32,15 +32,17 @@ div(class = 'upload page',
                              ".csv")
         )
       ),
-      div(class = 'upload--box1-2',
-        div(class = 'upload--site-label',
-            'Site'),
-        uiOutput("siteNameUI")
-      ),
-      div(class = 'upload--box1-3',
-          div(class = 'upload--station-label',
-              'Station'),
-          uiOutput("stationNameUI")
+      div(class = 'upload--aBox',
+        div(class = 'upload--box1-2',
+          div(class = 'upload--site-label',
+              'Site'),
+          uiOutput("siteNameUI")
+        ),
+        div(class = 'upload--box1-3',
+            div(class = 'upload--station-label',
+                'Station'),
+            uiOutput("stationNameUI")
+        )
       ),
       actionButton("uploadBtn", "Add dataset")
       ),
