@@ -27,7 +27,6 @@ varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStati
 
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#601A3E", "NA" = "#9EC1CF")
         plotdf_view <- goop$processed_df %>% filter(Variable == variable)
-        
         plotdf_view <- plotdf_view[plotdf_view$Site == pickedSite() & plotdf_view$Station == pickedStation(), ]
         plotdf_view <- subset(plotdf_view, Date_Time >= dateRange()[1] & Date_Time <= dateRange()[2])
   
@@ -40,7 +39,8 @@ varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStati
                 key = ~(paste0(as.character(id),"_",as.character(Site))), 
                 colors = color_mapping, 
                 source = paste0("viewgraph_",variable)) |>
-          config(displaylogo = FALSE, modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian", "select")) 
+          config(displaylogo = FALSE, modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian", "select")) |>
+          layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = alias))
       })
     }
   )
