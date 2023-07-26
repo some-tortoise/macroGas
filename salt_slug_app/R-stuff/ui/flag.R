@@ -27,9 +27,11 @@ div(class = 'qaqc panel-container',
                 span(class="closeFlag close-modal","x"),
                 h2("Instructions")
             ),
-            p('To flag points, make sure that the ‘box select’ option is selected in the top right of graph. Once you have box selected the points you would like to flag, 
-                                                select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’. The flagged points will appear in a new color on the graph. 
-                                                To remove flagged points, repeat the same process but set the flag type to ‘NA’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points.')
+            tags$ul(
+              tags$li('To flag points, make sure that the ‘box select’ option is selected in the top right of graph.'),
+              tags$li('Once you have box selected the points you would like to flag, select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’.'),
+              tags$li('To remove flagged points, repeat the same process but set the flag type to ‘NA’.'),
+              tags$li('For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points.'))
         )
     ),
     tags$script(HTML("

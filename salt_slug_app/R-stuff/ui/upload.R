@@ -42,12 +42,12 @@ div(class = 'upload panel-container',
               h2("Instructions"),
               div(class="closeUpload close-modal","x")
           ),
-          p('Please select whether you want to upload data manually (locally) or 
-          through a Google Drive link. If you want to upload manually,
-            select that option and then choose the file from your computer that
-            you would like to upload. If uploading from Google Drive, paste the
-            link to the folder your file is in when prompted. All data must be a
-            csv in the correct format, which you can find by downloading the format.')
+          tags$ul(
+            tags$li('Please select whether you want to upload data manually (locally) or through a Google Drive link.'),
+            tags$li('If you want to upload manually, select that option and then choose the file from your computer that you would like to upload.'), 
+            tags$li('If uploading from Google Drive, paste the
+            link to the folder your file is in when prompted.'),
+            tags$li('All data must be a csv in the correct format, which you can find by downloading the format.'))
         )
     ),
     tags$script(HTML("
