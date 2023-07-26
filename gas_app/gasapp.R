@@ -17,27 +17,7 @@ library(lubridate)
 library(reshape2)
 library(janitor)
 library(remotes)
-library(shiny) # for webpage creation
-library(reactlog)
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(htmlwidgets)
-library(shinyjs)
-library(shinyFiles)
-library(shinyTime) 
-library(sortable)
-library(googledrive)
-library(readr)
-library(shinyBS)
-library(tidyverse)
-library(dplyr)
-library(shinythemes)
-library(lubridate)
-library(knitr)
-library(kableExtra)
-library(reshape2)
-library(ggplot2)
-#library(streamMetabolizer)
+library(streamMetabolizer)
 
 ui <- fluidPage(
   class = 'body-container',
@@ -75,7 +55,7 @@ server <- function(input, output, session) {
   source("server/uploadserver.R", local = TRUE)
   source("server/qaqcserver.R", local = TRUE)
   source("server/viewserver.R", local = TRUE)
-  #source("server/DOserver.R", local = TRUE)
+  source("server/DOserver.R", local = TRUE)
 }
 
 
