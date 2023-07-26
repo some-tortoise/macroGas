@@ -7,7 +7,7 @@ output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
   fluidRow(
     column(width = 8,
-           numericInput("background", label = "Background conductivity:", value = goop$background)
+           numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
     ),
     column(width = 2,
            actionButton("question", label = "", icon = icon("question")),
