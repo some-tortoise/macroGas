@@ -24,7 +24,9 @@ observeEvent(input$path_ok, {
       date <- str_split(min(goop$combined_df$Date_Time), pattern = ' ')[[1]][1]
       file_name <- paste0('processed_',site,'_',station,'_',date,'.csv')
       print(file_name)
-      write.csv(goop$combined_df, file_name, row.names = FALSE)
+      exportDF <- goop$combined_df
+      exportDF['Date_Time'] <- format(exportDF['Date_Time'], "%m/%d/%y %I:%M:%S %p")
+      write.csv(exportDF, file_name, row.names = FALSE)
       drive_upload(name = file_name, media = file_name, path = file_path)
       file.remove(file_name)
     }
