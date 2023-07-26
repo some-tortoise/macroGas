@@ -134,7 +134,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
           layout(xaxis = list(
             type = "date"  # Specify the x-axis type as date
           ), dragmode = 'select') |>
-          config(modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
+          config(displaylogo = FALSE, modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian")) |>
           layout(plot_bgcolor='white', xaxis = list(title = 'Date Time'), yaxis = list(title = ~Variable))
       }) #main plot
     }

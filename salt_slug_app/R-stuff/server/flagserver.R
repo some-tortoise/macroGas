@@ -60,7 +60,7 @@ observe({
                dragmode = 'select') |>
         
         # Remove unneccessary plotly buttons
-        config(displaylogo = FALSE, modeBarButtonsToRemove = c("toImage", "sendDataToCloud", "pan2d", "lasso2d", "zoomIn2d", "zoomOut2d", "resetScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>%
+        config(displaylogo = FALSE, modeBarButtonsToRemove = c("sendDataToCloud", "pan2d", "lasso2d", "zoomIn2d", "zoomOut2d", "resetScale2d", "hoverClosestCartesian", "hoverCompareCartesian")) %>%
         
         # Register an event for when points are selected -- for future flagging
         event_register(event = "plotly_selected")

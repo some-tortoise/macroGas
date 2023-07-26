@@ -46,7 +46,7 @@ output$trim_plot <- renderPlotly({
     )) %>%
     
     # Gets rid of Plotly modebar and allows the vertical lines to be editable by user
-    config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
+    config(displaylogo = FALSE, modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian", "zoom", "zoomIn", "zoomOut", "select"), edits = list(shapePosition = TRUE))
   
   plot
   

@@ -37,7 +37,9 @@ varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStati
                 color = ~as.character(Flag), 
                 key = ~(paste0(as.character(id),"_",as.character(Site))), 
                 colors = color_mapping, 
-                source = paste0("viewgraph_",variable))
+                source = paste0("viewgraph_",variable)) |>
+          
+          config(displaylogo = FALSE, modeBarButtonsToRemove = list("pan2d", "hoverCompareCartesian", "lasso2d", "autoscale", "hoverClosestCartesian", "select")) 
       })
     }
   )
