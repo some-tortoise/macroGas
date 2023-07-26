@@ -71,16 +71,22 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         full_values <- df[(df$Variable == variable), 'Value']
         full_mean <- round(mean(full_values, na.rm = TRUE), 2)
         full_median <- median(full_values, na.rm = TRUE)
+        full_min <- min(full_values, na.rm = TRUE)
+        full_max <- max(full_values, na.rm = TRUE)
         full_sd <- round(sd(full_values, na.rm = TRUE), 2)
         
         daily_values  <- df[(df$Variable == variable) & (df$Date_Time > summary_daily_dateValue & df$Date_Time < summary_daily_dateValue + 1), 'Value']
         daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
         daily_median <- median(daily_values, na.rm = TRUE)
+        daily_min <- min(full_values, na.rm = TRUE)
+        daily_max <- max(full_values, na.rm = TRUE)
         daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
         
         custom_values  <- df[(df$Variable == variable) & (df$Date_Time >= summary_custom_startValue & df$Date_Time <= summary_custom_endValue), 'Value']
         custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
         custom_median <- median(custom_values, na.rm = TRUE)
+        custom_min <- min(full_values, na.rm = TRUE)
+        custom_max <- max(full_values, na.rm = TRUE)
         custom_sd <- round(sd(custom_values, na.rm = TRUE), 2)
         
         div(class = 'summary-container',
@@ -90,6 +96,8 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 h1('Daily'),
                 p(paste0('Mean: ',daily_mean)),
                 p(paste0('Median: ',daily_median)),
+                p(paste0('Min: ',daily_min)),
+                p(paste0('Max: ',daily_max)),
                 p(paste0('Standard deviation: ', daily_sd)),
                 dateInput(paste0(variable,'-summary_daily_date'), 'Date:', value = summary_daily_dateValue)
             ),
@@ -97,12 +105,16 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 h1('Full'),
                 p(paste0('Mean: ',full_mean)),
                 p(paste0('Median: ',full_median)),
+                p(paste0('Min: ',full_min)),
+                p(paste0('Max: ',full_max)),
                 p(paste0('Standard deviation: ', full_sd))
               ),
             div(class = 'summary-sub-container',
                 h1('Custom'),
                 p(paste0('Mean: ',custom_mean)),
                 p(paste0('Median: ',custom_median)),
+                p(paste0('Min: ',custom_min)),
+                p(paste0('Max: ',custom_max)),
                 p(paste0('Standard deviation: ', custom_sd)),
                 dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue, min = summary_custom_startValue, max = summary_custom_endValue)
               )
