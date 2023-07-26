@@ -16,7 +16,8 @@ div(class = 'calculate panel-container',
             plotlyOutput("dischargecalcplot"),
             div(class = 'curr-station-deets',
                 textOutput("dischargeOutput"),
-                textOutput("halfheightOutput"))
+                textOutput("halfheightOutput")
+                )
             )
         ),
     div(class = 'calculate--box2',

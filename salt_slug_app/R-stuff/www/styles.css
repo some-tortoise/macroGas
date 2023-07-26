@@ -615,10 +615,9 @@ Instructions
 #flag-modal{
   width: 600px;
   padding: auto;
-  background-color: #CFDDF1;
+  background-color: #ffffff;
   display: none;
   box-shadow: 0px 0px 10px 2px #AAA;
-  border-radius: 5px;
   padding: 20px;
 }
 
@@ -637,10 +636,9 @@ Instructions
 #upload-modal{
   width: 600px;
   padding: auto;
-  background-color: #CFDDF1;
+  background-color: #ffffff;
   display: none;
   box-shadow: 0px 0px 10px 2px #AAA;
-  border-radius: 5px;
   padding: 20px;
   z-index: 20;
 }
@@ -661,10 +659,9 @@ Instructions
 #calc-modal{
   width: 600px;
   padding: auto;
-  background-color: #CFDDF1;
+  background-color: #ffffff;
   display: none;
   box-shadow: 0px 0px 10px 2px #AAA;
-  border-radius: 5px;
   padding: 20px;
   z-index: 20;
 }
@@ -702,4 +699,12 @@ Instructions
 
 .close-modal:hover{
   cursor: pointer;
+}
+
+#enterbackground{
+  transform: translate(0px, 65px);
+}
+
+#entersalt{
+  transform: translate(0px, 25px);
 }

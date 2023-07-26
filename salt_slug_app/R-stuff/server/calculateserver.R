@@ -20,7 +20,7 @@ output$salt_out <- renderUI({
   req(goop$calc_curr_station_df)
   fluidRow(
     column(width = 8,
-           numericInput("salt_mass", label = "NaCl Mass (g):", value = 1000)
+           numericInput("salt_mass", label = "NaCl Mass (g):", value = 0)
     ),
     column(width = 2,
            actionButton("entersalt", label = "Enter")
@@ -72,7 +72,7 @@ observeEvent(input$enterbackground,{
 
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
 observeEvent(input$entersalt,{
-  Mass_NaCl <- input$salt_mass
+  goop$Mass_NaCl <- input$salt_mass
 }) 
 
 # Renders the plot of the breakthrough curve data
@@ -200,10 +200,10 @@ output$dischargeOutput <- renderText({
   
   Area <- sum(station_slug$Area) # Area under the curve is the sum of the Area column
   
-  if(is.null(Mass_NaCl)){
+  if(is.null(goop$Mass_NaCl)){
     Discharge = 0
     }else{
-    Discharge = round(Mass_NaCl / Area, 2)
+    Discharge = round(goop$Mass_NaCl / Area, 2)
     } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
