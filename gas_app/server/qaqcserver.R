@@ -8,7 +8,8 @@ output$qaqcSiteStationSelects <- renderUI({
 
 observeEvent(input$qaqcSave, {
   showModal(modalDialog(
-    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
+    textInput('drivePath', 'Please enter the path to the folder in your Google Drive.  
+              Make sure your folder is set to accessible by \'anyone with the link\' and copy the URL from the address bar, not the share link.'),
     actionButton('path_ok', 'OK')
   ))
   

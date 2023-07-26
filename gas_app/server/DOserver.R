@@ -5,30 +5,26 @@ output$do_date_viewer <- renderUI({
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
                  start = start_date, end = end_date, min = start_date, max = end_date)
 })
-output$station <- renderUI({
-  station_names <- unique(goop$combined_df$Station)
-  radioButtons('station', label = "Select station to graph", station_names)
+
+output$DOSiteStationSelects <- renderUI({
+    selectInput('DOSiteSelect', "Select Site", unique(goop$combined_df$Site))
+    selectInput('DOStationSelect', 'Select Station', unique(goop$combined_df$Station))
 })
-# output$site <- renderUI({
-#   site_name <- unique(goop$combined_df$Site)
-#   radioButtons('site', label = "Select site to graph", site_name)
-# })
 
 combined_df <- reactive({
-  combined_df <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
+  combined_df <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
   
   combined_df_pivoted <- pivot_wider(combined_df,
                             id_cols = c("Date_Time", "Station", "Site"),
                             names_from = Variable,
                             values_from = Value)
   
-  print("pony")
-  view(combined_df_pivoted)
+  # view(combined_df_pivoted)
   
 })
 
 filtered_df <- reactive({
-    df_plot <- goop$combined_df[goop$combined_df$Station %in% input$station, ]
+    df_plot <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
     # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
     # df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
     
@@ -38,13 +34,12 @@ filtered_df <- reactive({
                               names_from = Variable,
                               values_from = Value)
     
-    view(df_plot)
+    # view(df_plot)
     
   selected_dates <- input$date_range_input
   df_pivoted <- subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
   
-  print("horse")
-  view(df_pivoted)
+  # view(df_pivoted)
   
   })
 
@@ -104,7 +99,7 @@ light_df <- reactive({
   light_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == TRUE)
   
-  view(light_combined_df)
+  # view(light_combined_df)
   
 })
 

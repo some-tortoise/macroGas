@@ -18,6 +18,7 @@ library(reshape2)
 library(janitor)
 library(remotes)
 library(streamMetabolizer)
+library(ggplot2)
 
 ui <- fluidPage(
   class = 'body-container',
