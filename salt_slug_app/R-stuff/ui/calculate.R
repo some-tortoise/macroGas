@@ -9,7 +9,7 @@ div(class = 'calculate panel-container',
         div(class = 'calculate--sidebar',
             uiOutput("calc_station"),
             uiOutput("background_out"),
-            numericInput("salt_mass", label = "NaCl Mass (g):", value = 1000)
+            uiOutput("salt_out")
             
             ),
         div(class = 'calculate--graph-stuff',
