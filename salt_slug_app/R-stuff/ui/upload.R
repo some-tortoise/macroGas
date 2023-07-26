@@ -4,9 +4,15 @@ div(class = 'upload panel-container',
           p('Files that do not obey the data format will not be accepted. You can download the data format here.'),
           downloadButton("downloadFile", "Data format"), 
           div(class = 'upload--bar1 style-bar'),
-          radioButtons('upload_m', 'How would you like to upload your data?', c('Manually', 'Through Google Drive ' = 'Google Drive')),
+          radioButtons('upload_hob', 'What kind of data are you uploading?', c("Hobo", "Clean CSVs")),
+          
           conditionalPanel(
-            condition = "input.upload_m == 'Google Drive'",
+            condition = "input.upload_messy == 'Clean CSVs'",
+            radioButtons('upload_m', 'How would you like to upload your data?', c('Manually', 'Through Google Drive ' = 'Google Drive')),
+          ),
+          
+          conditionalPanel(
+            condition = "input.upload_m == 'Google Drive' & input.upload_messy != 'Hobo'",
             strong('Link to CSV:'),
             fluidRow(column(9,
                             textInput('gdrive_link', NULL)),
@@ -15,9 +21,10 @@ div(class = 'upload panel-container',
                             bsTooltip("import_button", "Import file from the entered link", placement = "bottom",
                                       trigger = "hover",options = list(container = "body")))),
             ),
+          
           conditionalPanel(
-            condition = "input.upload_m == 'Manually'",
-            fileInput("upload", "Choose a CSV file",
+            condition = "input.upload_m == 'Manually' & input.upload_messy != 'Hobo'",
+            fileInput("upload", "Upload CSV files:",
                       multiple = TRUE,
                       accept = c("text/csv",
                                 "text/comma-separated-values,text/plain",
