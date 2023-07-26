@@ -1,18 +1,56 @@
 div(class = 'upload panel-container',
     div(class = 'upload--boxes-container',
         div(class = 'upload--box-1',
-          p('Files that do not obey the data format will not be accepted. You can download the data format here.'),
+          p('Our application supports two types of data uploads: CSVs exported from HOBOware and CSVs that adhere to a specific format. 
+            If you wish to upload \'clean\' CSVs, they should follow the provided data format that can be downloaded here:'),
           downloadButton("downloadFile", "Data format"), 
           div(class = 'upload--bar1 style-bar'),
-          radioButtons('upload_hob', 'What kind of data are you uploading?', c("Hobo", "Clean CSVs")),
+          radioButtons('upload_HOBO', 'What kind of data are you uploading?', c("HOBO", "Clean CSVs")),
+          
+          #
+          # if uploading HOBO data
+          #
           
           conditionalPanel(
-            condition = "input.upload_messy == 'Clean CSVs'",
-            radioButtons('upload_m', 'How would you like to upload your data?', c('Manually', 'Through Google Drive ' = 'Google Drive')),
+            condition = "input.upload_HOBO == 'HOBO'",
+            radioButtons('HOBO_buttons', 'How would you like to upload your HOBO CSVs?', c('Manually' = 'hobo_manual' , 'Through Google Drive ' = 'hobo_gdrive'))
           ),
           
           conditionalPanel(
-            condition = "input.upload_m == 'Google Drive' & input.upload_messy != 'Hobo'",
+            condition = "input.upload_HOBO == 'HOBO' & input.HOBO_buttons == 'hobo_manual'",
+            fileInput("upload_manual_hobo", "Upload HOBO CSVs:",
+                      multiple = FALSE,
+                      accept = c("text/csv",
+                                 "text/comma-separated-values,text/plain",
+                                 ".csv")
+                      
+          )
+          ),
+          
+          conditionalPanel(
+            condition = "input.upload_HOBO == 'HOBO' & input.HOBO_buttons == 'hobo_gdrive'",
+            strong('Link to CSV:'),
+            fluidRow(column(9,
+                            textInput('gdrive_link', NULL)),
+                     column(1,
+                            actionButton("import_button", icon("check")),
+                            bsTooltip("import_button", "Import file from the entered link", placement = "bottom",
+                                      trigger = "hover",options = list(container = "body")))),
+          ),
+            
+
+          # 
+          # If uploading clean data
+          #
+          
+          
+          conditionalPanel(
+            condition = "input.upload_HOBO == 'Clean CSVs'",
+            radioButtons('upload_m', 'How would you like to upload your clean CSVs?', c('Manually', 'Through Google Drive ' = 'Google Drive')),
+          ),
+        
+          conditionalPanel(
+            condition = "input.upload_m == 'Google Drive' & input.upload_HOBO != 'HOBO'",
             strong('Link to CSV:'),
             fluidRow(column(9,
                             textInput('gdrive_link', NULL)),
@@ -23,7 +61,7 @@ div(class = 'upload panel-container',
             ),
           
           conditionalPanel(
-            condition = "input.upload_m == 'Manually' & input.upload_messy != 'Hobo'",
+            condition = "input.upload_m == 'Manually' & input.upload_HOBO != 'HOBO'",
             fileInput("upload", "Upload CSV files:",
                       multiple = TRUE,
                       accept = c("text/csv",
@@ -31,6 +69,11 @@ div(class = 'upload panel-container',
                                 ".csv")
                      )
              ),
+          
+          
+          
+          
+          
           selectInput("select",'Your uploaded files', NULL, choices = NULL, width = "100%"),
           actionButton("delete", "Remove selected dataset")
           ),

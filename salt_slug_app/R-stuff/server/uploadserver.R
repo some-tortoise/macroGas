@@ -160,7 +160,7 @@ output$contents <- renderDT({
     
     # Create a datatable to display the selected file
     datatable(selected_file, 
-             options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 5))
+             options = list(lengthChange = FALSE, ordering = FALSE, searching = FALSE, pageLength = 20))
   }
 })
 
