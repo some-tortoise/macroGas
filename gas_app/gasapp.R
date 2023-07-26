@@ -17,7 +17,7 @@ library(lubridate)
 library(reshape2)
 library(janitor)
 library(remotes)
-#library(streamMetabolizer)
+library(streamMetabolizer)
 
 ui <- fluidPage(
   class = 'body-container',
@@ -55,7 +55,7 @@ server <- function(input, output, session) {
   source("server/uploadserver.R", local = TRUE)
   source("server/qaqcserver.R", local = TRUE)
   source("server/viewserver.R", local = TRUE)
-  #source("server/DOserver.R", local = TRUE)
+  source("server/DOserver.R", local = TRUE)
 }
 
 
