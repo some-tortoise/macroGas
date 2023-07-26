@@ -1,0 +1,12 @@
+name: gas_app
+title: gas_app
+username: kaleysperling
+account: kaleysperling
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9512903
+bundleId:
+url: https://kaleysperling.shinyapps.io/gas_app/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

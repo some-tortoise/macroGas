@@ -128,7 +128,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       }) 
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#601A3E", "NA" = "#9EC1CF")
         plot_df <- goop$combined_df[goop$combined_df$Variable == variable,]
         plot_df <- plot_df[plot_df$Date_Time >= dateRange()[1] & plot_df$Date_Time <= dateRange()[2],]
         plot_df <- plot_df[plot_df$Station == pickedStation(),]
