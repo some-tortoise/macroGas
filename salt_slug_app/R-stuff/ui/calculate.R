@@ -44,7 +44,7 @@ div(class = 'calculate panel-container',
             tags$ul(
               tags$li('Manually enter the background conductivity, found by looking at the graph and seeing the baseline of conductivity before the curve.'),
               tags$li("Enter the mass of salt used in your salt slug."),
-              tags$li("Double click to zoom in and out of the graph and hover over a point to see its values."),
+              tags$li("Double click to zoom out of the graph and hover over a point to see its values."),
               tags$li("Do this process in full for each station. When finished with all stations, the average discharge and groundwater exchange across all sites will be displayed." ))
         )
     ),
