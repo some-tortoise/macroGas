@@ -10,11 +10,24 @@ output$background_out <- renderUI({
            numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
     ),
     column(width = 2,
-           actionButton("question", label = "", icon = icon("question")),
-           bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity data, though it can be changed manually here", placement = "bottom", trigger = "hover", options = list(container = "body"))
+           actionButton("enterbackground", label = "Enter")
     )
   )
 }) 
+
+
+output$salt_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  fluidRow(
+    column(width = 8,
+           numericInput("salt_mass", label = "NaCl Mass (g):", value = 0)
+    ),
+    column(width = 2,
+           actionButton("entersalt", label = "Enter")
+    )
+  )
+}) 
+
 
 # A renderUI that creates a dropdown to select from the stations that have been uploaded
 output$calc_station <- renderUI({
@@ -53,8 +66,13 @@ observeEvent(input$calc_station_picker, {
 }) 
 
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
-observeEvent(input$background,{
+observeEvent(input$enterbackground,{
   goop$background <- input$background
+}) 
+
+# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+observeEvent(input$entersalt,{
+  goop$Mass_NaCl <- input$salt_mass
 }) 
 
 # Renders the plot of the breakthrough curve data
@@ -181,8 +199,12 @@ output$dischargeOutput <- renderText({
            Area = NaCl_Conc * diff_time_btwn_observations) 
   
   Area <- sum(station_slug$Area) # Area under the curve is the sum of the Area column
-  Mass_NaCl <- as.numeric(input$salt_mass) # Mass of the salt slug is an input by the user
-  Discharge <- round(Mass_NaCl / Area, 2) # Round the discharge to 2 points
+  
+  if(is.null(goop$Mass_NaCl)){
+    Discharge = 0
+    }else{
+    Discharge = round(goop$Mass_NaCl / Area, 2)
+    } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
