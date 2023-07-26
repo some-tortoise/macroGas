@@ -10,8 +10,7 @@ output$background_out <- renderUI({
            numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
     ),
     column(width = 2,
-           actionButton("question", label = "", icon = icon("question")),
-           bsTooltip(id = "question", "We provide a baseline for this value by calculating the mean of the conductivity data, though it can be changed manually here", placement = "bottom", trigger = "hover", options = list(container = "body"))
+           actionButton("enterbackground", label = "Enter")
     )
   )
 }) 
@@ -53,7 +52,7 @@ observeEvent(input$calc_station_picker, {
 }) 
 
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
-observeEvent(input$background,{
+observeEvent(input$enterbackground,{
   goop$background <- input$background
 }) 
 
