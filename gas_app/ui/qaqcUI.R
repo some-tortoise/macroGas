@@ -171,7 +171,7 @@ div(class = 'qaqc page',
                                                 To remove flagged points, repeat the same process but set the flag type to ‘NA’. For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points."),
           uiOutput('qaqcDateRange'),
           p('When you are finished flagging, save your data.'),
-          actionButton('qaqcSave', 'Save')
+          actionButton('qaqcSave', 'Save to Google Drive')
         )
       ),
     div(class = 'qaqc--main',

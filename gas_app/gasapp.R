@@ -17,6 +17,26 @@ library(lubridate)
 library(reshape2)
 library(janitor)
 library(remotes)
+library(shiny) # for webpage creation
+library(reactlog)
+library(plotly) # for interactive graphs
+library(DT) # for datatables
+library(htmlwidgets)
+library(shinyjs)
+library(shinyFiles)
+library(shinyTime) 
+library(sortable)
+library(googledrive)
+library(readr)
+library(shinyBS)
+library(tidyverse)
+library(dplyr)
+library(shinythemes)
+library(lubridate)
+library(knitr)
+library(kableExtra)
+library(reshape2)
+library(ggplot2)
 #library(streamMetabolizer)
 
 ui <- fluidPage(
