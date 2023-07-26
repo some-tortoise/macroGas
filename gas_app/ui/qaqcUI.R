@@ -10,7 +10,7 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
     'High_Range' = 'High Range (µS/cm)',
     'Abs_Pres' = 'Abs Pressure (kPa)'
   )
-  print(var)
+  
   alias <- variable_names[var]
   
   
@@ -48,8 +48,18 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       # Calculate and display summary statistics
       output$summary <- renderUI({
         
-        start_date_summary = min(goop$combined_df$Date_Time)
-        end_date_summary = max(goop$combined_df$Date_Time)
+        summaryFlagVal <- input$summaryFlag
+        summary_df <- goop$combined_df
+        if(!is.null(summaryFlagVal)){
+          if(summaryFlagVal == FALSE){
+            summary_df <- goop$combined_df[goop$combined_df$Flag == 'NA', ]
+          }
+        }else{
+        }
+        
+        
+        start_date_summary = min(summary_df$Date_Time)
+        end_date_summary = max(summary_df$Date_Time)
         
         summary_daily_dateValue <- input$summary_daily_date
         if(is.null(input$summary_daily_date)){
@@ -66,7 +76,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
           summary_custom_endValue <- end_date_summary
         }
         
-        df <- goop$combined_df[goop$combined_df$Site == pickedSite() & goop$combined_df$Station == pickedStation(),]
+        df <- summary_df[summary_df$Site == pickedSite() & summary_df$Station == pickedStation(),]
         
         full_values <- df[(df$Variable == variable), 'Value']
         full_mean <- round(mean(full_values, na.rm = TRUE), 2)
@@ -75,6 +85,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         full_max <- max(full_values, na.rm = TRUE)
         full_sd <- round(sd(full_values, na.rm = TRUE), 2)
         list_of_full_quartiles <- c(quantile(full_values, na.rm = TRUE)[2][1],quantile(full_values, na.rm = TRUE)[3][1],quantile(full_values, na.rm = TRUE)[4][1])
+        list_of_full_quartiles = round(list_of_full_quartiles, 2)
         full_quartile <- list_of_full_quartiles
         
         daily_values  <- df[(df$Variable == variable) & (df$Date_Time > summary_daily_dateValue & df$Date_Time < summary_daily_dateValue + 1), 'Value']
@@ -85,6 +96,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
         daily_quartile <- as.data.frame(quantile(daily_values, na.rm = TRUE))
         list_of_daily_quartiles <- c(quantile(daily_values, na.rm = TRUE)[2][1],quantile(daily_values, na.rm = TRUE)[3][1],quantile(daily_values, na.rm = TRUE)[4][1])
+        list_of_daily_quartiles = round(list_of_daily_quartiles, 2)
         daily_quartile <- list_of_daily_quartiles
        
         
@@ -95,10 +107,11 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         custom_max <- max(full_values, na.rm = TRUE)
         custom_sd <- round(sd(custom_values, na.rm = TRUE), 2)
         list_of_custom_quartiles <- c(quantile(custom_values, na.rm = TRUE)[2][1],quantile(custom_values, na.rm = TRUE)[3][1],quantile(custom_values, na.rm = TRUE)[4][1])
+        list_of_custom_quartiles = round(list_of_custom_quartiles, 2)
         custom_quartile <- list_of_custom_quartiles
         div(class = 'summary-container',
             div(class = 'summary-flag-container',
-                checkboxInput(paste0(variable,'-summaryFlag'), 'Include Flags?')),
+                checkboxInput(paste0(variable,'-summaryFlag'), 'Include Flags?',value = summaryFlagVal)),
             div(class = 'summary-sub-container',
                 h1('Daily'),
                 p(paste0('Mean: ',daily_mean)),

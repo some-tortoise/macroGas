@@ -1,5 +1,9 @@
 # Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
+observeEvent(goop$combined_df$DO_conc,{
+  
+
 output$do_date_viewer <- renderUI({
+  if(is.null(goop$combined_df)) return(NULL)
   start_date = min(goop$combined_df$Date_Time)
   end_date = max(goop$combined_df$Date_Time)
   dateRangeInput("date_range_input", "Select Date(s) To View/Calculate",
@@ -24,12 +28,13 @@ combined_df <- reactive({
 })
 
 filtered_df <- reactive({
-    df_plot <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
-    # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
-    # df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
+  if(is.null(goop$combined_df)) return(NULL)
+  df_plot <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
+  # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
+  # df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
     
-    # THIS NEEDS TO BE FIXED -- NO FLAG, ID, ETC.
-    df_pivoted <- pivot_wider(df_plot,
+  # THIS NEEDS TO BE FIXED -- NO FLAG, ID, ETC.
+  df_pivoted <- pivot_wider(df_plot,
                               id_cols = c("Date_Time", "Station", "Site"),
                               names_from = Variable,
                               values_from = Value)
@@ -44,11 +49,15 @@ filtered_df <- reactive({
   })
 
 output$do_plot_range <- renderPlotly({
+  print('agrt')
+  print(filtered_df()$DO_conc)
+  if(is.null(filtered_df()$DO_conc)) return()
   plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 
 output$do_plot_full <- renderPlotly({
+  if(is.null(combined_df()$DO_conc)) return()
   plot_ly(combined_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
@@ -182,4 +191,4 @@ output$do_hypoxia_metrics <- renderDT({
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 
 })
-
+})

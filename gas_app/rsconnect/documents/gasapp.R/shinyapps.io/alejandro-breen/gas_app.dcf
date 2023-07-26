@@ -1,0 +1,13 @@
+name: gas_app
+title: gas_app
+username:
+account: alejandro-breen
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 9512906
+bundleId: 7499940
+url: https://alejandro-breen.shinyapps.io/gas_app/
+when: 1690396865.53581
+lastSyncTime: 1690396865.53582
+asMultiple: FALSE
+asStatic: FALSE

@@ -24,7 +24,7 @@ varViewServer <- function(id, variable, goop, dateRange, pickedSite, pickedStati
     function(input, output, session) {
       
       output$main_plot_view <- renderPlotly({
-        print('hello there')
+
         color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#601A3E", "NA" = "#9EC1CF")
         plotdf_view <- goop$processed_df %>% filter(Variable == variable)
         

@@ -1,6 +1,6 @@
 observe({
   
-  raw_folder <- 'https://drive.google.com/drive/u/0/folders/1AJqv_9IYUlA3yf-Y-UWEPfOPRpJLr4n7'
+  raw_folder <- PROCESSED_FOLDER
   list_of_raw_csv_names = drive_ls(raw_folder)[['name']] #gives us file names from google drive
   if(length(list_of_raw_csv_names)<1){
     goop$processed_df <- NULL
