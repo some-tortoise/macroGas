@@ -36,7 +36,7 @@ output$trim_plot <- renderPlotly({
                   source = "D") %>%
     layout(xaxis = list(title = "Date and Time"), 
            yaxis = list(title = "Low Range Conductivity"),
-      showlegend = FALSE, shapes = list(
+      showlegend = TRUE, shapes = list(
       # Left vertical line
       list(type = "line", x0 = trim_xLeft, x1 = trim_xLeft,
            y0 = 0, y1 = 1, yref = "paper"),
