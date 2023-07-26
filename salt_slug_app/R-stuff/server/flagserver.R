@@ -33,7 +33,7 @@ observe({
     # Plotly 
     output$flag_plot <- renderPlotly({
       # Color mapping: bad = red, interesting = orange, questionable = pink, NA = blue
-      color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
+      color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#601A3E", "NA" = "#9EC1CF")
       
       # Define x values (date_time), y values (value), and potential flags
       plotX <- filteredData()[filteredData()$Variable == input$variable_choice, 'Date_Time']

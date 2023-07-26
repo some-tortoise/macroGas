@@ -74,6 +74,8 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         full_min <- min(full_values, na.rm = TRUE)
         full_max <- max(full_values, na.rm = TRUE)
         full_sd <- round(sd(full_values, na.rm = TRUE), 2)
+        list_of_full_quartiles <- c(quantile(full_values, na.rm = TRUE)[2][1],quantile(full_values, na.rm = TRUE)[3][1],quantile(full_values, na.rm = TRUE)[4][1])
+        full_quartile <- list_of_full_quartiles
         
         daily_values  <- df[(df$Variable == variable) & (df$Date_Time > summary_daily_dateValue & df$Date_Time < summary_daily_dateValue + 1), 'Value']
         daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
@@ -81,6 +83,10 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         daily_min <- min(full_values, na.rm = TRUE)
         daily_max <- max(full_values, na.rm = TRUE)
         daily_sd <- round(sd(daily_values, na.rm = TRUE), 2)
+        daily_quartile <- as.data.frame(quantile(daily_values, na.rm = TRUE))
+        list_of_daily_quartiles <- c(quantile(daily_values, na.rm = TRUE)[2][1],quantile(daily_values, na.rm = TRUE)[3][1],quantile(daily_values, na.rm = TRUE)[4][1])
+        daily_quartile <- list_of_daily_quartiles
+       
         
         custom_values  <- df[(df$Variable == variable) & (df$Date_Time >= summary_custom_startValue & df$Date_Time <= summary_custom_endValue), 'Value']
         custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
@@ -88,7 +94,8 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         custom_min <- min(full_values, na.rm = TRUE)
         custom_max <- max(full_values, na.rm = TRUE)
         custom_sd <- round(sd(custom_values, na.rm = TRUE), 2)
-        
+        list_of_custom_quartiles <- c(quantile(custom_values, na.rm = TRUE)[2][1],quantile(custom_values, na.rm = TRUE)[3][1],quantile(custom_values, na.rm = TRUE)[4][1])
+        custom_quartile <- list_of_custom_quartiles
         div(class = 'summary-container',
             div(class = 'summary-flag-container',
                 checkboxInput(paste0(variable,'-summaryFlag'), 'Include Flags?')),
@@ -99,6 +106,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 p(paste0('Min: ',daily_min)),
                 p(paste0('Max: ',daily_max)),
                 p(paste0('Standard deviation: ', daily_sd)),
+                p(paste0("25th, 50th, 75th Quartiles: "), paste0(daily_quartile, collapse=",")),
                 dateInput(paste0(variable,'-summary_daily_date'), 'Date:', value = summary_daily_dateValue)
             ),
             div(class = 'summary-sub-container',
@@ -107,7 +115,8 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 p(paste0('Median: ',full_median)),
                 p(paste0('Min: ',full_min)),
                 p(paste0('Max: ',full_max)),
-                p(paste0('Standard deviation: ', full_sd))
+                p(paste0('Standard deviation: ', full_sd)),
+                p(paste0("25th, 50th, 75th Quartiles: "), paste0(full_quartile, collapse=","))
               ),
             div(class = 'summary-sub-container',
                 h1('Custom'),
@@ -116,6 +125,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
                 p(paste0('Min: ',custom_min)),
                 p(paste0('Max: ',custom_max)),
                 p(paste0('Standard deviation: ', custom_sd)),
+                p(paste0("25th, 50th, 75th Quartiles: "), paste0(custom_quartile, collapse=",")),
                 dateRangeInput(paste0(variable,'-summary_custom_dateRange'), 'Date Range:', start = summary_custom_startValue, end = summary_custom_endValue, min = summary_custom_startValue, max = summary_custom_endValue)
               )
             )
@@ -128,7 +138,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
       }) 
       
       output$main_plot <- renderPlotly({
-        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#FFDFFF", "NA" = "#9EC1CF")
+        color_mapping <- c("bad" = "#FF6663", "interesting" = "#FEB144", "questionable" = "#601A3E", "NA" = "#9EC1CF")
         plot_df <- goop$combined_df[goop$combined_df$Variable == variable,]
         plot_df <- plot_df[plot_df$Date_Time >= dateRange()[1] & plot_df$Date_Time <= dateRange()[2],]
         plot_df <- plot_df[plot_df$Station == pickedStation(),]

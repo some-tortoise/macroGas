@@ -18,6 +18,7 @@ library(reshape2)
 library(janitor)
 library(remotes)
 library(streamMetabolizer)
+library(ggplot2)
 
 PROCESSED_FOLDER <- "https://drive.google.com/drive/u/0/folders/1Ot7VH5dBjkAWFmtOLcA5p5_nyR3lN5ga"
 
