@@ -7,16 +7,7 @@ output$qaqcSiteStationSelects <- renderUI({
 })
 
 observeEvent(input$qaqcSave, {
-  showModal(modalDialog(
-    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
-    actionButton('path_ok', 'OK')
-  ))
-  
-})
-
-observeEvent(input$path_ok, {
-  #file_path <- 'https://drive.google.com/drive/u/0/folders/1XYrJIcQIZufAMAgcSf8_2RuUPSht_k3E'
-  file_path <- input$drivePath
+  file_path <- PROCESSED_FOLDER
   file_name <- "output.csv"
   
   for(site in unique(goop$combined_df$Site)){
@@ -33,6 +24,7 @@ observeEvent(input$path_ok, {
   }
   alert('Files Uploaded!')
 })
+
 
 observeEvent(input$uploadBtn, {
   output$varContainers <- renderUI({
