@@ -20,9 +20,9 @@ uploaded_data <- reactiveValues(csv_names = NULL,
                                 station_names = NULL,
                                 combined_df = NULL)
 
-##
+#
 # UPLOADING/DELETING DATA
-##
+#
 
 # Download handler for downloading the template
 output$downloadFile <- downloadHandler( 
@@ -58,6 +58,8 @@ check_format <- function(csv_file, file_name){
     }
   }
 }
+
+### GOOGLE DRIVE -- CLEAN CSVs ###
 
 # Function to import data with correct format from Google Drive
 import_from_drive <- function(gdrive_link) {
@@ -105,6 +107,8 @@ observeEvent(input$import_button, {
   
 })
 
+### MANUAL UPLOAD -- CLEAN CSVs ###
+
 # Manually upload data
 observeEvent(input$upload, {
   req(input$upload)
@@ -120,8 +124,49 @@ observeEvent(input$upload, {
     },
     error = function(e) df=NULL # Set df to NULL if trycatch encounters 
   ) 
+})
 
+### HOBOS ###
 
+# Function for cleaning HOBO files
+clean_hobo <- function(csv_file){
+  clean_csv_file <- csv_file %>%
+    select(-1) %>%
+    rename_at(vars(1:4), ~ c("Date_Time", "Low_Range", "Full_Range", "Temp_C")) %>%
+    mutate(Station = input$station) %>%
+    select(Date_Time, Station, Low_Range, Full_Range, Temp_C)
+  
+  view(clean_csv_file)
+  return(clean_csv_file)
+  
+}
+
+# Manually inputting HOBO files
+observeEvent(input$hoboupload, {
+  req(input$hoboupload)
+  tryCatch(
+    {
+      for(i in 1:length(input$hoboupload[,1])){
+        df <- read_csv(input$hoboupload[[i, 'datapath']], skip = 1, show_col_types = FALSE)
+        print("HORSE")
+        print(problems(df))
+        file_name <- input$upload[[i, 'name']]
+        clean_csv_file <- clean_hobo(df)
+        
+        dtRendered(TRUE) # Set dtRendered to true once uploaded successfully
+        
+        if(file_name %in% uploaded_data$csv_names) { # Won't store the new data if file_name already exists (user has re-uploaded the same thing)
+          return(TRUE)
+        } else {
+          uploaded_data$data[[length(uploaded_data$data) + 1]] <- clean_csv_file # Stores a correctly formatted data in uploaded_data$data as a separate element
+          uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name) # Adds file_name to list of uploaded csvs
+          updateSelectInput(session, 'select', choices = uploaded_data$csv_names, selected = file_name) # Updates the select csv to include new csv
+        }
+      }
+    }, error = function(e) {
+      print(paste("Error occurred:", e))
+    }
+  )
 })
 
 # Updating uploaded_data$index based on how many CSVs are uploaded, works for any file naming convention
