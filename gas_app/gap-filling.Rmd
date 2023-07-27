@@ -14,7 +14,7 @@ library(lubridate)
 
 ```{r}
 df <- read.csv("ex_with_do_df.csv", header = F)
-df  <- df[-c(1,2, 1325, 1326, 1327),c(1,2,3,4)]
+df  <- df[-c(1,2, 2701, 2702, 2703),c(1,2,3,4)]
 colnames(df) <- c("number", "date", "DO", "Temp")
 df <- df[df$DO != '',]
 View(df)
@@ -55,7 +55,7 @@ df$Time = Ex_Time
 
 ```{r}
 # manually delete some data
-train_index = c(1:499,600:1322)
+train_index = c(1:499,600:2698)
 train_df = df[train_index, 3:5]
 test_df = df[-train_index, 3:5]
 p1 <- ggplot()+
