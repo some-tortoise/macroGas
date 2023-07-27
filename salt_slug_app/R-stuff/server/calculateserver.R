@@ -266,19 +266,17 @@ output$halfheightOutput <- renderText({
 # Math to calculate groundwater exchange
 output$groundwaterOutput <- renderUI({
   req(goop$combined_df)
-  if(!('1' %in% unique(goop$combined_df$station))){
-    return(p('Please make sure you have a station 1.')) # Need to have a station 1 in order to do this calculation, this checks it exists
-  }
   
+  first_station <-min(as.numeric(unique(goop$combined_df$station))) # Gets the first station number by finding the minimum numeric value in the 'station' column.
   last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number by finding the maximum numeric value in the 'station' column.
 
   # Need more than 1 station, checks that only station available isn't just 'station 1'
-  if(last_station == 1){
+  if(last_station == first_station){
     return(p('Need more than one station.'))
   } 
   
   # Gets discharge values from goop$dischargeDF for the first and last stations
-  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == 'Station 1', 'Discharge'])
+  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'Discharge'])
   last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'Discharge'])
   
   if(first_station_discharge == 0 || last_station_discharge == 0){
