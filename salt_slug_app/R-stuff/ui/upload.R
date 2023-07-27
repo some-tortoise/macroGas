@@ -4,7 +4,7 @@ div(class = 'upload panel-container',
           p('Files that do not obey the data format will not be accepted. You can download the data format here.'),
           downloadButton("downloadFile", "Data format"), 
           div(class = 'upload--bar1 style-bar'),
-          radioButtons('upload_hob', 'What kind of data are you uploading?', c("Hobo", "Clean CSVs")),
+          radioButtons('upload_hob', 'What kind of data are you uploading?', c("Messy Stinky Hobo", "Clean CSVs")),
           
           conditionalPanel(
             condition = "input.upload_messy == 'Clean CSVs'",

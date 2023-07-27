@@ -1,5 +1,6 @@
 # Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
-observeEvent(goop$combined_df$DO_conc,{
+observeEvent(goop$combined_df,{
+  if(!is.null(goop$combined_df)){
   
 
 output$do_date_viewer <- renderUI({
@@ -191,4 +192,4 @@ output$do_hypoxia_metrics <- renderDT({
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 
 })
-})
+}})

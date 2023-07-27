@@ -13,9 +13,11 @@ library(lubridate)
 ```
 
 ```{r}
-df <- read.csv("NC_NHC_2023-03-06_HD.csv", header = F)
+df <- read.csv("ex_with_do_df.csv", header = F)
 df  <- df[-c(1,2, 1325, 1326, 1327),c(1,2,3,4)]
 colnames(df) <- c("number", "date", "DO", "Temp")
+df <- df[df$DO != '',]
+View(df)
 ```
 
 ```{r, fig.height=6}
@@ -32,7 +34,6 @@ plot(Temp, DO)
 
 ```{r}
 Time = df$date
-
 Time = strsplit(Time, " ")
 Ex_Time <- c()
 for(i in 1:length(Time)){
@@ -46,7 +47,7 @@ for(i in 1:length(Time)){
   }
   if(AM_PM=="PM")
     H = H + 12
-  Ex_Time[i] = 60*H + M + S
+  Ex_Time[i] = 60*H + M + S/60
 }
 plot(Ex_Time, DO)
 df$Time = Ex_Time
@@ -76,6 +77,7 @@ p2 = ggplot()+
   geom_point(aes(x = test_df$Time, y = pred1), color="red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("Quadratic Regression")
+p2
 ```
 
 ```{r}
@@ -92,6 +94,7 @@ p3 = ggplot()+
   geom_point(aes(x = test_df$Time, y = pred2), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("Mean")
+p3
 ```
 
 ```{r}
@@ -104,6 +107,7 @@ p4 = ggplot()+
   geom_point(aes(x = filled_df$Time[c(200:300)], y = filled_df$DO[c(200:300)]), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("KNN")
+p4
 ```
 
 ```{r, fig.height=10, fig.width=12}
