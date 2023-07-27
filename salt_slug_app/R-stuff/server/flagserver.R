@@ -154,38 +154,3 @@ observeEvent(input$upload_to_gdrive, {
   ))
 })
 
-observeEvent(input$flag_path_ok,{
-  name <- 'processed.csv'
-  turn_file_to_csv(goop$melted_combined_df, name)
-  res = tryCatch(upload_csv_file(goop$melted_combined_df, name, input$drivePath), error = function(i) NA)
-  if(is.na(res)){
-    showModal(modalDialog(
-      h3('The path you entered is invalid!'),
-      easyClose = FALSE,
-      footer = tagList(
-        modalButton('Back')
-      )
-    ))      
-  }
-  else{
-    if(paste0('processed_', name) %in% (drive_ls(input$drivePath)[['name']])){
-      showModal(modalDialog(
-        h3('File has been uploaded successfully!'),
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton('Back')
-        )
-      ))
-    }
-    else{
-      showModal(modalDialog(
-        h3('File upload failed!'),
-        easyClose = FALSE,
-        footer = tagList(
-          modalButton('Back')
-        )
-      ))
-    }
-  }
-}
-)
