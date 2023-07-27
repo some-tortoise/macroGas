@@ -103,8 +103,8 @@ df_test <- df[,3:5]
 df_test[c(500:600),'DO'] <- NA
 filled_df <- knnImputation(df_test)
 p4 = ggplot()+
-  geom_point(aes(x = filled_df$Time[-c(200:300)], y = filled_df$DO[-c(200:300)]), color='grey')+
-  geom_point(aes(x = filled_df$Time[c(200:300)], y = filled_df$DO[c(200:300)]), color = "red")+
+  geom_point(aes(x = filled_df$Time[-c(500:600)], y = filled_df$DO[-c(500:600)]), color='grey')+
+  geom_point(aes(x = filled_df$Time[c(500:600)], y = filled_df$DO[c(500:600)]), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("KNN")
 p4
