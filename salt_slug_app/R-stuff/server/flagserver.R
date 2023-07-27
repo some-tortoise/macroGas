@@ -4,11 +4,27 @@
 
 
 # Creates radio buttons and the plot based on new filteredData reactive that's set to station choice
+observeEvent(goop$combined_df, {
+  View(goop$combined_df)
+  melted_comb_df <- melt(goop$combined_df,
+                         id.vars = c("Date_Time", "station"),
+                         measure.vars = c("Low_Range",
+                                          "Full_Range",
+                                          "Temp_C")) |>
+    rename(Variable = variable,
+           Station = station,
+           Value = value) %>% mutate(Flag = "NA", id = row.names(.))
+  goop$melted_combined_df <- melted_comb_df
+  View(goop$melted_combined_df)
+})
+
 observe({
   if(!is.null(goop$combined_df)){ 
     
     # New reactive expression that filters data to user's station choice
     filteredData <- reactive({
+      print(input$station)
+      print(unique(goop$melted_combined_df$Station))
       df_plot <- goop$melted_combined_df[goop$melted_combined_df$Station == input$station,]
       #df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
     })
@@ -39,7 +55,6 @@ observe({
       plotX <- filteredData()[filteredData()$Variable == input$variable_choice, 'Date_Time']
       plotY <- filteredData()[filteredData()$Variable == input$variable_choice, 'Value']
       plotFlag <- filteredData()[filteredData()$Variable == input$variable_choice, 'Flag']
-      
       # Defining variables/formatting
       plot_ly(data = filteredData(), 
               type = 'scatter', 

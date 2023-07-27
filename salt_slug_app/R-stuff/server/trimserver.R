@@ -88,13 +88,8 @@ observeEvent(input$trimContinue, {
   temp <- subset(goop$combined_df, Date_Time > goop$trim_xLeft)
   temp <- subset(temp, Date_Time < goop$trim_xRight)
   
-  # Trim the melted data frame between the two bars
-  temp_melted <- subset(goop$melted_combined_df, Date_Time > goop$trim_xLeft)
-  temp_melted <- subset(temp_melted, Date_Time < goop$trim_xRight)
-  
   if(length(temp) > 1){ #If data remains update both goop$combined_df and goop$melted_combined_df with trimmed data
     goop$combined_df <- temp
-    goop$melted_combined_df <- temp_melted 
     updateTabsetPanel(session, inputId = "navbar", selected = "flagpanel") # Move user to QAQC page
     
   }else{ 

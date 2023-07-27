@@ -52,6 +52,7 @@ check_format <- function(csv_file, file_name){
       return(TRUE)
     }
     else{
+      View(csv_file)
       uploaded_data$data[[length(uploaded_data$data) + 1]] <- csv_file # Stores a correctly formatted data in uploaded_data$data as a separate element
       uploaded_data$csv_names <- c(uploaded_data$csv_names, file_name) # Adds file_name to list of uploaded csvs
       updateSelectInput(session, 'select', choices = uploaded_data$csv_names, selected = file_name) # Updates the select csv to include new csv
@@ -240,21 +241,11 @@ observeEvent(input$uploadContinue,{
   comb_df <- comb_df %>% #saves following code
     mutate_at(vars(-Date_Time), as.numeric) %>% #changes every variable but date_time to numeric
     mutate(Date_Time = mdy_hms(Date_Time, tz='EST')) %>% #changes date_time to a mdy_hms format in est time zone
-     mutate(Low_Range_Flag = "good", Full_Range_Flag = "good", 
+    mutate(Low_Range_Flag = "good", Full_Range_Flag = "good", 
             Temp_C_Flag = "good", id = row.names(.))
   
   goop$combined_df <- comb_df
 
-  melted_comb_df <- melt(comb_df,
-                         id.vars = c("Date_Time", "station"),
-                         measure.vars = c("Low_Range",
-                                          "Full_Range",
-                                          "Temp_C")) |>
-    rename(Variable = variable,
-           Station = station,
-           Value = value) %>% mutate(Flag = "NA", id = row.names(.))
-
-  goop$melted_combined_df <- melted_comb_df
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) 
 
