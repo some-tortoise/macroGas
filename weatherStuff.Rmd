@@ -1,0 +1,56 @@
+---
+title: "weatherMarkdown"
+output: html_document
+date: "2023-07-27"
+---
+
+```{r setup, include=FALSE}
+library(httr)
+library(jsonlite)
+library(tidyverse)
+
+```
+
+
+```{r setup, include=FALSE}
+res = GET("https://archive-api.open-meteo.com/v1/archive?latitude=35.3268&longitude=-78.6761&start_date=2023-06-08&end_date=2023-07-22&hourly=temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover,windspeed_10m,is_day,direct_radiation&timezone=America%2FNew_York")
+
+data = as.data.frame(fromJSON(rawToChar(res$content)))
+```
+
+
+```{r setup, include=FALSE}
+print(names(data))
+```
+
+
+```{r setup, include=FALSE}
+
+df <- read.csv("gas_app/ex_with_do_df.csv", header = F)
+df  <- df[-c(1,2),c(1,2,3,4)]
+colnames(df) <- c("id", "Date_Time", "DO", "Temp_C")
+df <- df[df$DO != '',]
+View(df)
+```
+
+```{r}
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.is_day)) + 
+  geom_point()
+
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.rain)) + 
+  geom_point()
+
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.temperature_2m)) + 
+  geom_point()
+
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.direct_radiation)) + 
+  geom_point()
+
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.windspeed_10m)) + 
+  geom_point()
+
+ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.cloudcover)) + 
+  geom_point()
+```
+
+
