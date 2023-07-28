@@ -4,11 +4,11 @@
 
   ## About
 
-The MacroGas project aims to make analyzing stream ecological data easier through the development of two R Shiny apps. 
+The MacroGas project is dedicated to developing two R Shiny Apps that cater to the needs of stream ecologists for data analysis. These apps aim to streamline and enhance the process of cleaning, visualizing, performing quality assurance/quality control (QA/QC), and conducting calculations to gain deeper insights into the chemistry of New Hope Creek.
 
-The Salt Slug App has been designed for conservative tracer injection studies which use NaCl (salt slugs). It allows researchers to upload their data, perform quality assurance/quality control (QA/QC) functions, then calculate stream discharge (Q), groundwater exchange  (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>).
+The Salt Slug App has been designed for NaCl conservative tracer (also known as salt slugs) injection studies. It allows researchers to upload their data, perform QA/QC functions, then calculate stream discharge (Q), groundwater exchange  (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>).
 
-The GHG Visualization App is designed to take raw sensor data collected about dissolved oxygen (DO) and greenhouse gas (GHG) levels in streams, then perform QA/QC functions, visualize these data, and calculate various metrics such as hypoxia probability and summary statistics.
+The HydroGas App is designed to visualize uploaded variables, such as dissolved oxygen (DO), greenhouse gases (GHGs) like CO<sub>2</sub> and CH<sub>4</sub>, water temperature, conductivity, pressure, and salinity, then perform QA/QC functions, download the melted data, and view DO and hypoxia metrics and visualizations.
 
 Both apps will create a more efficient and user-friendly platform for analyzing data, thereby contributing to the advancement of stream ecology research and environmental understanding.
 
@@ -20,36 +20,60 @@ The home page serves as a hub for the Salt Slug App, providing users with an ove
   
 **Upload**
 
-The upload page allows users to download a data template and import their CSV file(s) into the app, either from Google Drive or locally. Users are guided through the process of formatting and uploading their data files. Here are some important instructions for using the upload page:
+The upload page allows users to import two types of data into the app: CSVs exported from HOBOware and CSVs that adhere to a specific format.
+Here are some instructions for using this page:
 
-1. The "Download File" button contains a CSV with an example breakthrough curve in the required formatting. You can use this data to get familiar with using the app.
-2. Match your CSV files to the example formatting. If your data is missing certain fields, you can create the respective column and leave it blank (except for 'Station'). Column naming conventions must match.
-   *Please note that only data from a single tracer injection experiment should be uploaded at a time.*
-3. If uploading through Google Drive, ensure that the CSV formatting matches the required format. In Google Drive, set the access for each CSV to "Anyone with the link" under the "Share" option. Paste the drive link from the "Copy Link" button within "Share" into the app. Please provide links to individual CSV files, as links to folders will not work.
-4. Repeat the process for each station.
+1. **Data Template**: To help you get started, click the "Download File" button to obtain a CSV with an example breakthrough curve in the required formatting. Feel free to use this sample data to familiarize yourself with the app.
+
+2. **Formatting Your CSV**: Ensure that your CSV files match the example formatting provided. If certain fields are missing in your data, create the corresponding column and leave it blank (except for 'Station'). It's essential to adhere to the column naming conventions to ensure proper data processing.
+
+    *Please remember to upload data from a single tracer injection experiment at a time.*
+
+3. **Upload Manually**: If you choose this method, select that option and then choose the file from your computer that you would like to upload.
+  
+4. **Upload from Google Drive**: If you choose this method, make sure your CSV files are formatted correctly. In Google Drive, set the access for each CSV file to "Anyone with the link" under the "Share" option. Then, copy the drive link from the "Copy Link" button within "Share" and paste it into the app.
+
+   *Please provide links to **individual CSV files**, as links to folders will not work.*
+
+5. **Upload Multiple Stations**: If you have data for multiple stations, repeat the upload process for each station separately.
 
 **Trim**
 
-The Trim page provides the function of cleaning the data you uploaded. It displays a plot showing the data points for each station that you have uploaded. Here's how you can use the trim page:
+The Trim page provides the function of cleaning the data you uploaded. It displays a plot showing the data points for all stations that you have uploaded. Here's how you can use the trim page:
 
-1. Adjust the vertical bars on the plot to define the start and end points of the data you want to trim.
-2. As you move the bars, a separate plot will update to show the trimmed data in real-time.
-3. Fine-tune the position of the bars until you have selected the desired portion of the data.
-4. Once you are satisfied with the trim, click the "Continue" button to save your changes and proceed to the QA/QC page.
+1. **Move the Vertical Bars**: To remove excess data from the breakthrough curves, drag the vertical bars to encompass the relevant portions you want to keep. As you move the bars, the graph on the right will automatically update to reflect the changes you've made. This trimmed data will be carried forward and used throughout the rest of the app.
+
+2. **Continue**: Once you are happy with the trim you've made, simply press the "Continue" button to proceed with the trimmed data. Please be aware that the data will be permanently updated. If you wish to make the selected bounds larger after continuing, you will need to re-upload the data. 
 
 **QA/QC**
 
-Quality Assurance/Quality Control page allows you to select a station and view the associated data. You can change the variable you are viewing and interact with the plot to flag data points. Here's a quick overview of the QA/QC page:
+Quality Assurance/Quality Control page allows you to efficiently flag data points to ensure data accuracy. Here's a quick overview of the QA/QC page:
 
-1. Select a station you would like to view.
-2. Once selected, you can change the variable you are viewing.
-3. Click on one or multiple points on the plot.
-4. Use the button above to flag the selected points.
+1. **Select Station**: Choose the station you wish to view and analyze from the available options.
+
+2. **Select Variable**: Once you've selected a station, you can easily switch between different variables to view the associated data for each one.
+
+3. **Flag Data Points**: Ensure that the 'box select' option is chosen from the top right of the graph. After box selecting the points you want to flag, choose from the options 'interesting', 'bad', or 'questionable', and then click on 'Flag selected points'.
+
+4. **Remove Flagged Points**: To remove flagged points, simply repeat the same process but set the flag type to 'NA'.
+
+5. **Zoom for Precision**: For more precise flagging, take advantage of the zoom features available in the top right of the graph. Zoom in to specific areas before box selecting points to ensure accurate data flagging.
 
 **Calculate**
 
-Calculate page performs stream discharge (Q), groundwater exchange  (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>) calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the result. Users can download flagged dataset and output table.
+The Calculate page enables users to perform essential calculations for stream ecology research, including stream discharge (Q), groundwater exchange (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>). An output summary table will display the result. Users can download flagged dataset and summary table to have a comprehensive record of the analysis. Here's how you can effectively use this page:
 
+1. **Visualize Data**: Users can visualize the data and observe breakthrough curves. Additionally, you can manually adjust parameters for calculation to tailor the analysis to their specific needs.
+
+2. **Enter Background Conductivity**: Manually enter the background conductivity by observing the graph and identifying the baseline conductivity before the curve.
+
+3. **Enter Salt Slug Mass**: Provide the mass of salt used in your salt slug experiment to facilitate accurate calculations.
+
+4. **Graph Interaction**: Interact with the graph by double-clicking to zoom out, and hover over data points to view their values, enabling accurate and detailed analysis.
+
+     *For comprehensive analysis, follow this process for each station you wish to evaluate.*
+
+6. **Download Output Table**: Once calculations are completed for all stations, the average discharge and groundwater exchange across all sites will be presented. To retain a complete record of your analysis, download the output summary table.
 
   ## GHG App Functions
     
@@ -59,32 +83,37 @@ The Home page provides an overview of the app.
 
 **Upload**
 
-The Upload page allows users to upload csv files.
+The Upload page allows users to upload csv files. 
 
 **QA/QC**
 
-The QA/QC page allows you to flag data points on the plot. Follow these steps to use this page:
+The QA/QC page allows you to efficiently flag data points on the plot for further analysis and identification. Follow these steps to make the most of this page:
 
-1. The variables will be displayed below once you have uploaded your data.
-2. Select "Summary" tabset to view summary statistics of each variable, including mean, median, and standard deviation.
-3. To flag points, make sure that the "box select" option is selected in the top-right of the graph. Choose from the options "interesting", "bad", or "questionable" and click "Flag selected points".
-The flagged points will be highlighted in a new color on the graph.
-4. To remove flagged points, repeat the same process but set the flag type to "NA".
+1. **Variable Display**: Once your data is uploaded, the variables will be displayed below for your reference.
 
-*For more precise flagging, utilize the zoom features in the top-right corner of the graph before selecting points.*
+2. **Summary Statistics**: Select the 'Summary' tabset to view summary statistics of each variable, including mean, median, maximum, minimum, standard deviation, 25<sup>th</sup>, 50<sup>th</sup> and 75<sup>th</sup> quartiles.
 
-5. Once you finish flagging, remember to save your data.
+3. **Flag Points**: To flag data points, ensure that the "box select" option is chosen from the top-right corner of the graph. Then, choose from the options 'interesting', 'bad', or 'questionable', and click 'Flag selected points'. The flagged points will be highlighted in a new color on the graph.
+
+4. **Remove Flagged Points**: To remove flagged points, repeat the same process but set the flag type to 'NA'.
+
+    *For more precise flagging, utilize the zoom features in the top-right corner of the graph before selecting points.*
 
 **View**
 
-This page allows you to view the variables associated with your selected site and station from the uploaded file. To get started, simply choose the date range to view the data.
+This page allows you to conveniently view variables associated with your selected site and station from the uploaded file. To get started, simply choose the date range you want to view the data from.
 
 **DO Data and Metrics**
 
-The DO Data and Metrics page provides functionality to assess hypoxia probability and summary statistics within your dataset. You have the flexibility to input the hypoxia threshold (in mg/L) for conducting thorough analyses. 
+The DO Data and Metrics page displays mean, minimum, maximum, amplitude, and probability of hypoxia across selected range of data, it provides functionality to assess hypoxia probability and summary statistics within your dataset. You have the flexibility to input the hypoxia threshold (in mg/L) for conducting thorough analyses. 
 
-## Gap Filling - Missing Values Imputation
-  
+## Missing Data Imputation
+
+Methods tested to fill missing data as a result of equipment issues:
+1. **K-Nearest Neighbors (KNN)**: This method estimates missing values based on the values of neighboring locations.
+2. **Regression imputation**: This method fits the observed data with a certain regression model and predicts the missing values based on other variables. 
+3. **Mean/Median imputation**: This method uses the mean or median values of observed data to replace the missing values. 
+
 ## Getting Started
 
 1. Make sure you have R Studio installed on your computer. 
