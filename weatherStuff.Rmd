@@ -116,7 +116,7 @@ p2 = ggplot()+
   geom_point(aes(x = train_df$Time, y = train_df$DO), color="grey")+
   geom_point(aes(x = test_df$Time, y = pred1), color="red")+
   labs(x="Time in a day(Min)", y="DO")+
-  ggtitle("Quadratic Regression")
+  ggtitle("linear Regression with all")
 p2
 ```
 ```{r}
@@ -129,7 +129,7 @@ for(i in 1:100){
   pred2[i] <- mean_rep[mean_rep$Time==pred_Time,]$mean_DO
 }
 p3 = ggplot()+
-  geom_point(aes(x = df$Time, y = df$DO), color='grey')+
+  geom_point(aes(x = train_df$Time, y = train_df$DO), color='grey')+
   geom_point(aes(x = test_df$Time, y = pred2), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("Mean")
