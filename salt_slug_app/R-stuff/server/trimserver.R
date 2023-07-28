@@ -53,10 +53,10 @@ output$trim_plot <- renderPlotly({
 })
 
 # Filter combined_df into trimmed_combined_df based on Date_Time values set by the trim bars 
-observe({
-  goop$trimmed_combined_df <- goop$combined_df[goop$combined_df$Date_Time > goop$trim_xLeft & goop$combined_df$Date_Time < goop$trim_xRight, ]
-  
-})
+# observe({
+#   goop$trimmed_combined_df <- goop$combined_df[goop$combined_df$Date_Time > goop$trim_xLeft & goop$combined_df$Date_Time < goop$trim_xRight, ]
+#   
+# })
 
 # Updating the vertical bar positions based on the user interaction
 observeEvent(event_data("plotly_relayout", source = "D"), { 
@@ -84,7 +84,7 @@ observeEvent(event_data("plotly_relayout", source = "D"), {
 # Trims the data when user selects the continue button 
 observeEvent(input$trimContinue, {
   
-  # Trime goop$combined_df between goop$trim_xLeft and goop$trim_xRight here
+  # Trims goop$combined_df between goop$trim_xLeft and goop$trim_xRight here
   temp <- subset(goop$combined_df, Date_Time > goop$trim_xLeft)
   temp <- subset(temp, Date_Time < goop$trim_xRight)
   

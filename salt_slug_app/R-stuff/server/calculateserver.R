@@ -46,6 +46,8 @@ output$calc_station <- renderUI({
 # Filters to the subset of rows that has the correct station the user inputs, then stores in goop$calc_curr_station_df
 observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
+  goop$calc_curr_station_df <- na.omit(goop$calc_curr_station_df)
+  view(goop$calc_curr_station_df)
 })
 
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
@@ -151,9 +153,19 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 # OUTPUT, MATH, TABLE
 #
 
-# Creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars 
+# Creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars to do calculations with later
 observe({
-  goop$trimmed_slug <- goop$calc_curr_station_df[(as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) & (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)), ]
+  if(is.null(goop$calc_curr_station_df)) return()
+  if(is.null(goop$calc_xLeft)) return()
+  
+  goop$trimmed_slug <- goop$calc_curr_station_df[
+    (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
+      (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
+  ]
+  
+  #goop$trimmed_slug <- goop$calc_curr_station_df %>% filter(Date_Time >= goop$calc_xLeft)
+  print('got to')
+  
 }) 
 
 # Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF

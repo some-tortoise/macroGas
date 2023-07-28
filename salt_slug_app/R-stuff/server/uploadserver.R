@@ -85,7 +85,7 @@ clean_hobo <- function(csv_file){
   clean_csv_file <- csv_file %>%
     select(-1) %>%
     rename_at(vars(1:4), ~ c("Date_Time", "Low_Range", "Full_Range", "Temp_C")) %>%
-    mutate(Station = "") %>%
+    mutate(Station = input$stationupload) %>%
     select(Date_Time, Station, Low_Range, Full_Range, Temp_C)
   
     return(clean_csv_file)
@@ -96,8 +96,9 @@ clean_hobo <- function(csv_file){
 observeEvent(input$hobobutton, {
   showModal(
     modalDialog(
-      p("bla bla bla"),
-      numericInput("station", "Station:", 1),
+      p("To correctly assign stations, you can only upload data from one station at a time. 
+        Please input the correct station number before uploading."),
+      numericInput("stationupload", "Station:", 1),
       fileInput("hoboupload", "Upload HOBO CSVs:",
                 multiple = FALSE,
                 accept = c("text/csv",
@@ -208,6 +209,8 @@ observeEvent(input$uploadContinue,{
             Temp_C_Flag = "good", id = row.names(.))
   
   goop$combined_df <- comb_df
+  
+  view(goop$combined_df)
 
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) 
