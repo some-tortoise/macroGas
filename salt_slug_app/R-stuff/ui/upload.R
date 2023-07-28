@@ -10,18 +10,13 @@ div(class = 'upload panel-container',
           # HOBO manually
           conditionalPanel(
             condition = "input.clean_or_hobo == 'HOBO'",
-            p("To clean the HOBOware files, the app needs to assign the appropriate station. Please be sure to change the station accordingly before uploading each file *separately*."),
-            fileInput("hoboupload", "Upload HOBO CSVs:",
-                      multiple = FALSE,
-                      accept = c("text/csv",
-                                 "text/comma-separated-values,text/plain",
-                                 ".csv")
-                      
-          )
+            actionButton("hobobutton", "Upload Hobo Files", icon = NULL),
+            br(),
+            br()
           ),
+  
           
-
-          # clean files through manual
+          # upload clean files manually
           conditionalPanel(
             condition = "input.clean_or_hobo == 'CLEAN'",
             fileInput("upload", "Upload CSV files:",

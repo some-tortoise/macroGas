@@ -89,21 +89,33 @@ clean_hobo <- function(csv_file){
     mutate(Station = "") %>%
     select(Date_Time, Station, Low_Range, Full_Range, Temp_C)
   
-  view(clean_csv_file)
-  return(clean_csv_file)
+    return(clean_csv_file)
   
 }
 
-# Manually inputting HOBO files
+# Modal HOBO box
+observeEvent(input$hobobutton, {
+  showModal(
+    modalDialog(
+      p("bla bla bla"),
+      numericInput("station", "Station:", 1),
+      fileInput("hoboupload", "Upload HOBO CSVs:",
+                multiple = FALSE,
+                accept = c("text/csv",
+                           "text/comma-separated-values,text/plain",
+                           ".csv")
+      )
+    )
+  )
+})
+
 observeEvent(input$hoboupload, {
   req(input$hoboupload)
   tryCatch(
     {
       for(i in 1:length(input$hoboupload[,1])){
         df <- read_csv(input$hoboupload[[i, 'datapath']], skip = 1, show_col_types = FALSE)
-        print("HORSE")
-        print(problems(df))
-        file_name <- input$upload[[i, 'name']]
+        file_name <- input$hoboupload[[i, 'name']]
         clean_csv_file <- clean_hobo(df)
         
         dtRendered(TRUE) # Set dtRendered to true once uploaded successfully
