@@ -75,7 +75,7 @@ The Calculate page enables users to perform essential calculations for stream ec
 
 6. **Download Output Table**: Once calculations are completed for all stations, the average discharge and groundwater exchange across all sites will be presented. To retain a complete record of your analysis, download the output summary table.
 
-  ## GHG App Functions
+  ## HydroGas App Functions
     
 **Home**
 
@@ -109,10 +109,14 @@ The DO Data and Metrics page displays mean, minimum, maximum, amplitude, and pro
 
 ## Missing Data Imputation
 
-Methods tested to fill missing data as a result of equipment issues:
-1. **K-Nearest Neighbors (KNN)**: This method estimates missing values based on the values of neighboring locations.
-2. **Regression imputation**: This method fits the observed data with a certain regression model and predicts the missing values based on other variables. 
-3. **Mean/Median imputation**: This method uses the mean or median values of observed data to replace the missing values. 
+Missing data imputation is a statistical technique used to predict or estimate missing values in a dataset. In our field data, missing data points can arise due to various reasons, such as malfunctioning sensors, data collection errors, and technical issues.
+
+To address missing data, we have tested several imputation methods: 
+1. **K-Nearest Neighbors (KNN)**: This method estimates missing values by considering the values of neighboring locations. It assumes that similar locations have similar values, making it suitable for spatial data.
+
+2. **Regression Imputation**: This method utilizes regression models to predict missing values based on other variables in the dataset. It captures relationships between variables to impute missing data accurately.
+
+3. **Mean Imputation**: This simple method replaces missing values with the mean values of observed data for the respective variable. It is a quick approach but may not capture underlying patterns in the data.
 
 ## Getting Started
 
