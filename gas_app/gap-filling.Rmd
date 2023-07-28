@@ -14,7 +14,7 @@ library(lubridate)
 
 ```{r}
 df <- read.csv("ex_with_do_df.csv", header = F)
-df  <- df[-c(1,2, 1325, 1326, 1327),c(1,2,3,4)]
+df  <- df[-c(1,2, 2701, 2702, 2703),c(1,2,3,4)]
 colnames(df) <- c("number", "date", "DO", "Temp")
 df <- df[df$DO != '',]
 View(df)
@@ -55,7 +55,7 @@ df$Time = Ex_Time
 
 ```{r}
 # manually delete some data
-train_index = c(1:499,600:1322)
+train_index = c(1:499,600:2698)
 train_df = df[train_index, 3:5]
 test_df = df[-train_index, 3:5]
 p1 <- ggplot()+
@@ -103,8 +103,8 @@ df_test <- df[,3:5]
 df_test[c(500:600),'DO'] <- NA
 filled_df <- knnImputation(df_test)
 p4 = ggplot()+
-  geom_point(aes(x = filled_df$Time[-c(200:300)], y = filled_df$DO[-c(200:300)]), color='grey')+
-  geom_point(aes(x = filled_df$Time[c(200:300)], y = filled_df$DO[c(200:300)]), color = "red")+
+  geom_point(aes(x = filled_df$Time[-c(500:600)], y = filled_df$DO[-c(500:600)]), color='grey')+
+  geom_point(aes(x = filled_df$Time[c(500:600)], y = filled_df$DO[c(500:600)]), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("KNN")
 p4

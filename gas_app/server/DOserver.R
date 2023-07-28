@@ -70,11 +70,11 @@ output$do_plot_full <- renderPlotly({
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
   metrics <- data.frame(
-    Mean = mean(metrics_df$DO_conc, na.rm = TRUE),
-    Minimum = min(metrics_df$DO_conc, na.rm = TRUE),
-    Maximum = max(metrics_df$DO_conc, na.rm = TRUE),
-    Amplitude = max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(metrics_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(metrics_df$DO_conc))
+    Mean = round(mean(metrics_df$DO_conc, na.rm = TRUE), 4),
+    Minimum = round(min(metrics_df$DO_conc, na.rm = TRUE), 4),
+    Maximum = round(max(metrics_df$DO_conc, na.rm = TRUE), 4),
+    Amplitude = round(max(metrics_df$DO_conc, na.rm = TRUE) - min(metrics_df$DO_conc, na.rm = TRUE), 4),
+    Hypoxia_Prob = round(sum(metrics_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(metrics_df$DO_conc)), 4)
   )
   datatable(metrics, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 }) #renders a datatable with DO metrics for selected dates
@@ -86,11 +86,11 @@ output$do_metrics_range <- renderDT({
 output$do_metrics_full <- renderDT({
   combined_df <- combined_df()
   metrics_dt <-  data.frame(
-    Mean = mean(combined_df$DO_conc, na.rm = TRUE),
-    Minimum = min(combined_df$DO_conc, na.rm = TRUE),
-    Maximum = max(combined_df$DO_conc, na.rm = TRUE),
-    Amplitude = max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE),
-    Hypoxia_Prob = sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc))
+    Mean = round(mean(combined_df$DO_conc, na.rm = TRUE), 4), 
+    Minimum = round(min(combined_df$DO_conc, na.rm = TRUE), 4),
+    Maximum = round(max(combined_df$DO_conc, na.rm = TRUE), 4),
+    Amplitude = round(max(combined_df$DO_conc, na.rm = TRUE) - min(combined_df$DO_conc, na.rm = TRUE), 4),
+    Hypoxia_Prob = round(sum(combined_df$DO_conc <= input$h_threshold, na.rm = TRUE)/(length(combined_df$DO_conc)), 4)
   )
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  })

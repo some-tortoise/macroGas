@@ -59,54 +59,6 @@ check_format <- function(csv_file, file_name){
   }
 }
 
-### GOOGLE DRIVE -- CLEAN CSVs ###
-
-# Function to import data with correct format from Google Drive
-import_from_drive <- function(gdrive_link) {
-  file_id <- sub('.*\\/d\\/([^\\/]+).*', '\\1', gdrive_link)
-  if (file_id == gdrive_link) 
-    return(NULL)
-  file_name = drive_get(as_id(file_id))[["name"]] # Get the file name 
-  file_type = tail(unlist(strsplit(file_name, "\\.")),n=1) # Extract file type
-  if(file_type=="csv"){
-    temp_file <- tempfile(fileext = ".csv")
-    drive_download(as_id(file_id), path = temp_file) # Save gdrive file as a temp_file
-    tryCatch({data <- read.csv(temp_file)}, error = function(e) data<-NULL) # Set data to NULL if can't read the CSV data using tryCatch
-    unlink(temp_file) # Remove temporary data after reading it
-    return(list(data, file_name)) # Return list with file name and data
-  }
-  else
-    return(NULL) # Won't work if the file isn't a CSV
-} 
-
-# Importing from Google Drive using import_from_drive and check_format functions
-observeEvent(input$import_button, {
-  if (!is.null(input$gdrive_link) && input$gdrive_link != "") { # Check gdrive link isn't null/empty
-    data <- import_from_drive(input$gdrive_link)[[1]] # Use import_from_drive function to return a list (data) w/ the CSV data
-    if (!is.null(data)) { # If data list isn't null assign file_name and call check_format function 
-      file_name <- import_from_drive(input$gdrive_link)[[2]] # the file name is second element in 'data' list
-      check_format(data, file_name) # Use check_format function to make sure format is correct
-    } 
-    else { 
-      showModal(
-        modalDialog(
-          title = "Error",
-          "Failed to import data from Google Drive. Please make sure the link is valid and accessible."
-        )
-      )
-    }
-  } 
-  else {
-    showModal(
-      modalDialog(
-        title = "Error",
-        "Please enter a valid Google Drive link."
-      )
-    )
-  }
-  
-})
-
 ### MANUAL UPLOAD -- CLEAN CSVs ###
 
 # Manually upload data
@@ -133,24 +85,36 @@ clean_hobo <- function(csv_file){
   clean_csv_file <- csv_file %>%
     select(-1) %>%
     rename_at(vars(1:4), ~ c("Date_Time", "Low_Range", "Full_Range", "Temp_C")) %>%
-    mutate(Station = input$station) %>%
+    mutate(Station = "") %>%
     select(Date_Time, Station, Low_Range, Full_Range, Temp_C)
   
-  view(clean_csv_file)
-  return(clean_csv_file)
+    return(clean_csv_file)
   
 }
 
-# Manually inputting HOBO files
+# Modal HOBO box
+observeEvent(input$hobobutton, {
+  showModal(
+    modalDialog(
+      p("bla bla bla"),
+      numericInput("station", "Station:", 1),
+      fileInput("hoboupload", "Upload HOBO CSVs:",
+                multiple = FALSE,
+                accept = c("text/csv",
+                           "text/comma-separated-values,text/plain",
+                           ".csv")
+      )
+    )
+  )
+})
+
 observeEvent(input$hoboupload, {
   req(input$hoboupload)
   tryCatch(
     {
       for(i in 1:length(input$hoboupload[,1])){
         df <- read_csv(input$hoboupload[[i, 'datapath']], skip = 1, show_col_types = FALSE)
-        print("HORSE")
-        print(problems(df))
-        file_name <- input$upload[[i, 'name']]
+        file_name <- input$hoboupload[[i, 'name']]
         clean_csv_file <- clean_hobo(df)
         
         dtRendered(TRUE) # Set dtRendered to true once uploaded successfully
