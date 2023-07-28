@@ -5,7 +5,9 @@ account: alejandro-breen
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9412026
-bundleId: 7422943
+bundleId: 7503795
 url: https://alejandro-breen.shinyapps.io/r-stuff/
-when: 1688571136.4843
-lastSyncTime: 1688571136.48431
+when: 1690484893.21919
+lastSyncTime: 1690484893.2192
+asMultiple: FALSE
+asStatic: FALSE

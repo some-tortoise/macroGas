@@ -19,7 +19,10 @@ library(kableExtra)
 library(reshape2)
 library(ggplot2)
 
-reactlog_enable()
+Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
+drive_auth()
+
+
 combined_df <- NULL
 
 

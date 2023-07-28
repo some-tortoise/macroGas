@@ -8,49 +8,99 @@ date: "2023-07-27"
 library(httr)
 library(jsonlite)
 library(tidyverse)
+library(gridExtra)
+library(lubridate)
 
 ```
 
 
 ```{r setup, include=FALSE}
-res = GET("https://archive-api.open-meteo.com/v1/archive?latitude=35.3268&longitude=-78.6761&start_date=2023-06-08&end_date=2023-07-22&hourly=temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover,windspeed_10m,is_day,direct_radiation&timezone=America%2FNew_York")
-
-data = as.data.frame(fromJSON(rawToChar(res$content)))
-```
-
-
-```{r setup, include=FALSE}
-print(names(data))
-```
-
-
-```{r setup, include=FALSE}
-
 df <- read.csv("gas_app/ex_with_do_df.csv", header = F)
 df  <- df[-c(1,2),c(1,2,3,4)]
 colnames(df) <- c("id", "Date_Time", "DO", "Temp_C")
 df <- df[df$DO != '',]
-View(df)
+df$DO <- as.numeric(df$DO)
+df$Temp_C = as.numeric(df$Temp_C)
+df <- df %>% mutate(Date_Time = parse_date_time(Date_Time, "%m/%d/%y %I:%M:%S %p"))
 ```
 
 ```{r}
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.is_day)) + 
+start_day <- str_split(min(df$Date_Time),pattern = ' ')[[1]][1]
+end_day <- str_split(max(df$Date_Time),pattern = ' ')[[1]][1]
+print(start_day)
+print(end_day)
+```
+
+```{r}
+api_url <- paste0("https://archive-api.open-meteo.com/v1/archive?latitude=35.3268&longitude=-78.6761&start_date=",
+                  start_day,
+                  "&end_date=",
+                  end_day,
+                  "&hourly=temperature_2m,relativehumidity_2m,rain,snowfall,cloudcover,windspeed_10m,is_day,direct_radiation&timezone=America%2FNew_York")
+
+res = GET(api_url)
+
+apiData = as.data.frame(fromJSON(rawToChar(res$content)))
+```
+
+```{r}
+print(names(apiData))
+print(apiData$hourly.temperature_2m)
+```
+
+
+```{r}
+par(mfrow=c(2,2))
+
+plot1 <- ggplot(data = df, mapping = aes(x = DO)) + 
+  geom_density()
+
+plot2 <- ggplot(data = df, mapping = aes(x = log(DO))) + 
+  geom_density()
+
+plot3 <- ggplot(data = df, mapping = aes(x = Temp_C)) + 
+  geom_density()
+
+plot4 <- ggplot(data = df, mapping = aes(x = DO, y = Temp_C)) + 
   geom_point()
 
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.rain)) + 
+plot5 <- ggplot(data = df, mapping = aes(x = DO, y = apiData$hourly.temperature_2m)) + 
   geom_point()
 
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.temperature_2m)) + 
+plot6 <- ggplot(data = df, mapping = aes(x = DO, y = apiData$hourly.rain)) + 
   geom_point()
 
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.direct_radiation)) + 
-  geom_point()
+grid.arrange(plot1, plot2, plot3, plot4, plot5, plot6, ncol=2, nrow=3)
+```
 
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.windspeed_10m)) + 
-  geom_point()
 
-ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.cloudcover)) + 
-  geom_point()
+```{r, fig.height=6}
+par(mfrow=c(2,2))
+
+plot(density(df$DO))
+plot(density(log(df$DO)))
+plot(density(df$Temp_C))
+plot(df$Temp, df$DO)
+```
+
+```{r}
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.is_day)) + 
+#   geom_point()
+# 
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.rain)) + 
+#   geom_point()
+# 
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.temperature_2m)) + 
+#   geom_point()
+# 
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.direct_radiation)) + 
+#   geom_point()
+# 
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.windspeed_10m)) + 
+#   geom_point()
+# 
+# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.cloudcover)) + 
+#   geom_point()
 ```
 
 

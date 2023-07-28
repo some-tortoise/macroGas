@@ -5,7 +5,6 @@
 
 # Creates radio buttons and the plot based on new filteredData reactive that's set to station choice
 observeEvent(goop$combined_df, {
-  View(goop$combined_df)
   melted_comb_df <- melt(goop$combined_df,
                          id.vars = c("Date_Time", "station"),
                          measure.vars = c("Low_Range",
@@ -15,7 +14,6 @@ observeEvent(goop$combined_df, {
            Station = station,
            Value = value) %>% mutate(Flag = "NA", id = row.names(.))
   goop$melted_combined_df <- melted_comb_df
-  View(goop$melted_combined_df)
 })
 
 observe({
