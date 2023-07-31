@@ -1,5 +1,7 @@
-keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs") #the app will use these keywords to detect and guess variable names
+# The app will use these keywords to detect and guess variable names
+keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs") 
 
+# Detect and guess variable names in a given data frame based on a predefined list of keywords
 getGuesses <- function(df) {
   
   goop$guessList <- c()
@@ -19,8 +21,10 @@ getGuesses <- function(df) {
     }
   }
   
-} #detect and guess variable names in a given data frame based on a predefined list of keywords
+} 
 
+# Generates a list of guessUI modules based on the columns in an uploaded file, 
+# then applies  guessServer to handle the guessing process for each column.
 observeEvent(goop$fileEntered, {
   getGuesses(goop$curr_df)
   output$guesses <- renderUI({
@@ -42,8 +46,9 @@ observeEvent(goop$fileEntered, {
   lapply(ids, function(i) {
     goop$guessList[i] <- guessServer(id = i, goop = goop, guessIndex = i)
   })
-}) #generates a list of guessUI modules based on the columns in an uploaded file, then applies  guessServer to handle the guessing process for each column. 
+})  
 
+# Sets up and processes information related to the uploaded data frame and its file name
 add_df <- function(df, fileName) {
   
   goop$fileEntered <- 0
@@ -63,8 +68,10 @@ add_df <- function(df, fileName) {
   
   getGuesses(df)
   goop$curr_df <- df
-} #sets up and processes information related to the uploaded data frame and its file name
+} 
 
+# When one or more CSV files are uploaded using the df_upload input, it reads the uploaded CSV files,
+# processes each file using add_df function, and stores relevant information  
 observeEvent(input$df_upload, {
   tryCatch({
     for(i in 1:length(input$df_upload[,1])){
@@ -85,9 +92,9 @@ observeEvent(input$df_upload, {
       ))
       return()
     })
-}) #when one or more CSV files are uploaded using the df_upload input, it reads the uploaded CSV files,
-#processes each file using add_df function, and stores relevant information  
+}) 
 
+# Reactives to store 
 goop$siteName <- 'Placeholder'
 goop$stationName <- 'Placeholder'
 
@@ -207,5 +214,5 @@ observeEvent(input$uploadBtn, {
   goop$stationName <- ''
   
   output$guesses <- renderUI({})
-}) # processes the uploaded data frame, updates variable names, manipulates the data frame structure, 
-#and combines the data with previously uploaded data
+}) 
+

@@ -1,3 +1,7 @@
+#
+# PACKAGES 
+#
+
 library(shiny) # for webpage creation
 library(tidyverse)
 library(data.table)
@@ -20,10 +24,15 @@ library(remotes)
 library(streamMetabolizer)
 library(ggplot2)
 
+# hard coding the location of the processed folder in the macrogas google drive
 PROCESSED_FOLDER <- "https://drive.google.com/drive/u/0/folders/1Ot7VH5dBjkAWFmtOLcA5p5_nyR3lN5ga"
 
 Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
 drive_auth()
+
+#
+# 
+#
 
 ui <- fluidPage(
   class = 'body-container',
