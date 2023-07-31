@@ -1,7 +1,18 @@
+# Modal dialog that gives an error message if there is no DO data present 
+observeEvent(input$navbar, {
+  if (input$navbar == "DO" & !("DO_conc" %in% goop$combined_df$Variable)) {
+    showModal(modalDialog(
+      p("You need to upload data with dissolved oxygen (DO) concentration data prior to proceeding to this page."),
+      title = "Upload DO Data", footer = modalButton("Dismiss"), size = "l"
+    ))
+  }
+})
+
 # Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
 observeEvent(goop$combined_df,{
-  if(!is.null(goop$combined_df)){
-  
+  view(goop$combined_df)
+
+  if("DO_conc" %in% goop$combined_df$Variable){
 
 output$do_date_viewer <- renderUI({
   if(is.null(goop$combined_df)) return(NULL)
@@ -50,8 +61,6 @@ filtered_df <- reactive({
   })
 
 output$do_plot_range <- renderPlotly({
-  print('agrt')
-  print(filtered_df()$DO_conc)
   if(is.null(filtered_df()$DO_conc)) return()
   plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
@@ -192,4 +201,8 @@ output$do_hypoxia_metrics <- renderDT({
     datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 
 })
-}})
+
+}
+  
+})
+

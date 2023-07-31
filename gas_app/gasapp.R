@@ -45,7 +45,7 @@ ui <- fluidPage(
     ),
     tags$link(rel = "stylesheet", type = "text/css", href = "styles.css")
   ),
-  navbarPage('Gas App',
+  navbarPage('Gas App', id = "navbar",
               theme = shinytheme("flatly"),
              useShinyjs(),
              tabPanel('Home',
@@ -56,7 +56,7 @@ ui <- fluidPage(
                       source("ui/qaqcUI.R")[1]),
              tabPanel("View",
                      source("ui/viewUI.R")[1]),
-             tabPanel("DO Data and Metrics",
+             tabPanel("DO Data and Metrics", value = "DO",
                       source("ui/DOUI.R")[1])
               )
   )
