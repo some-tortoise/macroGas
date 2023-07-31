@@ -1,3 +1,7 @@
+#
+# PACKAGES
+#
+
 library(shiny) # for webpage creation
 library(reactlog)
 library(plotly) # for interactive graphs
@@ -19,12 +23,10 @@ library(kableExtra)
 library(reshape2)
 library(ggplot2)
 
-Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
-drive_auth()
-
+# Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
+# drive_auth()
 
 combined_df <- NULL
-
 
 js_code <- HTML("shinyjs.enableUpload = function() {
                document.getElementById('uploadContinue').classList.remove('disabled')

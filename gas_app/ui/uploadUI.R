@@ -1,3 +1,4 @@
+# Creates a dropdown UI element for guessing a value from a list of choices. 
 guessUI <- function (id, colName, guess, guessList){ 
   ns <- NS(id)
  
@@ -7,8 +8,11 @@ guessUI <- function (id, colName, guess, guessList){
       selectInput(ns('guessInput'), label='', choices = guessList, selected = guess)
     )
   )
-} #creates a dropdown UI element for guessing a value from a list of choices. 
+} 
 
+# Defines the server-side logic for the guessUI module. When a user makes a selection in the dropdown created by the guessUI, 
+# the server will capture this selection and update the corresponding position in the goop object with the selected value. 
+# guessIndex specifies the position/index where the value will be saved.
 guessServer <- function(id, goop, guessIndex) {
   moduleServer(
     id,
@@ -20,8 +24,11 @@ guessServer <- function(id, goop, guessIndex) {
     }
     
       )
-} # defines the server-side logic for the guessUI module. When a user makes a selection in the dropdown created by the guessUI, the server will capture this selection and update the corresponding position in the goop object with the selected value. guessIndex specifies the position/index where the value will be saved.
+} 
 
+#
+# BASIC UI
+#
 
 div(class = 'upload page',
   div(class = 'upload-box-1',

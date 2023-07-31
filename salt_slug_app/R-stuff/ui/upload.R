@@ -1,13 +1,13 @@
 div(class = 'upload panel-container',
     div(class = 'upload--boxes-container',
         div(class = 'upload--box-1',
-          p('Our application supports two types of data uploads: CSVs exported from HOBOware and CSVs that adhere to a specific format. 
+          p('Our application supports two types of data uploads, CSVs exported from HOBOware and CSVs that adhere to a specific format. 
             If you wish to upload \'clean\' CSVs, they should follow the provided data format that can be downloaded here:'),
           downloadButton("downloadFile", "Data format"), 
           div(class = 'upload--bar1 style-bar'),
           radioButtons('clean_or_hobo', 'What kind of data are you uploading?', c("HOBO", "Clean CSVs" = 'CLEAN')),
 
-          # HOBO manually
+          # Conditional panel for uploading HOBO files
           conditionalPanel(
             condition = "input.clean_or_hobo == 'HOBO'",
             actionButton("hobobutton", "Upload Hobo Files", icon = NULL),
@@ -15,8 +15,7 @@ div(class = 'upload panel-container',
             br()
           ),
   
-          
-          # upload clean files manually
+          # Conditional panel for uploading clean files
           conditionalPanel(
             condition = "input.clean_or_hobo == 'CLEAN'",
             fileInput("upload", "Upload CSV files:",
@@ -26,11 +25,11 @@ div(class = 'upload panel-container',
                                 ".csv")
                      )
              ),
-          
-          
+    
           selectInput("select",'Your uploaded files', NULL, choices = NULL, width = "100%"),
           actionButton("delete", "Remove selected dataset")
           ),
+        
         div(class = 'upload--box-2',
             div(class = 'upload--dt-container',
                 DTOutput("contents")),
@@ -44,15 +43,16 @@ div(class = 'upload panel-container',
       div(id = 'upload-modal',
           div(class="modal-header",
               h2("Instructions"),
-              div(class="closeUpload close-modal","x")
+              div(class="closeUpload close-modal", "x")
           ),
           tags$ul(
-            tags$li('Please select whether you want to upload data manually (locally) or through a Google Drive link.'),
-            tags$li('If you want to upload manually, select that option and then choose the file from your computer that you would like to upload.'), 
-            tags$li('If uploading from Google Drive, paste the
-            link to the folder your file is in when prompted.'),
-            tags$li('All data must be a csv in the correct format, which you can find by downloading the format.'))
-        )
+            tags$li("You can upload either CSVs from the HOBOware software or CSVs that follow our data format ('clean CSVs')."),
+            tags$li("If you upload HOBO data, it will be cleaned to meet the app's standards before continuing."),
+            tags$li("When uploading HOBO data, make sure to enter the correct station number before uploading each new file."),
+            tags$li("Clean CSVs can be uploaded as individual files for each station or as one CSV file that identifies each station correctly within the station column."),
+            tags$li("If you accidentally upload the wrong file, simply select it within the 'Your uploaded files' dropdown and choose 'Remove selected dataset'."),
+            tags$li("This app is designed to handle data from one experiment at a time. Please avoid uploading data from multiple salt slug experiments.")
+          )
     ),
     tags$script(HTML("
     document.getElementById('uploadInstructionsBtn').addEventListener('click', uploadInstructions);
@@ -70,6 +70,7 @@ div(class = 'upload panel-container',
                      ")
                 )
     )
+)
 
 # Previous Instructions
 #The “Download File” button contains a CSV with an example breakthrough curve in the required formatting. Feel free to use this data to get familiar with using the app.<br><br>",

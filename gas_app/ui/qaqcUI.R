@@ -177,7 +177,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
 } 
 
 #
-# THE SIMPLE UI
+# BASIC UI
 #
 
 div(class = 'qaqc page',

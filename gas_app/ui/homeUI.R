@@ -1,4 +1,3 @@
-#this is the ui for the home page of the app
 div(class = 'home page',
     img(src = 'home-back.jpg', class = "home--img"),
     div(class = 'home--title-container',

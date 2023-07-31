@@ -96,8 +96,9 @@ clean_hobo <- function(csv_file){
 observeEvent(input$hobobutton, {
   showModal(
     modalDialog(
-      p("To correctly assign stations, you can only upload data from one station at a time. 
-        Please input the correct station number before uploading."),
+      easyClose = TRUE,
+      footer = NULL, 
+      p(HTML("To correctly assign stations, you can only upload data from one station at a time. <b><i>Please input the correct station number before uploading.</i></b>")),
       numericInput("stationupload", "Station:", 1),
       fileInput("hoboupload", "Upload HOBO CSVs:",
                 multiple = FALSE,
@@ -214,13 +215,3 @@ observeEvent(input$uploadContinue,{
 
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) 
-
-#
-# INSTRUCTIONS 
-#
-
-# Instructions 
-observe({
-  onclick("instructions", paste0("my instructions"))
-})
-            

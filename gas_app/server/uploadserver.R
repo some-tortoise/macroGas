@@ -1,5 +1,5 @@
 # The app will use these keywords to detect and guess variable names
-keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs", 'Full Range') 
+keywords <- c("NA","DO", "Date", "Low Range", "Full Range", "High Range", "Temp", "Abs") 
 
 # Detect and guess variable names in a given data frame based on a predefined list of keywords
 getGuesses <- function(df) {
@@ -84,7 +84,7 @@ observeEvent(input$df_upload, {
       print(err)
       showModal(modalDialog(
         title = "Error",
-        p("Could not upload file."),
+        p("Could not upload file. Please try selecting the \'Skip First Row\' option."),
         easyClose = TRUE,
         footer = tagList(
           modalButton("Back")

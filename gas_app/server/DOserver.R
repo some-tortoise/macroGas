@@ -1,4 +1,4 @@
-# Modal dialog that gives an error message if there is no DO data present 
+# Modal dialog that gives an error message if there is no DO data present when the tab is opened
 observeEvent(input$navbar, {
   if (input$navbar == "DO" & !("DO_conc" %in% goop$combined_df$Variable)) {
     showModal(modalDialog(
@@ -8,12 +8,20 @@ observeEvent(input$navbar, {
   }
 })
 
-# Render UI for user to select dates, station, and sites based on what data is in goop$combined_df 
-observeEvent(goop$combined_df,{
-  view(goop$combined_df)
+#
+# ALL UI AND DO CALCULATIONS 
+#
 
+observeEvent(goop$combined_df,{
+
+# Only runs all the calculations if DO_conc exists to avoid errors
   if("DO_conc" %in% goop$combined_df$Variable){
 
+#
+# UI
+#
+
+# A renderUI that allows users to select from the uploaded dates
 output$do_date_viewer <- renderUI({
   if(is.null(goop$combined_df)) return(NULL)
   start_date = min(goop$combined_df$Date_Time)
@@ -22,14 +30,22 @@ output$do_date_viewer <- renderUI({
                  start = start_date, end = end_date, min = start_date, max = end_date)
 })
 
+# renderUIs to select site and stations that are present
 output$DOSiteStationSelects <- renderUI({
     selectInput('DOSiteSelect', "Select Site", unique(goop$combined_df$Site))
     selectInput('DOStationSelect', 'Select Station', unique(goop$combined_df$Station))
 })
 
+#
+# DATA FORMATTING
+#
+
+
+# Pivot combined_df to wide format for later use in "Full Range" metrics
 combined_df <- reactive({
-  combined_df <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
   
+  # Assign the data to combined_df based on which station is selected
+  combined_df <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
   combined_df_pivoted <- pivot_wider(combined_df,
                             id_cols = c("Date_Time", "Station", "Site"),
                             names_from = Variable,
@@ -39,36 +55,37 @@ combined_df <- reactive({
   
 })
 
+# Create reactive filtered_df which is combined_df pivoted to wide format for later use in "Selected Range" metrics
 filtered_df <- reactive({
   if(is.null(goop$combined_df)) return(NULL)
+  # Assign the data to df_plot based on which station is selected
   df_plot <- goop$combined_df[goop$combined_df$Station %in% input$DOStationSelect, ]
-  # df_chosen <- df_plot[paste0(df_plot$Date_Time,'_',df_plot$Station) %in% event.selected.data$key,]
-  # df_chosen <- df_plot[df_plot$Variable == input$variable_choice,]
-    
-  # THIS NEEDS TO BE FIXED -- NO FLAG, ID, ETC.
   df_pivoted <- pivot_wider(df_plot,
                               id_cols = c("Date_Time", "Station", "Site"),
                               names_from = Variable,
                               values_from = Value)
-    
-    # view(df_plot)
-    
+  
+  # Trim the pivoted data frame to those selected by the user
   selected_dates <- input$date_range_input
   df_pivoted <- subset(df_pivoted, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
   
-  # view(df_pivoted)
-  
   })
 
-output$do_plot_range <- renderPlotly({
-  if(is.null(filtered_df()$DO_conc)) return()
-  plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
-    layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
-})
+#
+# DO DATA PlOTS
+#
 
+# Render the plot of the full range DO data (from combined_df)
 output$do_plot_full <- renderPlotly({
   if(is.null(combined_df()$DO_conc)) return()
   plot_ly(combined_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
+    layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
+})
+
+# Render the plot of the selected range DO data (from filtered_df)
+output$do_plot_range <- renderPlotly({
+  if(is.null(filtered_df()$DO_conc)) return()
+  plot_ly(filtered_df(), x = ~Date_Time, y = ~DO_conc, type = "scatter", mode = "lines") %>%
     layout(title = "DO Concentration Over Time", xaxis = list(title = "Date and Time"), yaxis = list(title = "DO Concentration (mg/L)"))
 })
 
@@ -104,33 +121,39 @@ output$do_metrics_full <- renderDT({
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  })
 
-
 #
-# HYPOXIA METRICS
+# NHR/HYPOXIA METRICS
 #
 
+# Create dataframe of only daytime values using calc_is_daytime
 light_df <- reactive({
   selected_dates <- input$date_range_input
-   
+  
+  # add the daytime t/f column to combined_df
   hyp_combined_df <- combined_df() %>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
   
+  # select only points where the daytime column is true
   light_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
-           daytime == TRUE)
-  
-  # view(light_combined_df)
-  
+           daytime == TRUE) 
 })
 
+# Create dataframe of only nighttime values using calc_is_daytime
 dark_df <- reactive({
   selected_dates <- input$date_range_input
   
+  # add the daytime t/f column to combined_df
   hyp_combined_df <- combined_df() %>%
     mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
   
+  # select only points where the daytime column is false
   dark_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
            daytime == FALSE)
     })
+
+#
+# Daytime Kernel Density Estimation Plot
+#
 
 output$light_kernel <- renderPlotly({
   light_data <- light_df() # Retrieve the data frame from reactive light_df
@@ -145,9 +168,14 @@ output$light_kernel <- renderPlotly({
     labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
     ggtitle("Light Kernel Density Estimation")
 
+  # Convert ggplot to Plotly 
   plotly::ggplotly(light_plot) %>%
-    config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
+    config(displayModeBar = FALSE) 
 })
+
+#
+# Nighttime Kernel Density Estimation Plot
+#
 
 output$dark_kernel <- renderPlotly({
     dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
@@ -162,43 +190,60 @@ output$dark_kernel <- renderPlotly({
       labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
       ggtitle("Dark Kernel Density Estimation")
 
+    # Convert ggplot to Plotly 
     plotly::ggplotly(dark_plot) %>%
-      config(displayModeBar = FALSE) # Convert ggplot to Plotly plot
+      config(displayModeBar = FALSE) 
   })
 
+#
+# HYPOXIA CALCULATIONS
+#
+
 output$do_hypoxia_metrics <- renderDT({
+ 
+# Inputs: 
   light_df <- light_df()
   dark_df <- dark_df()
-  h <- input$h_threshold
+  h <- input$h_threshold # user inputs the hypoxia threshold
 
+  #
+  # FUNCTIONS
+  #
+  
+  # Use daytime dataframe to calcluate the light probability density
   light_prob_fxn <- function(light_df, h) {
     n_light <- nrow(light_df)
-    hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) #gets number of hypoxic observations
+    hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) 
     light_prob_dens <- (hypoxic_n_light/n_light)
   }
 
+  # Use nighttime dataframe to calcluate the light probability density
   dark_prob_fxn <- function(dark_df, h) {
     n_dark <- nrow(dark_df)
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
   }
 
+  # Divide dark by light probability density to get night hypoxia ratio
   night_hyp_ratio <- function(dark_prob_dens, light_prob_dens) {
     nhr <<- (dark_prob_dens/light_prob_dens)
     return(nhr)
   }
 
+  # run the functions 
   light_prob_dens <- light_prob_fxn(light_df, h)
   dark_prob_dens <- dark_prob_fxn(dark_df, h)
   nhr <- night_hyp_ratio(dark_prob_dens, light_prob_dens)
 
+  # assign results to hypoxia dataframe 
   hypoxia <- data.hypoxia <- data.frame(
     light_probability = round(light_prob_dens, digits = 4),
     dark_probability = round(dark_prob_dens, digits = 4),
     night_hypoxia_ratio = round(nhr, digits = 4)
   )
 
-    datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
+  # display the hypoxia dataframe
+  datatable(hypoxia, options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE))
 
 })
 

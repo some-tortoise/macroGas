@@ -28,6 +28,7 @@ div(class = 'qaqc panel-container',
                 h2("Instructions")
             ),
             tags$ul(
+              tags$li(HTML("<i>Please note that points flagged as 'bad' will be removed from the calculations on the next page.</i>")),
               tags$li('To flag points, make sure that the ‘box select’ option is selected in the top right of graph.'),
               tags$li('Once you have box selected the points you would like to flag, select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’.'),
               tags$li('To remove flagged points, repeat the same process but set the flag type to ‘NA’.'),
@@ -49,7 +50,3 @@ div(class = 'qaqc panel-container',
                      ")
     )
     )
-
-# Previous Instructions
-# First, select a station you would like to view. Once selected, you can change the variable you are viewing. Then, click on a point or select multiple points on the plot to your right, then flag them using the buttons on your left
-
