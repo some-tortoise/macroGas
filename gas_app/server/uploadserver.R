@@ -22,6 +22,7 @@ getGuesses <- function(df) {
 } #detect and guess variable names in a given data frame based on a predefined list of keywords
 
 observeEvent(goop$fileEntered, {
+  getGuesses(goop$curr_df)
   output$guesses <- renderUI({
     LL <- vector("list",length(goop$colList))   
     ids <- c(1:length(goop$colList))
@@ -39,7 +40,7 @@ observeEvent(goop$fileEntered, {
   
   ids <- c(1:length(goop$colList))
   lapply(ids, function(i) {
-    guessServer(id = i, goop = goop, guessIndex = i)
+    goop$guessList[i] <- guessServer(id = i, goop = goop, guessIndex = i)
   })
 }) #generates a list of guessUI modules based on the columns in an uploaded file, then applies  guessServer to handle the guessing process for each column. 
 
@@ -47,7 +48,6 @@ add_df <- function(df, fileName) {
   
   goop$fileEntered <- 0
   goop$fileEntered <- 1
-  
   siteGuess <- str_split(fileName, '_')[[1]][2]
   stationGuess <- str_split(fileName, '_')[[1]][3] 
   #Guesses station and site name based on assumption that the fileName has an underscore-separated format, and the second and third elements are used for site and station names.
@@ -69,10 +69,21 @@ observeEvent(input$df_upload, {
   tryCatch({
     for(i in 1:length(input$df_upload[,1])){
       filePath <- input$df_upload[[i, 'datapath']]
-      df <- read.csv(filePath, skip = 1)
+      df <- read.csv(filePath, skip = ifelse(input$skipRow, 1, 0))
       fileName <- input$df_upload[[i, 'name']]
       add_df(df, fileName)
       }
+    }, error = function (err){
+      print(err)
+      showModal(modalDialog(
+        title = "Error",
+        p("Could not upload file."),
+        easyClose = TRUE,
+        footer = tagList(
+          modalButton("Back")
+        )
+      ))
+      return()
     })
 }) #when one or more CSV files are uploaded using the df_upload input, it reads the uploaded CSV files,
 #processes each file using add_df function, and stores relevant information  
@@ -100,14 +111,53 @@ output$contents <- renderDT({
   datatable(goop$curr_df)
 })
 
+remove_shiny_inputs <- function(id, .input) {
+  invisible(
+    lapply(grep(id, names(.input), value = TRUE), function(i) {
+      .subset2(.input, "impl")$.values$remove(i)
+    })
+  )
+}
+
 observeEvent(input$uploadBtn, {
   
+  # Error Checking
+  if(input$stationName == '' || input$siteName == ''){
+    showModal(modalDialog(
+      title = "Error",
+      p("Please enter a station and site name"),
+      easyClose = TRUE,
+      footer = tagList(
+        modalButton("Back")
+      )
+    ))
+    return(FALSE)
+  }
+  
+  includesDateTime <- FALSE
   for(i in 1:length(goop$guessList)){
-    if(goop$guessList[i] == 'NA'){
+    print(goop$guessList[i])
+    if(!is.na(goop$guessList[i]) & goop$guessList[i] == 'Date'){
+      includesDateTime <- TRUE
+    }
+  }
+  if(includesDateTime == FALSE){
+    showModal(modalDialog(
+      title = "Error",
+      p("There must be a date time column in your dataset"),
+      easyClose = TRUE,
+      footer = tagList(
+        modalButton("Back")
+      )
+    ))
+    return(FALSE)
+  }
+  
+  for(i in 1:length(goop$guessList)){
+    if(!is.na(goop$guessList[i]) & goop$guessList[i] == 'NA'){
       goop$guessList[i] <- NA
     }
   }
-  
   df <- goop$curr_df
   colnames(df) <- goop$guessList
   df <- df[, !is.na(names(df))]
@@ -117,7 +167,10 @@ observeEvent(input$uploadBtn, {
   names(df)[names(df) == 'Temp'] <- 'Temp_C'
   names(df)[names(df) == 'DO'] <- 'DO_conc'
   names(df)[names(df) == 'Abs'] <- 'Abs_Pres'
+  names(df)[names(df) == 'Low Range'] <- 'Low_Range'
+  names(df)[names(df) == 'High Range'] <- 'High_Range'
   
+  df$Temp_C <- as.numeric(df$Temp_C)
   # Reshape df from wide to long format 
   df <- gather(df, key = "Variable", value = "Value", -1)
   
@@ -145,9 +198,14 @@ observeEvent(input$uploadBtn, {
   # Store in a local variable combined_df
   combined_df <- goop$combined_df
 
+  removeUI(selector = "#guess-el")
+  for(i in 1:length(goop$colList)){
+    remove_shiny_inputs(i, input)
+  }
   goop$curr_df <- NULL
   goop$siteName <- ''
   goop$stationName <- ''
+  
   output$guesses <- renderUI({})
 }) # processes the uploaded data frame, updates variable names, manipulates the data frame structure, 
 #and combines the data with previously uploaded data

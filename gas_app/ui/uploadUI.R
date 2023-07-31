@@ -2,7 +2,7 @@ guessUI <- function (id, colName, guess, guessList){
   ns <- NS(id)
  
   tagList(
-    div(
+    div(id = 'guess-el',
       p(colName),
       selectInput(ns('guessInput'), label='', choices = guessList, selected = guess)
     )
@@ -16,7 +16,9 @@ guessServer <- function(id, goop, guessIndex) {
       observeEvent(input$guessInput, {
         goop$guessList[guessIndex] <- input$guessInput
       })
+      return(goop$guessList[guessIndex])
     }
+    
       )
 } # defines the server-side logic for the guessUI module. When a user makes a selection in the dropdown created by the guessUI, the server will capture this selection and update the corresponding position in the goop object with the selected value. guessIndex specifies the position/index where the value will be saved.
 
@@ -31,6 +33,9 @@ div(class = 'upload page',
                              "text/comma-separated-values,text/plain",
                              ".csv")
         )
+      ),
+      div(class = 'upload--box1-15',
+          checkboxInput('skipRow', 'Skip First Row', value = TRUE)
       ),
       div(class = 'upload--aBox',
         div(class = 'upload--box1-2',

@@ -27,7 +27,7 @@ observeEvent(input$qaqcSave, {
 
 observeEvent(input$uploadBtn, {
   output$varContainers <- renderUI({
-    vars <- unique(goop$combined_df$Variable)
+    vars <- unique(goop$combined_df[goop$combined_df$Station == input$qaqcStationSelect & goop$combined_df$Site == input$qaqcSiteSelect,]$Variable)
     LL <- vector("list",length(vars))       
     for(i in vars){
       LL[[i]] <- list(varContainerUI(id = i, var = i))

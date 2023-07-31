@@ -114,6 +114,17 @@ UPLOAD
     padding: 20px;
 }
 
+.upload--box1-15{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload--box1-15 > .shiny-input-container:not(.shiny-input-container-inline) {
+    width: auto !important;
+}
+
 .upload--aBox{
     display: flex;
     flex-direction: row;
