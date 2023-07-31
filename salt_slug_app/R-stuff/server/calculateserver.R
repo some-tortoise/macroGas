@@ -2,7 +2,7 @@
 # BASIC UI 
 #
 
-# A renderUI for the background conductivity input, as well as explanation of how we calculate it
+# A renderUI for the background conductivity input
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
   fluidRow(
@@ -15,7 +15,7 @@ output$background_out <- renderUI({
   )
 }) 
 
-
+# A renderUI that creates place to enter mass of the salt slug
 output$salt_out <- renderUI({
   req(goop$calc_curr_station_df)
   fluidRow(
