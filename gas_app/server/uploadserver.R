@@ -1,5 +1,5 @@
 # The app will use these keywords to detect and guess variable names
-keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs") 
+keywords <- c("NA","DO", "Date", "Low Range", "High Range", "Temp", "Abs", 'Full Range') 
 
 # Detect and guess variable names in a given data frame based on a predefined list of keywords
 getGuesses <- function(df) {
@@ -176,6 +176,7 @@ observeEvent(input$uploadBtn, {
   names(df)[names(df) == 'Abs'] <- 'Abs_Pres'
   names(df)[names(df) == 'Low Range'] <- 'Low_Range'
   names(df)[names(df) == 'High Range'] <- 'High_Range'
+  names(df)[names(df) == 'Full Range'] <- 'Full_Range'
   
   df$Temp_C <- as.numeric(df$Temp_C)
   # Reshape df from wide to long format 
