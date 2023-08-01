@@ -49,22 +49,20 @@ observeEvent(input$calc_station_picker, {
   view(goop$calc_curr_station_df)
 })
 
-# Remove points flagged as 'bad' if user chooses to
+# User can remove points flagged as 'bad'
 observeEvent(input$excludeflags, {
-
-  #   original_calc_curr_station_df <- goop$calc_curr_station_df
-  # view(original_calc_curr_station_df)
-  
   if (input$excludeflags == TRUE) {
-    bad_dates <- bad_dates()  # reactive bad_dates defined in flag server when flagging is performed
-    goop$calc_curr_station_df <- goop$calc_curr_station_df[!goop$calc_curr_station_df$Date_Time %in% bad_dates, ]
-  } else {
-    # goop$calc_curr_station_df <- original_calc_curr_station_df
-    #   }
-  view(goop$calc_curr_station_df)
+    bad_dates <- goop$bad_dates() # reactive from flagserver that has Date_Time and Station column
+    goop$calc_curr_station_df <- goop$calc_curr_station_df[!(goop$calc_curr_station_df$Date_Time %in% bad_dates$Date_Time & goop$calc_curr_station_df$station %in% bad_dates$Station), ]
   }
-  
+  view(goop$calc_curr_station_df)
 })
+
+# Need to reset the exclude flags checkbox to false when user switches stations
+observeEvent(input$calc_station_picker, {
+  updateCheckboxInput(session, "excludeflags", value = FALSE)
+})
+
 
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
 observe({

@@ -115,18 +115,26 @@ observeEvent(input$flag_btn, {
 
   # Assigns the flag from input$flag_type to where the id and station match from selectedData()
   goop$melted_combined_df[((goop$melted_combined_df$id %in% selectedData()$id) & (goop$melted_combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  
+  view(goop$melted_combined_df)
   # goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)), flag_name] <- input$flag_type
   
 })
 
-bad_dates <- reactive({
+goop$bad_dates <- reactive({
   req(goop$melted_combined_df)  # Ensure that goop$melted_combined_df is available
   goop_melted <- goop$melted_combined_df
-  bad_dates <- goop_melted$Date_Time[goop_melted$Flag == 'bad']
-  print("BAD DATES")
-  print(bad_dates)
+  bad_dates <- goop_melted[goop_melted$Flag == 'bad', c("Date_Time", "Station")]
   return(bad_dates)
 })
+
+observe({
+  print("date/station")
+  print(goop$bad_dates())
+})
+
+# all_dates <- reactive({
+#   req(goop$melted_combined_df)
+# })
 
 #
 # EXPORT 
