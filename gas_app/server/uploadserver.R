@@ -74,6 +74,10 @@ add_df <- function(df, fileName) {
 # processes each file using add_df function, and stores relevant information  
 observeEvent(input$df_upload, {
   tryCatch({
+    removeUI(selector = ".guess-el")
+    for(i in 1:length(goop$colList)){
+      remove_shiny_inputs(i, input)
+    }
     for(i in 1:length(input$df_upload[,1])){
       filePath <- input$df_upload[[i, 'datapath']]
       df <- read.csv(filePath, skip = ifelse(input$skipRow, 1, 0))
