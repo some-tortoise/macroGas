@@ -17,10 +17,10 @@ div(class = 'home panel-container',
           h1(class = 'title-text', "Resources"),
           p("For more information:"),
             p(tags$a(href = "http://dx.doi.org/10.1029/2011WR010942", "Covino et al. 2011. Stream-groundwater exchange and hydrologic turnover at the network scale.'")
+          ),
+          div(class = 'home--btn-container',
+              actionButton('homeContinue', class='continue-btn', 'Continue')
           )
-        ),
-    div(class = 'home--btn-container',
-        actionButton('homeContinue', class='continue-btn', 'Continue')
         )
   )
 )
