@@ -2,27 +2,27 @@
 # PACKAGES 
 #
 
-library(shiny) # for webpage creation
-library(tidyverse)
-library(data.table)
-library(reactlog)
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(htmlwidgets)
-library(shinyjs)
-library(shinyFiles)
-library(shinyTime) 
-library(sortable)
-library(googledrive)
-library(readr)
-library(shinyBS)
-library(shinythemes)
-library(lubridate)
-library(reshape2)
-library(janitor)
-library(remotes)
-library(streamMetabolizer)
-library(ggplot2)
+require(shiny) # for webpage creation
+require(tidyverse)
+require(data.table)
+require(reactlog)
+require(plotly) # for interactive graphs
+require(DT) # for datatables
+require(htmlwidgets)
+require(shinyjs)
+require(shinyFiles)
+require(shinyTime) 
+require(sortable)
+require(googledrive)
+require(readr)
+require(shinyBS)
+require(shinythemes)
+require(lubridate)
+require(reshape2)
+require(janitor)
+require(remotes)
+require(streamMetabolizer)
+require(ggplot2)
 
 # hard coding the location of the processed folder in the macrogas google drive
 PROCESSED_FOLDER <- "https://drive.google.com/drive/u/0/folders/1Ot7VH5dBjkAWFmtOLcA5p5_nyR3lN5ga"
