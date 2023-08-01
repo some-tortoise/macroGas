@@ -3,7 +3,7 @@ guessUI <- function (id, colName, guess, guessList){
   ns <- NS(id)
  
   tagList(
-    div(id = 'guess-el',
+    div(class = 'guess-el',
       p(colName),
       selectInput(ns('guessInput'), label='', choices = guessList, selected = guess)
     )

@@ -62,7 +62,6 @@ HOME PAGE
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
 
 .home--title{
@@ -83,6 +82,22 @@ HOME PAGE
     bottom: 0;
     color: black;
     font-weight: 600;
+}
+
+@media screen and (max-width: 1000px) {
+    .home--img{
+        object-fit: cover;
+    }
+    .home--title{
+        font-size: 5rem;
+    }
+    .home--info-container{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        width: 100%;
+    }
 }
 
 /***
@@ -108,7 +123,6 @@ UPLOAD
     gap: 20px;
     border-radius: 5px;
     align-items: center;
-    padding: 0 20px;
     justify-content: center;
     width: fit-content;
     padding: 20px;
@@ -207,6 +221,39 @@ UPLOAD
     padding: 20px;
     border-radius: 5px;
 
+}
+
+@media screen and (max-width: 800px) {
+    .upload--box1-1{
+        display: flex;
+        flex-direction: column;
+    }
+    .upload--aBox{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #siteNameUI > div > .form-control, #stationNameUI > div > .form-control{
+        width: auto !important; 
+    }
+    .upload-box-2 > #guesses{
+        border-radius: 5px;
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-gap: 60px;
+    }
+    .upload-box-2 > #guesses{
+        padding: 0px;
+    }
+    #guesses > .guess-el{
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 
@@ -327,9 +374,35 @@ QAQC
     border: none;
 }
 
+@media screen and (max-width: 1000px) {
+    .qaqc--type-flag-container{
+        top: -90px;
+        width: 100%;
+    }
+    .qaqc--type-flag-container > .form-group {
+        width: auto;
+        
+    }
+    .qaqc--type-flag-container > div > div > div > div > .item{
+        padding-right: 40px;
+    }
+    .qaqc--type-container{
+        padding-bottom: 200px;
+    }
+}
+
 /**
 QAQC: Summary
 **/
+
+@media screen and (max-width: 1000px) {
+    .summary-container{
+        display: none !important;
+    }
+    .qaqc--type-container > .tabbable > .nav > :nth-child(2){
+        display: none;
+    }
+}
 
 .summary-container{
     position: relative;
