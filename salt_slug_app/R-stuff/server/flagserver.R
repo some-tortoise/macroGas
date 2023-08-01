@@ -115,7 +115,6 @@ observeEvent(input$flag_btn, {
 
   # Assigns the flag from input$flag_type to where the id and station match from selectedData()
   goop$melted_combined_df[((goop$melted_combined_df$id %in% selectedData()$id) & (goop$melted_combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  
-  view(goop$melted_combined_df)
   # goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)), flag_name] <- input$flag_type
   
 })

@@ -53,7 +53,7 @@ observeEvent(input$calc_station_picker, {
 observeEvent(c(input$excludeflags, goop$calc_curr_station_df), {
   if(input$excludeflags == TRUE){
     bad_dates <- goop$bad_dates
-    goop$calc_curr_station_df_use <- goop$calc_curr_station_df[!(goop$calc_curr_station_df$Date_Time %in% bad_dates$Date_Time & goop$calc_curr_station_df$station %in% bad_dates$Station), ]
+    goop$calc_curr_station_df_use <- goop$calc_curr_station_df[!((goop$calc_curr_station_df$Date_Time %in% bad_dates$Date_Time) & (goop$calc_curr_station_df$station %in% bad_dates$Station)), ]
   }else{
     goop$calc_curr_station_df_use <- goop$calc_curr_station_df
   }
@@ -171,9 +171,10 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 
 # Creates goop$trimmed_slug based on goop$calc_curr_station_df_use that only contains values between the left and right bars to do calculations with later
 observe({
+  if(is.null(goop$calc_curr_station_df)) return()
   if(is.null(goop$calc_curr_station_df_use)) return()
   if(is.null(goop$calc_xLeft)) return()
-  
+  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
   goop$trimmed_slug <- goop$calc_curr_station_df_use[
     (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
       (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
@@ -281,6 +282,10 @@ output$halfheightOutput <- renderText({
   Chalf_time <- station_slug$Date_Time[index_Chalf] # Extract the Chalf_time from the 'station_slug' data frame using the index 'index_Chalf'
   time_to_half <- ((as.numeric(Chalf_time) - as.numeric(start_time))) 
   
+  if(is.na(time_to_half) || is.null(time_to_half) || length(time_to_half) == 0){
+    return(paste0('Time to half height: ', "NA seconds"))
+  }
+    
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
   
