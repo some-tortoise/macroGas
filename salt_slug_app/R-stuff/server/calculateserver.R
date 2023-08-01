@@ -5,6 +5,7 @@
 # A renderUI for the background conductivity input
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
   fluidRow(
     column(width = 8,
            numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
@@ -18,6 +19,7 @@ output$background_out <- renderUI({
 # A renderUI that creates place to enter mass of the salt slug
 output$salt_out <- renderUI({
   req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
   fluidRow(
     column(width = 8,
            numericInput("salt_mass", label = "NaCl Mass (g):", value = 0)
@@ -46,28 +48,27 @@ output$calc_station <- renderUI({
 observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
   goop$calc_curr_station_df <- na.omit(goop$calc_curr_station_df)
-  view(goop$calc_curr_station_df)
 })
 
-# User can remove points flagged as 'bad'
-observeEvent(input$excludeflags, {
-  if (input$excludeflags == TRUE) {
-    bad_dates <- goop$bad_dates() # reactive from flagserver that has Date_Time and Station column
-    goop$calc_curr_station_df <- goop$calc_curr_station_df[!(goop$calc_curr_station_df$Date_Time %in% bad_dates$Date_Time & goop$calc_curr_station_df$station %in% bad_dates$Station), ]
+observeEvent(c(input$excludeflags, goop$calc_curr_station_df), {
+  if(input$excludeflags == TRUE){
+    bad_dates <- goop$bad_dates
+    goop$calc_curr_station_df_use <- goop$calc_curr_station_df[!(goop$calc_curr_station_df$Date_Time %in% bad_dates$Date_Time & goop$calc_curr_station_df$station %in% bad_dates$Station), ]
+  }else{
+    goop$calc_curr_station_df_use <- goop$calc_curr_station_df
   }
-  view(goop$calc_curr_station_df)
 })
 
 # Need to reset the exclude flags checkbox to false when user switches stations
-observeEvent(input$calc_station_picker, {
-  updateCheckboxInput(session, "excludeflags", value = FALSE)
-})
+# observeEvent(input$calc_station_picker, {
+#   updateCheckboxInput(session, "excludeflags", value = FALSE)
+# })
 
 
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
 observe({
-  goop$calc_xValue <- goop$calc_curr_station_df$Date_Time
-  goop$calc_yValue <- goop$calc_curr_station_df$Low_Range
+  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
+  goop$calc_yValue <- goop$calc_curr_station_df_use$Low_Range
 }) 
 
 # Setting the indices of the left and right trim bars 
@@ -78,7 +79,7 @@ observe({
 
 # Setting the background conductivity to a rough mean of the data
 observeEvent(input$calc_station_picker, {
-  goop$background <- round(((mean(goop$calc_curr_station_df$Low_Range)) - 5), 2)
+  goop$background <- round(((mean(goop$calc_curr_station_df_use$Low_Range)) - 5), 2)
 }) 
 
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
@@ -96,6 +97,7 @@ output$dischargecalcplot <- renderPlotly({
   
   #requirements 
   req(goop$calc_curr_station_df) 
+  req(goop$calc_curr_station_df_use)
   req(goop$calc_xLeft) 
   req(goop$calc_xRight)
   
@@ -107,7 +109,7 @@ output$dischargecalcplot <- renderPlotly({
   
   #creates xfill column that assigns xVal if it's w/in range set by xLeft and xRight, fills NA otherwise
   #gets used later to addtrace
-  goop$calc_curr_station_df$xfill <- ifelse(
+  goop$calc_curr_station_df_use$xfill <- ifelse(
     as.numeric(xVal) > as.numeric(xLeft) & as.numeric(xVal) < as.numeric(xRight),
     xVal,
     NA
@@ -118,11 +120,11 @@ output$dischargecalcplot <- renderPlotly({
   xRight <- as.POSIXct(xRight, tz = 'EST', origin = "1970-01-01")
   
   # Plot is based on goop$calc_curr_station_df
-  p <- plot_ly(goop$calc_curr_station_df, x = ~Date_Time, y = ~Low_Range, 
+  p <- plot_ly(goop$calc_curr_station_df_use, x = ~Date_Time, y = ~Low_Range, 
           type = 'scatter', mode = 'lines', source = "R") %>%
     # Trace and fill added where xfill isn't NA (between two vertical lines)
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
-    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df_use$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
+    add_trace(x = ~as.POSIXct(goop$calc_curr_station_df_use$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
     layout(
       xaxis = list(title = "Date and Time"), 
       yaxis = list(title = "Low Range Conductivity"),
@@ -167,23 +169,21 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 # OUTPUT, MATH, TABLE
 #
 
-# Creates goop$trimmed_slug based on goop$calc_curr_station_df that only contains values between the left and right bars to do calculations with later
+# Creates goop$trimmed_slug based on goop$calc_curr_station_df_use that only contains values between the left and right bars to do calculations with later
 observe({
-  if(is.null(goop$calc_curr_station_df)) return()
+  if(is.null(goop$calc_curr_station_df_use)) return()
   if(is.null(goop$calc_xLeft)) return()
   
-  goop$trimmed_slug <- goop$calc_curr_station_df[
+  goop$trimmed_slug <- goop$calc_curr_station_df_use[
     (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
       (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
   ]
   
-  #goop$trimmed_slug <- goop$calc_curr_station_df %>% filter(Date_Time >= goop$calc_xLeft)
-  print('got to')
   
 }) 
 
 # Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF
-observeEvent(goop$combined_df, {
+observeEvent(c(goop$combined_df), {
   zero <- c()
   which_station <- c()
   

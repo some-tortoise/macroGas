@@ -120,18 +120,6 @@ observeEvent(input$flag_btn, {
   
 })
 
-goop$bad_dates <- reactive({
-  req(goop$melted_combined_df)  # Ensure that goop$melted_combined_df is available
-  goop_melted <- goop$melted_combined_df
-  bad_dates <- goop_melted[goop_melted$Flag == 'bad', c("Date_Time", "Station")]
-  return(bad_dates)
-})
-
-observe({
-  print("date/station")
-  print(goop$bad_dates())
-})
-
 # all_dates <- reactive({
 #   req(goop$melted_combined_df)
 # })
@@ -182,5 +170,9 @@ observeEvent(input$upload_to_gdrive, {
     textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
     actionButton('flag_path_ok', 'OK')
   ))
+})
+
+observeEvent(input$qaqcContinue, {
+  goop$bad_dates <- goop$melted_combined_df[goop$melted_combined_df$Flag == 'bad', c("Date_Time", "Station")]
 })
 
