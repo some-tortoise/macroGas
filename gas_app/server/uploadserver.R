@@ -206,7 +206,7 @@ observeEvent(input$uploadBtn, {
   # Store in a local variable combined_df
   combined_df <- goop$combined_df
 
-  removeUI(selector = "#guess-el")
+  removeUI(selector = ".guess-el")
   for(i in 1:length(goop$colList)){
     remove_shiny_inputs(i, input)
   }
