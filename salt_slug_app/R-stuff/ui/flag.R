@@ -28,9 +28,9 @@ div(class = 'qaqc panel-container',
                 h2("Instructions")
             ),
             tags$ul(
-              tags$li(HTML("<i>Please note that points flagged as 'bad' will be removed from the calculations on the next page.</i>")),
               tags$li('To flag points, make sure that the ‘box select’ option is selected in the top right of graph.'),
-              tags$li('Once you have box selected the points you would like to flag, select from ‘interesting’, ‘bad’, or ‘questionable’ and select ‘Flag selected points’.'),
+              tags$li('Once you have box selected the points you would like to flag, select from ‘bad’, ‘questionable’, or ‘interesting’ and select ‘Flag selected points’.'),
+              tags$li(HTML("<i>Please note that points flagged as 'bad' will be removed from the calculations on the next page.</i>")),
               tags$li('To remove flagged points, repeat the same process but set the flag type to ‘NA’.'),
               tags$li('For more precise flagging, utilize the zoom features in the top right of the graph before box selecting points.'))
         )

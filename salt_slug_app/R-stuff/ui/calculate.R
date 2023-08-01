@@ -9,7 +9,8 @@ div(class = 'calculate panel-container',
         div(class = 'calculate--sidebar',
             uiOutput("calc_station"),
             uiOutput("background_out"),
-            uiOutput("salt_out")
+            uiOutput("salt_out"),
+            checkboxInput("excludeflags", "Exclude 'bad' flags", value = FALSE, width = NULL)
             
             ),
         div(class = 'calculate--graph-stuff',

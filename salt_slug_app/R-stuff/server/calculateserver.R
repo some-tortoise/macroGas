@@ -28,7 +28,6 @@ output$salt_out <- renderUI({
   )
 }) 
 
-
 # A renderUI that creates a dropdown to select from the stations that have been uploaded
 output$calc_station <- renderUI({
   if(!is.null(goop$combined_df)){
@@ -48,6 +47,23 @@ observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- goop$combined_df[goop$combined_df$station %in% input$calc_station_picker, ]
   goop$calc_curr_station_df <- na.omit(goop$calc_curr_station_df)
   view(goop$calc_curr_station_df)
+})
+
+# Remove points flagged as 'bad' if user chooses to
+observeEvent(input$excludeflags, {
+
+  #   original_calc_curr_station_df <- goop$calc_curr_station_df
+  # view(original_calc_curr_station_df)
+  
+  if (input$excludeflags == TRUE) {
+    bad_dates <- bad_dates()  # reactive bad_dates defined in flag server when flagging is performed
+    goop$calc_curr_station_df <- goop$calc_curr_station_df[!goop$calc_curr_station_df$Date_Time %in% bad_dates, ]
+  } else {
+    # goop$calc_curr_station_df <- original_calc_curr_station_df
+    #   }
+  view(goop$calc_curr_station_df)
+  }
+  
 })
 
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
