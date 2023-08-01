@@ -40,7 +40,6 @@ output$DOSiteStationSelects <- renderUI({
 # DATA FORMATTING
 #
 
-
 # Pivot combined_df to wide format for later use in "Full Range" metrics
 combined_df <- reactive({
   
@@ -55,7 +54,7 @@ combined_df <- reactive({
   
 })
 
-# Create reactive filtered_df which is combined_df pivoted to wide format for later use in "Selected Range" metrics
+# Create reactive filtered_df for later use in "Selected Range" metrics
 filtered_df <- reactive({
   if(is.null(goop$combined_df)) return(NULL)
   # Assign the data to df_plot based on which station is selected
@@ -155,7 +154,7 @@ dark_df <- reactive({
 # Daytime Kernel Density Estimation Plot
 #
 
-output$light_kernel <- renderPlotly({
+output$light_kernel <- renderPlot({
   light_data <- light_df() # Retrieve the data frame from reactive light_df
 
   kde <- density(light_data$DO_conc)
@@ -168,16 +167,18 @@ output$light_kernel <- renderPlotly({
     labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
     ggtitle("Light Kernel Density Estimation")
 
-  # Convert ggplot to Plotly 
-  plotly::ggplotly(light_plot) %>%
-    config(displayModeBar = FALSE) 
+  print(light_plot)
+  
+  # Return ggplot object
+  light_plot
+  
 })
 
 #
 # Nighttime Kernel Density Estimation Plot
 #
 
-output$dark_kernel <- renderPlotly({
+output$dark_kernel <- renderPlot({
     dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
 
     kde <- density(dark_data$DO_conc)
@@ -190,10 +191,12 @@ output$dark_kernel <- renderPlotly({
       labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
       ggtitle("Dark Kernel Density Estimation")
 
-    # Convert ggplot to Plotly 
-    plotly::ggplotly(dark_plot) %>%
-      config(displayModeBar = FALSE) 
-  })
+    print("TEST")
+    print(dark_plot)
+    
+    # Return ggplot object
+    dark_plot
+})
 
 #
 # HYPOXIA CALCULATIONS
