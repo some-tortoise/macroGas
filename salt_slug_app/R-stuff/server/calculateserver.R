@@ -268,6 +268,10 @@ output$halfheightOutput <- renderText({
   # Calculates the half height conductivity value 
   Chalf <- (goop$background + (1/2)*(Cmax - goop$background))
   
+  if(is.na(index_start_time) || is.null(index_start_time) || is.na(Chalf) || is.null(Chalf)){
+    return('Time to half height: N/A')
+  }
+  
   # Doesn't calculate if the start time is after the breakthrough curve
   if(index_start_time >= index_Cmax){
     return(paste0('Time to half height: ', "NA seconds"))
@@ -285,7 +289,8 @@ output$halfheightOutput <- renderText({
   if(is.na(time_to_half) || is.null(time_to_half) || length(time_to_half) == 0){
     return(paste0('Time to half height: ', "NA seconds"))
   }
-    
+  
+  
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
   
