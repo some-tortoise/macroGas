@@ -223,20 +223,7 @@ UPLOAD
 
 }
 
-@media screen and (max-width: 800px) {
-    .upload--box1-1{
-        display: flex;
-        flex-direction: column;
-    }
-    .upload--aBox{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-    #siteNameUI > div > .form-control, #stationNameUI > div > .form-control{
-        width: auto !important; 
-    }
+@media screen and (max-width: 1400px) {
     .upload-box-2 > #guesses{
         border-radius: 5px;
         width: 100%;
@@ -253,6 +240,22 @@ UPLOAD
         flex-direction: column;
         align-items: center;
         justify-content: center;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .upload--box1-1{
+        display: flex;
+        flex-direction: column;
+    }
+    .upload--aBox{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+    #siteNameUI > div > .form-control, #stationNameUI > div > .form-control{
+        width: auto !important; 
     }
 }
 
@@ -374,7 +377,7 @@ QAQC
     border: none;
 }
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 860px) {
     .qaqc--type-flag-container{
         top: -90px;
         width: 100%;
@@ -395,7 +398,7 @@ QAQC
 QAQC: Summary
 **/
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 860px) {
     .summary-container{
         display: none !important;
     }
