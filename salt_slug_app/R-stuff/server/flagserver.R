@@ -21,8 +21,6 @@ observe({
     
     # New reactive expression that filters data to user's station choice
     filteredData <- reactive({
-      print(input$station)
-      print(unique(goop$melted_combined_df$Station))
       df_plot <- goop$melted_combined_df[goop$melted_combined_df$Station == input$station,]
       #df_plot <- goop$combined_df[goop$combined_df$station %in% input$station, ]
     })

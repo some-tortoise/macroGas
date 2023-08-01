@@ -2,26 +2,26 @@
 # PACKAGES
 #
 
-library(shiny) # for webpage creation
-library(reactlog)
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(htmlwidgets)
-library(shinyjs)
-library(shinyFiles)
-library(shinyTime) 
-library(sortable)
-library(googledrive)
-library(readr)
-library(shinyBS)
-library(tidyverse)
-library(dplyr)
-library(shinythemes)
-library(lubridate)
-library(knitr)
-library(kableExtra)
-library(reshape2)
-library(ggplot2)
+require(shiny) # for webpage creation
+require(reactlog)
+require(plotly) # for interactive graphs
+require(DT) # for datatables
+require(htmlwidgets)
+require(shinyjs)
+require(shinyFiles)
+require(shinyTime) 
+require(sortable)
+require(googledrive)
+require(readr)
+require(shinyBS)
+require(tidyverse)
+require(dplyr)
+require(shinythemes)
+require(lubridate)
+require(knitr)
+require(kableExtra)
+require(reshape2)
+require(ggplot2)
 
 # Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
 # drive_auth()

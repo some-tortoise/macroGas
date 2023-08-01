@@ -69,7 +69,6 @@ observeEvent(input$upload, {
       for(i in 1:length(input$upload[,1])){ # For loop to store read in CSV data, file name, and check format of all uploaded files
         df <- read.csv(input$upload[[i, 'datapath']])
         fileName <- input$upload[[i, 'name']]
-        print(fileName)
         check_format(df, fileName) # Call check_format on uploaded data
       }
       #df = read.csv(input$upload$datapath)
