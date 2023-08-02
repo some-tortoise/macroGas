@@ -353,9 +353,12 @@ observeEvent(goop$trimmed_slug, {
   
   # Peak time
   index_peak <- which(station_slug$Low_Range == peak)[1]
-  peak_date_time <- as.POSIXct(station_slug$Date_Time[index_peak])
-
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak_Time'] <- ymd_hms(peak_date_time)
+  peak_date_time <- (station_slug$Date_Time[index_peak])
+  print(peak_date_time)
+  peak_date_time <- ymd_hms(peak_date_time)
+  peak_time <- format(peak_date_time, format = "%H:%M:%S")
+  print(peak_time)
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak_Time'] <- peak_time
   
 })
 
