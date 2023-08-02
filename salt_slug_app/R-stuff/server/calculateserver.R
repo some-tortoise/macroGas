@@ -79,11 +79,17 @@ observeEvent(input$calc_station_picker, {
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
 observeEvent(input$enterbackground,{
   goop$background <- input$background
+  background_cond <- goop$background
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'bkgnd_uS'] <- background_cond 
+  
 }) 
 
 # Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
 observeEvent(input$entersalt,{
   goop$Mass_NaCl <- input$salt_mass
+  mass_nacl <- goop$Mass_NaCl
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'slug_mass_g'] <- mass_nacl 
+  
 }) 
 
 # Renders the plot of the breakthrough curve data
@@ -163,19 +169,6 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 # OUTPUT, MATH, TABLE
 #
 
-# Creates goop$trimmed_slug based on goop$calc_curr_station_df_use that only contains values between the left and right bars to do calculations with later
-observe({
-  if(is.null(goop$calc_curr_station_df)) return()
-  if(is.null(goop$calc_curr_station_df_use)) return()
-  if(is.null(goop$calc_xLeft)) return()
-  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
-  goop$trimmed_slug <- goop$calc_curr_station_df_use[
-    (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
-      (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
-  ]
-  
-  
-}) 
 
 # Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF
 observeEvent(c(goop$combined_df), {
@@ -187,13 +180,56 @@ observeEvent(c(goop$combined_df), {
     which_station <- c(which_station, paste0('Station ', i))
   } #for loop to name the columns after each unique station in goop$combined_df 
 
-  a <- data.frame('Station' = which_station,
-                  'Discharge' = zero,
-                  'Half_Height' = zero,
-                  'Velocity' = zero,
-                  'Peak' = zero,
-                  'Peak_Time' = zero)
+  a <- data.frame('Date' = "",
+                  'Site' = "",
+                  'Station' = which_station,
+                  'station_distance' = zero,
+                  'slug_mass_g' = zero,
+                  'slug_in_time' = zero,
+                  'integration_start_time' = zero,
+                  'integration_end_time' = zero,
+                  'integral' = zero,
+                  "half_peak_time" = zero,
+                  'peak_time' = zero,
+                  "discharge_Ls" = zero,
+                  "gw_discharge_Ls" = zero,
+                  "travel_time_sec" = zero,
+                  "velocity_ms" = zero,
+                  "width_m" = zero,
+                  "bkgnd_uS" = zero,
+                  "peak_uS" = zero, 
+                  "slug_recovered_g" = zero)
+
   goop$dischargeDF <- a
+}) 
+
+# Creates goop$trimmed_slug that only contains values between the left and right bars to do calculations with later
+# And gets the start/end integration time and adds to output table
+observe({
+  if(is.null(goop$calc_curr_station_df)) return()
+  if(is.null(goop$calc_curr_station_df_use)) return()
+  if(is.null(goop$calc_xLeft)) return()
+  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
+  goop$trimmed_slug <- goop$calc_curr_station_df_use[
+    (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
+      (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
+  ]
+  
+  # get integration start time
+  int_start_datetime <- goop$calc_xLeft
+  int_start_datetime <- ymd_hms(int_start_datetime)
+  int_start_time <- format(int_start_datetime, format = "%H:%M:%S")
+  
+  # get integration end time
+  int_end_datetime <- goop$calc_xRight
+  int_end_datetime <- ymd_hms(int_end_datetime)
+  int_end_time <- format(int_end_datetime, format = "%H:%M:%S")
+  
+  
+  # Assign the start and end times to the dataframe
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'integration_start_time'] <- int_start_time 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'integration_end_time'] <- int_end_time 
+  
 }) 
 
 # Math to calculate discharge
@@ -231,7 +267,7 @@ output$dischargeOutput <- renderText({
     } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'discharge_Ls'] <- Discharge 
   
   return(paste0('Discharge: ', Discharge, ' L/s')) 
    
@@ -288,7 +324,7 @@ output$halfheightOutput <- renderText({
   }
   
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'travel_time_sec'] <- time_to_half 
   
   return(paste0('Time to half height: ', time_to_half, " seconds"))
   
@@ -299,8 +335,8 @@ output$halfheightOutput <- renderText({
 output$groundwaterOutput <- renderUI({
   req(goop$combined_df)
   
-  first_station <-min(as.numeric(unique(goop$combined_df$station))) # Gets the first station number by finding the minimum numeric value in the 'station' column.
-  last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number by finding the maximum numeric value in the 'station' column.
+  first_station <-min(as.numeric(unique(goop$combined_df$station))) # Gets the first station number from minimum numeric value in the 'station' column
+  last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number from the max
 
   # Need more than 1 station, checks that only station available isn't just 'station 1'
   if(last_station == first_station){
@@ -308,8 +344,8 @@ output$groundwaterOutput <- renderUI({
   } 
   
   # Gets discharge values from goop$dischargeDF for the first and last stations
-  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'Discharge'])
-  last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'Discharge'])
+  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'discharge_Ls'])
+  last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'discharge_Ls'])
   
   if(first_station_discharge == 0 || last_station_discharge == 0){
     return(p('NA'))
@@ -329,7 +365,7 @@ output$avgDischargeOutput <- renderUI({
   
   sum <- 0
   for(i in as.numeric(unique(goop$combined_df$station))){
-    curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'Discharge'])
+    curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'discharge_Ls'])
     if(is.null(curr_discharge) || is.na(curr_discharge) || curr_discharge == 0){
       return(p('Get discharge for all stations'))
     }
@@ -349,30 +385,27 @@ observeEvent(goop$trimmed_slug, {
   # Peak Conductivity
   station_slug <- goop$trimmed_slug
   peak <- max(station_slug$Low_Range)
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak'] <- peak 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'peak_uS'] <- peak 
   
   # Peak time
   index_peak <- which(station_slug$Low_Range == peak)[1]
   peak_date_time <- (station_slug$Date_Time[index_peak])
-  print(peak_date_time)
   peak_date_time <- ymd_hms(peak_date_time)
   peak_time <- format(peak_date_time, format = "%H:%M:%S")
-  print(peak_time)
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak_Time'] <- peak_time
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'peak_time'] <- peak_time
   
 })
 
 
-# Updates the output table when goop$combined_df changes and formats it using kableExtra package  
+
+# Updates the displayed output table when goop$combined_df changes and formats it using kableExtra package  
 observeEvent(goop$combined_df, {
   output$dischargetable <- function() {
     goop$dischargeDF %>% # Pipes goop$dischargeDF into kable function for style purposes 
-      knitr::kable("html", col.names =
-                     c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Velocity (m/s)", "Peak (fix units)", "Peak Time")) %>%
-      kable_styling("striped", full_width = F)
+      knitr::kable("html") %>%
+      kable_styling("striped", full_width = T)
   }
 })
-
 
 #
 # DOWNLOAD OUTPUT
@@ -407,10 +440,22 @@ observeEvent(goop$dischargeDF, {
     mutate(Date = "") %>%
     mutate(Site = "") %>%
     mutate(Station = "") %>%
-    mutate(bkgnd_uS = "") 
+    mutate(station_distance = "") %>%
+    mutate(slug_mass_g = "") %>%
+    mutate(slug_in_time = "") %>%
+    mutate(integration_start_time = "") %>%
+    mutate(integration_end_time = "") %>%
+    mutate(half_peak_time = "") %>%
+    mutate(bkgnd_uS = "") %>%
+    mutate(slug_recovered_g = "")
+  
+  # Reorder them
+  
+  
+  # Assign simple ones
+
   
   goop$output_df <- output_df
-  view(output_df)
   return(output_df)
   
 })
