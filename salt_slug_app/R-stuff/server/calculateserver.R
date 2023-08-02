@@ -59,12 +59,6 @@ observeEvent(c(input$excludeflags, goop$calc_curr_station_df), {
   }
 })
 
-# Need to reset the exclude flags checkbox to false when user switches stations
-# observeEvent(input$calc_station_picker, {
-#   updateCheckboxInput(session, "excludeflags", value = FALSE)
-# })
-
-
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
 observe({
   goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
@@ -195,7 +189,10 @@ observeEvent(c(goop$combined_df), {
 
   a <- data.frame('Station' = which_station,
                   'Discharge' = zero,
-                  'Half_Height' = zero)
+                  'Half_Height' = zero,
+                  'Velocity' = zero,
+                  'Peak' = zero,
+                  'Peak_Time' = zero)
   goop$dischargeDF <- a
 }) 
 
@@ -290,7 +287,6 @@ output$halfheightOutput <- renderText({
     return(paste0('Time to half height: ', "NA seconds"))
   }
   
-  
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
   
@@ -345,12 +341,31 @@ output$avgDischargeOutput <- renderUI({
   p(paste0(mean,' L/s'))
 })
 
+# Math to calculate velocity
+
+# Peak and Peak Time
+observeEvent(goop$trimmed_slug, {
+  
+  # Peak Conductivity
+  station_slug <- goop$trimmed_slug
+  peak <- max(station_slug$Low_Range)
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak'] <- peak 
+  
+  # Peak time
+  index_peak <- which(station_slug$Low_Range == peak)[1]
+  peak_date_time <- as.POSIXct(station_slug$Date_Time[index_peak])
+
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Peak_Time'] <- ymd_hms(peak_date_time)
+  
+})
+
+
 # Updates the output table when goop$combined_df changes and formats it using kableExtra package  
 observeEvent(goop$combined_df, {
   output$dischargetable <- function() {
     goop$dischargeDF %>% # Pipes goop$dischargeDF into kable function for style purposes 
       knitr::kable("html", col.names =
-                     c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
+                     c("Station", "Discharge (L/s)", "Time to Half Height (sec)", "Velocity (m/s)", "Peak (fix units)", "Peak Time")) %>%
       kable_styling("striped", full_width = F)
   }
 })
@@ -360,21 +375,56 @@ observeEvent(goop$combined_df, {
 # DOWNLOAD OUTPUT
 #
 
-# Function to correctly name output file
+# Function to get all the names
 new_filename <- function() {
+ 
+  # File name for download
   filename <- uploaded_data$csv_names[1]
   pattern <- "station_[0-9]_"
   station_string <- str_extract(filename, pattern)
   output_filename <- str_replace(filename, pattern, "")
-  print(output_filename)
   return(output_filename)
+  
+  # Retrieve site name
+  
+  
+  # Retrieve station name
+  
+  
+  # Retrieve date
+  
 }
+
+# output file changes when goop$dischargeDF changes
+observeEvent(goop$dischargeDF, {
+  output_df <- goop$dischargeDF
+  
+  # Make all the new columns
+  output_df <- output_df %>%
+    mutate(Date = "") %>%
+    mutate(Site = "") %>%
+    mutate(Station = "") %>%
+    mutate(bkgnd_uS = "") 
+  
+  goop$output_df <- output_df
+  view(output_df)
+  return(output_df)
+  
+})
+
 
 # Modal dialog for downloading 
 observeEvent(input$downloadOutputTable, {
   showModal(modalDialog(
     title = 'Download',
-    textInput("stationinput", label = "File name:", value = new_filename()), # get filename from the function to remove station_#
+    textInput("stationinput", label = "File name:", value = new_filename()), 
+    br(),
+    p("Check the below site, station, and date pulled from the filename are correct before downloading your data.
+      If you are from outside the Bernhardt Lab or uploaded files without the MacroGas naming convention, 
+      please input your site, station, and date below so they appear correctly:"),
+    textInput("outputsite", label = "Site:", value = ""),
+    textInput("outputstation", label = "Station", value = ""),
+    textInput("outputdate", label = "Date:", value = ""),
     p("Download output table:"),
     downloadButton('downloadBtnDischarge', 'Download'),
     easyClose = FALSE,
@@ -390,17 +440,9 @@ output$downloadBtnDischarge <- downloadHandler(
     paste0(input$stationinput)  
   },
   content = function(file) {
-    # Generate the content of the file
     write.csv(goop$dischargeDF, file, row.names = FALSE)
   }
 )
-
-observeEvent(input$upload_to_gdrive, {
-  showModal(modalDialog(
-    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
-    actionButton('path_ok', 'OK')
-  ))
-})
 
 observeEvent(input$path_ok,{
   name <- 'discharge.csv'
