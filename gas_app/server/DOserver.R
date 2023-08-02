@@ -94,6 +94,9 @@ output$do_plot_range <- renderPlotly({
 
 output$do_metrics_range <- renderDT({
   metrics_df <- filtered_df()
+  if(is.null(metrics_df) || !('DO_conc' %in% colnames(metrics_df))) {
+    return(datatable(data.frame(Mean = c(), Minimum = c(), Maximum = c(), Aplitude = c(), Hypoxia_Prob = c()), options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE)))
+  }
   metrics <- data.frame(
     Mean = round(mean(metrics_df$DO_conc, na.rm = TRUE), 4),
     Minimum = round(min(metrics_df$DO_conc, na.rm = TRUE), 4),
@@ -110,6 +113,9 @@ output$do_metrics_range <- renderDT({
 
 output$do_metrics_full <- renderDT({
   combined_df <- combined_df()
+  if(is.null(combined_df) || !('DO_conc' %in% colnames(combined_df))) {
+    return(datatable(data.frame(Mean = c(), Minimum = c(), Maximum = c(), Aplitude = c(), Hypoxia_Prob = c()), options = list(rownames = FALSE, searching = FALSE, paging = FALSE,  info = FALSE, ordering = FALSE)))
+  }
   metrics_dt <-  data.frame(
     Mean = round(mean(combined_df$DO_conc, na.rm = TRUE), 4), 
     Minimum = round(min(combined_df$DO_conc, na.rm = TRUE), 4),
@@ -126,7 +132,19 @@ output$do_metrics_full <- renderDT({
 
 # Create dataframe of only daytime values using calc_is_daytime
 light_df <- reactive({
+  
   selected_dates <- input$date_range_input
+  
+  print(selected_dates[1])
+  print(selected_dates[2])
+  
+  goop$api_url <- paste0("https://archive-api.open-meteo.com/v1/archive?latitude=35.980472&longitude=-79.004672&start_date=",
+                         selected_dates[1],
+                         "&end_date=",
+                         selected_dates[2],
+                         "&is_day")
+  
+  View(goop$api_url)
   
   # add the daytime t/f column to combined_df
   hyp_combined_df <- combined_df() %>%
@@ -156,7 +174,7 @@ dark_df <- reactive({
 
 output$light_kernel <- renderPlot({
   light_data <- light_df() # Retrieve the data frame from reactive light_df
-
+  if(is.null(light_data$DO_conc) || is.na(light_data$DO_conc)) return()
   kde <- density(light_data$DO_conc)
   plot <- data.frame(DO = kde$x, Density = kde$y)
   light_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -180,7 +198,7 @@ output$light_kernel <- renderPlot({
 
 output$dark_kernel <- renderPlot({
     dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
-
+    if(is.null(dark_data$DO_conc) || is.na(dark_data$DO_conc)) return()
     kde <- density(dark_data$DO_conc)
     plot <- data.frame(DO = kde$x, Density = kde$y)
     dark_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -216,6 +234,7 @@ output$do_hypoxia_metrics <- renderDT({
   # Use daytime dataframe to calcluate the light probability density
   light_prob_fxn <- function(light_df, h) {
     n_light <- nrow(light_df)
+    if(is.null(light_df$DO_conc) || is.na(light_df$DO_conc)) return()
     hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) 
     light_prob_dens <- (hypoxic_n_light/n_light)
   }
@@ -223,6 +242,7 @@ output$do_hypoxia_metrics <- renderDT({
   # Use nighttime dataframe to calcluate the light probability density
   dark_prob_fxn <- function(dark_df, h) {
     n_dark <- nrow(dark_df)
+    if(is.null(dark_df$DO_conc) || is.na(dark_df$DO_conc)) return()
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
   }
