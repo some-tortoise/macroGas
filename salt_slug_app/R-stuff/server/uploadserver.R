@@ -34,7 +34,9 @@ output$downloadFile <- downloadHandler(
 
 # Function for checking the format of uploaded files and updating list of uploaded CSVs
 check_format <- function(csv_file, file_name){
-  if (!identical(colnames(csv_file), colnames(templateCSV))) { # Returns error message if column names aren't identical to template
+  print("ncolumns")
+  print(ncol(csv_file))
+  if (ncol(csv_file) != ncol(templateCSV) || !identical(colnames(csv_file), colnames(templateCSV))) {
     showModal(modalDialog(
       title = "Error",
       p("Uploaded CSV must have identical columns (same column names and sequence) to the given template.
@@ -59,7 +61,7 @@ check_format <- function(csv_file, file_name){
   }
 }
 
-### MANUAL UPLOAD -- CLEAN CSVs ###
+### MANUAL UPLOAD CLEAN CSVs ###
 
 # Manually upload data
 observeEvent(input$upload, {
@@ -73,11 +75,11 @@ observeEvent(input$upload, {
       }
       #df = read.csv(input$upload$datapath)
     },
-    error = function(e) df=NULL # Set df to NULL if trycatch encounters 
+    error = function(e) df=NULL # Set df to NULL if trycatch encounters an error
   ) 
 })
 
-### HOBOS ###
+### MANUAL UPLOAD HOBOS ###
 
 # Function for cleaning HOBO files
 clean_hobo <- function(csv_file){
@@ -212,3 +214,4 @@ observeEvent(input$uploadContinue,{
 
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) 
+
