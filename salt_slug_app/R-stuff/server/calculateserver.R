@@ -360,12 +360,23 @@ observeEvent(goop$combined_df, {
 # DOWNLOAD OUTPUT
 #
 
-# Modal dialog when someone selects download button
+# Function to correctly name output file
+new_filename <- function() {
+  filename <- uploaded_data$csv_names[1]
+  pattern <- "station_[0-9]_"
+  station_string <- str_extract(filename, pattern)
+  output_filename <- str_replace(filename, pattern, "")
+  print(output_filename)
+  return(output_filename)
+}
+
+# Modal dialog for downloading 
 observeEvent(input$downloadOutputTable, {
   showModal(modalDialog(
-    title = 'How do you want to download your dataset?',
+    title = 'Download',
+    textInput("stationinput", label = "File name:", value = new_filename()), # get filename from the function to remove station_#
+    p("Download output table:"),
     downloadButton('downloadBtnDischarge', 'Download'),
-    actionButton('upload_to_gdrive', 'Upload to Google Drive'),
     easyClose = FALSE,
     footer = tagList(
       modalButton("Close")
@@ -376,8 +387,7 @@ observeEvent(input$downloadOutputTable, {
 # Download handler to write the csv
 output$downloadBtnDischarge <- downloadHandler(
   filename = function() {
-    # Set the filename of the downloaded file
-    "discharge.csv"
+    paste0(input$stationinput)  
   },
   content = function(file) {
     # Generate the content of the file
