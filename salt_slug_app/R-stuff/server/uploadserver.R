@@ -34,10 +34,6 @@ output$downloadFile <- downloadHandler(
 
 # Function for checking the format of uploaded files and updating list of uploaded CSVs
 check_format <- function(csv_file, file_name){
-  print("ncolumns")
-  print(ncol(csv_file))
-  print(colnames(csv_file))
-  print(head(csv_file))
   if (!identical(colnames(csv_file), colnames(templateCSV))) {
     showModal(modalDialog(
       title = "Error",

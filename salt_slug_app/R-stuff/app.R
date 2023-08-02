@@ -58,8 +58,8 @@ ui <- fluidPage(class = 'body-container',
                  tabPanel('Calculate',
                           source("ui/calculate.R")[1])
              ),
-  includeScript(path = "www/script.js"),
-  tags$script(HTML("
+
+    tags$script(HTML("
     $(document).on('click', '.continue-btn', function(){
       if(this.classList.contains('disabled')) return;
       var currentTab = $('#navbar .active > a').attr('data-value');
