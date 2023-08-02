@@ -36,7 +36,9 @@ output$downloadFile <- downloadHandler(
 check_format <- function(csv_file, file_name){
   print("ncolumns")
   print(ncol(csv_file))
-  if (ncol(csv_file) != ncol(templateCSV) || !identical(colnames(csv_file), colnames(templateCSV))) {
+  print(colnames(csv_file))
+  print(head(csv_file))
+  if (!identical(colnames(csv_file), colnames(templateCSV))) {
     showModal(modalDialog(
       title = "Error",
       p("Uploaded CSV must have identical columns (same column names and sequence) to the given template.
@@ -75,9 +77,21 @@ observeEvent(input$upload, {
       }
       #df = read.csv(input$upload$datapath)
     },
-    error = function(e) df=NULL # Set df to NULL if trycatch encounters an error
-  ) 
+    error = function(e) {
+      df = NULL
+      showModal(modalDialog(
+        title = "Error",
+        p("Could not read CSV file. Please check that your data does not have a header before uploading."),
+        easyClose = FALSE,
+        footer = tagList(
+        modalButton("Back")
+      )
+      )
+      )
+    }
+  )
 })
+      
 
 ### MANUAL UPLOAD HOBOS ###
 
