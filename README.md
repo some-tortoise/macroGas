@@ -16,7 +16,7 @@ Both apps will create a more efficient and user-friendly platform for analyzing 
   ## Salt Slug App Functions
 **Home**
 
-The home page serves as a hub for the Salt Slug App, providing users with an overview of its features and functionality. It also includes a [resource link](http://dx.doi.org/10.1029/2011WR010942) to the publication by *Covino et al. (2011)* where our calculation methods are used , along with any other relevant information.
+The home page serves as a hub for the Salt Slug App. It includes a [resource link](http://dx.doi.org/10.1029/2011WR010942) to the publication by *Covino et al. (2011)* where our calculation methods are used, along with any other relevant information.
   
 **Upload**
 
@@ -77,13 +77,9 @@ The Calculate page enables users to perform essential calculations for stream ec
 
   ## HydroGas App Functions
     
-**Home**
-
-The Home page provides an overview of the app.
-
 **Upload**
 
-The Upload page allows users to upload csv files. 
+The Upload page allows users to upload csv files. Once the file has been uploaded, you can choose 'Skip First Row' to remove the first row of the datatable.  Enter a station and site name, then dataset can be added. 
 
 **QA/QC**
 
@@ -97,7 +93,7 @@ The QA/QC page allows you to efficiently flag data points on the plot for furthe
 
 4. **Remove Flagged Points**: To remove flagged points, repeat the same process but set the flag type to 'NA'.
 
-    *For more precise flagging, utilize the zoom features in the top-right corner of the graph before selecting points.*
+5. **Save the data**: When you are finished flagging, you can save your data to Google Drive.
 
 **View**
 
@@ -123,9 +119,18 @@ To address missing data, we have tested several imputation methods:
 1. Make sure you have R Studio installed on your computer. 
 2. To get started with the Salt Slug App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/salt_slug_app.git'
-3. To get started with this app, clone the repository by running the following command: 
+3. To get started with the Gas App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/gas_app.git'
 
 #
 *For detailed instructions and information about each page's functionalities, please refer to the apps.*
+
+## Acknowledgments
+
+Project Lead: Emily Bernhardt, Ph.D. 
+
+Project Manager: Nick Marzolf, Ph.D.
+
+Project Contributers: Alejandro Breen, Anna Spitzer, Kaley Sperling, Qinhan Wen, Yiliang Yuan
+
 
