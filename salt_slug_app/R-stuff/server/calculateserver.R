@@ -2,21 +2,31 @@
 # BASIC UI 
 #
 
+# A renderUI that creates a dropdown to select from the stations that have been uploaded
+output$calc_station <- renderUI({
+  if(!is.null(goop$combined_df)){
+    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
+  }else{
+    HTML("<label>Choose A Station<br></br></label>")
+  }
+})
+
 # A renderUI for the background conductivity input
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
   fluidRow(
     column(width = 8,
-           numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
+           numericInput("background", label = "Background conductivity, (µS/cm):", value = 0)
     ),
     column(width = 2,
            actionButton("enterbackground", label = "Enter")
     )
   )
-}) 
+}
+  )
 
-# A renderUI that creates place to enter mass of the salt slug
+# A renderUI for entering mass of the salt slug
 output$salt_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
@@ -30,14 +40,34 @@ output$salt_out <- renderUI({
   )
 }) 
 
-# A renderUI that creates a dropdown to select from the stations that have been uploaded
-output$calc_station <- renderUI({
-  if(!is.null(goop$combined_df)){
-    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
-  }else{
-    HTML("<label>Choose A Station<br></br></label>")
-  }
+# A renderUI for entering stream width 
+output$width_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  fluidRow(
+    column(width = 8,
+           numericInput("width", label = "Stream width (m):", value = 0)
+    ),
+    column(width = 2,
+           actionButton("enterwidth", label = "Enter")
+    )
+  )
 }) 
+
+# A renderUI for entering distance from station 1 
+output$distance_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  fluidRow(
+    column(width = 8,
+           numericInput("distance", label = "Distance from Station 1, (m):", value = 0)
+    ),
+    column(width = 2,
+           actionButton("enterdistance", label = "Enter")
+    )
+  )
+}) 
+
 
 
 #
@@ -76,7 +106,7 @@ observeEvent(input$calc_station_picker, {
   goop$background <- round(((mean(goop$calc_curr_station_df_use$Low_Range)) - 5), 2)
 }) 
 
-# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+# Changes goop$background based on user input and saves to output df
 observeEvent(input$enterbackground,{
   goop$background <- input$background
   background_cond <- goop$background
@@ -84,13 +114,28 @@ observeEvent(input$enterbackground,{
   
 }) 
 
-# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+# Assigns salt mass to goop$Mass_NaCL and saves to output df
 observeEvent(input$entersalt,{
   goop$Mass_NaCl <- input$salt_mass
   mass_nacl <- goop$Mass_NaCl
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'slug_mass_g'] <- mass_nacl 
   
 }) 
+
+# Assigns width of stream to output table
+observeEvent(input$enterwidth, {
+  goop$width <- input$width
+  width <- goop$width
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'width_m'] <- width
+})
+
+# Assigns distance from station 1 to output table
+observeEvent(input$enterdistance, {
+  goop$distance <- input$distance
+  distance <- goop$distance
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'station_distance'] <- distance
+})
+
 
 # Renders the plot of the breakthrough curve data
 output$dischargecalcplot <- renderPlotly({
@@ -169,7 +214,6 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 # OUTPUT, MATH, TABLE
 #
 
-
 # Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF
 observeEvent(c(goop$combined_df), {
   zero <- c()
@@ -180,24 +224,24 @@ observeEvent(c(goop$combined_df), {
     which_station <- c(which_station, paste0('Station ', i))
   } #for loop to name the columns after each unique station in goop$combined_df 
 
-  a <- data.frame('Date' = "",
-                  'Site' = "",
-                  'Station' = which_station,
-                  'station_distance' = zero,
-                  'slug_mass_g' = zero,
-                  'slug_in_time' = zero,
-                  'integration_start_time' = zero,
-                  'integration_end_time' = zero,
-                  'integral' = zero,
-                  "half_peak_time" = zero,
-                  'peak_time' = zero,
-                  "discharge_Ls" = zero,
-                  "gw_discharge_Ls" = zero,
-                  "travel_time_sec" = zero,
+  a <- data.frame('Date' = "", 
+                  'Site' = "",  
+                  'Station' = which_station, # done
+                  'station_distance' = zero, # done
+                  'slug_mass_g' = zero, # done
+                  'slug_in_time' = zero, 
+                  'integration_start_time' = zero, # done
+                  'integration_end_time' = zero, # done
+                  'integral' = zero, # ???
+                  "half_peak_time" = zero, 
+                  'peak_time' = zero, # done
+                  "discharge_Ls" = zero, # done
+                  "gw_discharge_Ls" = zero, 
+                  "travel_time_sec" = zero, # done
                   "velocity_ms" = zero,
-                  "width_m" = zero,
-                  "bkgnd_uS" = zero,
-                  "peak_uS" = zero, 
+                  "width_m" = zero, # done
+                  "bkgnd_uS" = zero, # done
+                  "peak_uS" = zero, # done
                   "slug_recovered_g" = zero)
 
   goop$dischargeDF <- a
@@ -398,10 +442,11 @@ observeEvent(goop$trimmed_slug, {
 
 
 
-# Updates the displayed output table when goop$combined_df changes and formats it using kableExtra package  
 observeEvent(goop$combined_df, {
   output$dischargetable <- function() {
-    goop$dischargeDF %>% # Pipes goop$dischargeDF into kable function for style purposes 
+    discharge_table <- goop$dischargeDF
+    discharge_table %>%
+      select(-c(Date, Site)) %>%  # Use 'select' with the negative sign to exclude Date and Site columns
       knitr::kable("html") %>%
       kable_styling("striped", full_width = T)
   }
@@ -430,36 +475,6 @@ new_filename <- function() {
   # Retrieve date
   
 }
-
-# output file changes when goop$dischargeDF changes
-observeEvent(goop$dischargeDF, {
-  output_df <- goop$dischargeDF
-  
-  # Make all the new columns
-  output_df <- output_df %>%
-    mutate(Date = "") %>%
-    mutate(Site = "") %>%
-    mutate(Station = "") %>%
-    mutate(station_distance = "") %>%
-    mutate(slug_mass_g = "") %>%
-    mutate(slug_in_time = "") %>%
-    mutate(integration_start_time = "") %>%
-    mutate(integration_end_time = "") %>%
-    mutate(half_peak_time = "") %>%
-    mutate(bkgnd_uS = "") %>%
-    mutate(slug_recovered_g = "")
-  
-  # Reorder them
-  
-  
-  # Assign simple ones
-
-  
-  goop$output_df <- output_df
-  return(output_df)
-  
-})
-
 
 # Modal dialog for downloading 
 observeEvent(input$downloadOutputTable, {

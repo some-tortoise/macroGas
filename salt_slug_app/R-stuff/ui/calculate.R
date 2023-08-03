@@ -10,6 +10,8 @@ div(class = 'calculate panel-container',
             uiOutput("calc_station"),
             uiOutput("background_out"),
             uiOutput("salt_out"),
+            uiOutput("distance_out"),
+            uiOutput("width_out"),
             checkboxInput("excludeflags", "Exclude 'bad' flags", value = FALSE, width = NULL)
             
             ),
@@ -17,7 +19,7 @@ div(class = 'calculate panel-container',
             plotlyOutput("dischargecalcplot"),
             div(class = 'curr-station-deets',
                 textOutput("dischargeOutput"),
-                textOutput("halfheightOutput")
+                textOutput("halfheightOutput"),
                 )
             )
         ),
