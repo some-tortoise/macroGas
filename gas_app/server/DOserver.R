@@ -71,7 +71,7 @@ filtered_df <- reactive({
   })
 
 #
-# DO DATA PlOTS
+# DO DATA PLOTS
 #
 
 # Render the plot of the full range DO data (from combined_df)

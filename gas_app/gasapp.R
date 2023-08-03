@@ -36,7 +36,7 @@ Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
 drive_auth()
 
 #
-# 
+# READ IN UI FILES
 #
 
 ui <- fluidPage(
@@ -65,6 +65,10 @@ ui <- fluidPage(
                       source("ui/DOUI.R")[1])
               )
   )
+
+#
+# READ IN SERVER FILES
+#
 
 server <- function(input, output, session) {
   goop <- reactiveValues() 
