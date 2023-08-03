@@ -110,6 +110,8 @@ To address missing data, we have tested several imputation methods:
 
 3. **Mean Imputation**: This simple method replaces missing values with the mean values of observed data for the respective variable. It is a quick approach but may not capture underlying patterns in the data.
 
+In the gap_filling folder, we have imputation codes in gap-filling.Rmd file. In this file, we tested filling a dataset which we manually deleted some DO values with all the three methods, and the results are all pretty good. The Mean Squared Error(MSE) of each method are around 0.2. For imputation work in the future, you just need to upload your own csv file with missing values to replace the Test.csv in the gap-filling.Rmd. However, our models are mostly based on time of a day and temperature. If you want to include more variables for imputation or prediction, you may need to adjust the format of the current models.
+
 ## Dependencies
 
 To run this project successfully, you will need to have **R Studio** installed on your system. Additionally, ensure that the following R packages are installed:
