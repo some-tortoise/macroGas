@@ -23,19 +23,15 @@ The home page serves as a hub for the Salt Slug App. It includes a [resource lin
 The upload page allows users to import two types of data into the app: CSVs exported from HOBOware and CSVs that adhere to a specific format.
 Here are some instructions for using this page:
 
-1. **Data Template**: To help you get started, click the "Download File" button to obtain a CSV with an example breakthrough curve in the required formatting. Feel free to use this sample data to familiarize yourself with the app.
+1. **'Clean' CSVs Upload**: To upload 'clean' CSVs, simply press the "Download File" button to access the 'clean CSVs'. These CSVs have already been formatted to meet the app's standards.
 
-2. **Formatting Your CSV**: Ensure that your CSV files match the example formatting provided. If certain fields are missing in your data, create the corresponding column and leave it blank (except for 'Station'). It's essential to adhere to the column naming conventions to ensure proper data processing.
+2. **HOBO Data Upload**: If you are uploading HOBO data, rest assured that the app will automatically clean and adjust the data to meet the required standards. When uploading HOBO data, please ensure to enter the correct station number before uploading each new file. 
 
-    *Please remember to upload data from a single tracer injection experiment at a time.*
+3. **Multiple Stations Upload**: Clean CSVs can be uploaded either as individual files for each station or as a single CSV file that correctly identifies each station within the station column.
 
-3. **Upload Manually**: If you choose this method, select that option and then choose the file from your computer that you would like to upload.
-  
-4. **Upload from Google Drive**: If you choose this method, make sure your CSV files are formatted correctly. In Google Drive, set the access for each CSV file to "Anyone with the link" under the "Share" option. Then, copy the drive link from the "Copy Link" button within "Share" and paste it into the app.
+4. **Remove Incorrect Files**: In case of accidental uploads of the wrong files, you can easily rectify the situation. Just select the incorrect dataset within the 'Your uploaded files' dropdown and choose 'Remove selected dataset'.
 
-   *Please provide links to **individual CSV files**, as links to folders will not work.*
-
-5. **Upload Multiple Stations**: If you have data for multiple stations, repeat the upload process for each station separately.
+   *This app is designed to handle data from one experiment at a time. Please avoid uploading data from multiple salt slug experiments.*
 
 **Trim**
 
@@ -53,27 +49,27 @@ Quality Assurance/Quality Control page allows you to efficiently flag data point
 
 2. **Select Variable**: Once you've selected a station, you can easily switch between different variables to view the associated data for each one.
 
-3. **Flag Data Points**: Ensure that the 'box select' option is chosen from the top right of the graph. After box selecting the points you want to flag, choose from the options 'interesting', 'bad', or 'questionable', and then click on 'Flag selected points'.
+3. **Flag Data Points**: Ensure that the 'box select' option is chosen from the top right of the graph. After box selecting the points you want to flag, choose from 'interesting', 'bad', or 'questionable' options, and then click on 'Flag selected points'.
 
-4. **Remove Flagged Points**: To remove flagged points, simply repeat the same process but set the flag type to 'NA'.
+4. **Remove Flagged Points**: To do this, simply repeat the same process but set the flag type to 'NA'.
 
-5. **Zoom for Precision**: For more precise flagging, take advantage of the zoom features available in the top right of the graph. Zoom in to specific areas before box selecting points to ensure accurate data flagging.
+5. **Zoom for Precision**: For more precise flagging, zoom in to specific areas before box selecting points to ensure accurate data flagging.
 
 **Calculate**
 
-The Calculate page enables users to perform essential calculations for stream ecology research, including stream discharge (Q), groundwater exchange (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>). An output summary table will display the result. Users can download flagged dataset and summary table to have a comprehensive record of the analysis. Here's how you can effectively use this page:
+The Calculate page enables users to calculate stream discharge (Q), groundwater exchange (Q<sub>n</sub> - Q<sub>1</sub>), and time to half height (t<sub>1/2</sub>). An output summary table will display the result. Users can download flagged dataset and summary table. Here's how you can effectively use this page:
 
-1. **Visualize Data**: Users can visualize the data and observe breakthrough curves. Additionally, you can manually adjust parameters for calculation to tailor the analysis to their specific needs.
+1. **Visualize Data**: You can visualize the data and observe breakthrough curves on this page. Additionally, you can manually adjust parameters for calculation to tailor the analysis to their specific needs.
 
-2. **Enter Background Conductivity**: Manually enter the background conductivity by observing the graph and identifying the baseline conductivity before the curve.
+2. **Enter Background Conductivity**: Background conductivity can be obtained by observing the graph and identifying the baseline value before the curve.
 
-3. **Enter Salt Slug Mass**: Provide the mass of salt used in your salt slug experiment to facilitate accurate calculations.
+3. **Enter Salt Slug Mass**: Provide the mass of salt used in your salt slug experiment.
 
-4. **Graph Interaction**: Interact with the graph by double-clicking to zoom out, and hover over data points to view their values, enabling accurate and detailed analysis.
+4. **Graph Interaction**: Interact with the graph by double-clicking to zoom out and hover over data points to view their values.
 
      *For comprehensive analysis, follow this process for each station you wish to evaluate.*
 
-6. **Download Output Table**: Once calculations are completed for all stations, the average discharge and groundwater exchange across all sites will be presented. To retain a complete record of your analysis, download the output summary table.
+6. **Download Output Table**: Once calculations are completed for all stations, an output table containing summary statistics will be presented. To retain a complete record of your analysis, download this table.
 
   ## HydroGas App Functions
     
@@ -147,11 +143,12 @@ If any of these packages are missing, you can install them using the `install.pa
 
 ## Getting Started
 
-1. Make sure you have R Studio installed on your computer. 
+1. Make sure you have R Studio and required packages installed on your computer. 
 2. To get started with the Salt Slug App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/salt_slug_app.git'
 3. To get started with the Gas App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/gas_app.git'
+4. To carry out missing data imputations, clone the repository by running the following command: 'git clone https://github.com/some-tortoise/macroGas/edit/main/gap_filling.git'
 
 ## Acknowledgments
 
