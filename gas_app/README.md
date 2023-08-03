@@ -16,7 +16,7 @@ The Home page provides an overview of the app.
 
 **Upload**
 
-The Upload page allows users to upload csv files. Once the file has been uploaded, you can choose 'Skip First Row' to remove the first row of the datatable.  Enter a station and site name, then dataset can be added. 
+The Upload page allows users to upload csv files one at a time. Once the file has been uploaded, you can choose 'Skip First Row' to remove the first row of the datatable. The app will guess the station and site name along with the variable names of the file, but you can also manually enter/set these. After this, the dataset can be added to a combined dataframe. 
 
 **QA/QC**
 
@@ -34,7 +34,7 @@ The flagged points will be highlighted in a new color on the graph.
 
 **View**
 
-This page allows you to view the variables associated with your selected site and station from the uploaded file. To get started, simply choose the date range to view the data.
+This page allows you to view the variables associated with your selected site and station from all processed files in the google drive. To get started, simply choose the date range to view the data.
 
 **DO Data and Metrics**
 
