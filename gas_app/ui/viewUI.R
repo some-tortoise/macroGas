@@ -8,9 +8,9 @@ varViewUI <- function (id, var = 'Unknown Variable'){
     'Full_Range' = 'Full Range (µS/cm)',
     'High_Range' = 'High Range (µS/cm)',
     'Abs_Pres' = 'Abs Pressure (kPa)'
-  )
+  ) #takes variable names and creates a list of more readable versions of these variable names
   
-  alias <- variable_names[var]
+  alias <- variable_names[var] #takes variable names and creates a list of more readable versions of these variable names
   tagList(
     div(class = 'view--type-container',
         h1(alias),

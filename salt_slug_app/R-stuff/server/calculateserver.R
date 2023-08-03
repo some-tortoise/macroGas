@@ -2,21 +2,31 @@
 # BASIC UI 
 #
 
+# A renderUI that creates a dropdown to select from the stations that have been uploaded
+output$calc_station <- renderUI({
+  if(!is.null(goop$combined_df)){
+    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
+  }else{
+    HTML("<label>Choose A Station<br></br></label>")
+  }
+})
+
 # A renderUI for the background conductivity input
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
   fluidRow(
     column(width = 8,
-           numericInput("background", label = "Background conductivity, (µS/cm):", value = goop$background)
+           numericInput("background", label = "Background conductivity, (µS/cm):", value = 0)
     ),
     column(width = 2,
            actionButton("enterbackground", label = "Enter")
     )
   )
-}) 
+}
+  )
 
-# A renderUI that creates place to enter mass of the salt slug
+# A renderUI for entering mass of the salt slug
 output$salt_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
@@ -30,14 +40,34 @@ output$salt_out <- renderUI({
   )
 }) 
 
-# A renderUI that creates a dropdown to select from the stations that have been uploaded
-output$calc_station <- renderUI({
-  if(!is.null(goop$combined_df)){
-    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
-  }else{
-    HTML("<label>Choose A Station<br></br></label>")
-  }
+# A renderUI for entering stream width 
+output$width_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  fluidRow(
+    column(width = 8,
+           numericInput("width", label = "Stream width (m):", value = 0)
+    ),
+    column(width = 2,
+           actionButton("enterwidth", label = "Enter")
+    )
+  )
 }) 
+
+# A renderUI for entering distance from station 1 
+output$distance_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  fluidRow(
+    column(width = 8,
+           numericInput("distance", label = "Distance from Station 1, (m):", value = 0)
+    ),
+    column(width = 2,
+           actionButton("enterdistance", label = "Enter")
+    )
+  )
+}) 
+
 
 
 #
@@ -59,12 +89,6 @@ observeEvent(c(input$excludeflags, goop$calc_curr_station_df), {
   }
 })
 
-# Need to reset the exclude flags checkbox to false when user switches stations
-# observeEvent(input$calc_station_picker, {
-#   updateCheckboxInput(session, "excludeflags", value = FALSE)
-# })
-
-
 # Assigns Date_Time to the x-axis, Low_Range to the y-axis 
 observe({
   goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
@@ -82,15 +106,36 @@ observeEvent(input$calc_station_picker, {
   goop$background <- round(((mean(goop$calc_curr_station_df_use$Low_Range)) - 5), 2)
 }) 
 
-# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+# Changes goop$background based on user input and saves to output df
 observeEvent(input$enterbackground,{
   goop$background <- input$background
+  background_cond <- goop$background
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'bkgnd_uS'] <- background_cond 
+  
 }) 
 
-# Assigns what the user inputs to the background conductivity numericInput to the reactive value goop$background (overwrites our guess)
+# Assigns salt mass to goop$Mass_NaCL and saves to output df
 observeEvent(input$entersalt,{
   goop$Mass_NaCl <- input$salt_mass
+  mass_nacl <- goop$Mass_NaCl
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'slug_mass_g'] <- mass_nacl 
+  
 }) 
+
+# Assigns width of stream to output table
+observeEvent(input$enterwidth, {
+  goop$width <- input$width
+  width <- goop$width
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'width_m'] <- width
+})
+
+# Assigns distance from station 1 to output table
+observeEvent(input$enterdistance, {
+  goop$distance <- input$distance
+  distance <- goop$distance
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'station_distance'] <- distance
+})
+
 
 # Renders the plot of the breakthrough curve data
 output$dischargecalcplot <- renderPlotly({
@@ -169,20 +214,6 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
 # OUTPUT, MATH, TABLE
 #
 
-# Creates goop$trimmed_slug based on goop$calc_curr_station_df_use that only contains values between the left and right bars to do calculations with later
-observe({
-  if(is.null(goop$calc_curr_station_df)) return()
-  if(is.null(goop$calc_curr_station_df_use)) return()
-  if(is.null(goop$calc_xLeft)) return()
-  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
-  goop$trimmed_slug <- goop$calc_curr_station_df_use[
-    (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
-      (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
-  ]
-  
-  
-}) 
-
 # Creates new dataframe to store discharge and time to half height values, assigns to goop$dischargeDF
 observeEvent(c(goop$combined_df), {
   zero <- c()
@@ -193,10 +224,56 @@ observeEvent(c(goop$combined_df), {
     which_station <- c(which_station, paste0('Station ', i))
   } #for loop to name the columns after each unique station in goop$combined_df 
 
-  a <- data.frame('Station' = which_station,
-                  'Discharge' = zero,
-                  'Half_Height' = zero)
+  a <- data.frame('Date' = "", 
+                  'Site' = "",  
+                  'Station' = which_station, # done
+                  'station_distance' = zero, # done
+                  'slug_mass_g' = zero, # done
+                  'slug_in_time' = zero, 
+                  'integration_start_time' = zero, # done
+                  'integration_end_time' = zero, # done
+                  'integral' = zero, # ???
+                  "half_peak_time" = zero, 
+                  'peak_time' = zero, # done
+                  "discharge_Ls" = zero, # done
+                  "gw_discharge_Ls" = zero, 
+                  "travel_time_sec" = zero, # done
+                  "velocity_ms" = zero,
+                  "width_m" = zero, # done
+                  "bkgnd_uS" = zero, # done
+                  "peak_uS" = zero, # done
+                  "slug_recovered_g" = zero)
+
   goop$dischargeDF <- a
+}) 
+
+# Creates goop$trimmed_slug that only contains values between the left and right bars to do calculations with later
+# And gets the start/end integration time and adds to output table
+observe({
+  if(is.null(goop$calc_curr_station_df)) return()
+  if(is.null(goop$calc_curr_station_df_use)) return()
+  if(is.null(goop$calc_xLeft)) return()
+  goop$calc_xValue <- goop$calc_curr_station_df_use$Date_Time
+  goop$trimmed_slug <- goop$calc_curr_station_df_use[
+    (as.numeric(goop$calc_xValue) >= as.numeric(goop$calc_xLeft)) &
+      (as.numeric(goop$calc_xValue) <= as.numeric(goop$calc_xRight)),
+  ]
+  
+  # get integration start time
+  int_start_datetime <- goop$calc_xLeft
+  int_start_datetime <- ymd_hms(int_start_datetime)
+  int_start_time <- format(int_start_datetime, format = "%H:%M:%S")
+  
+  # get integration end time
+  int_end_datetime <- goop$calc_xRight
+  int_end_datetime <- ymd_hms(int_end_datetime)
+  int_end_time <- format(int_end_datetime, format = "%H:%M:%S")
+  
+  
+  # Assign the start and end times to the dataframe
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'integration_start_time'] <- int_start_time 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'integration_end_time'] <- int_end_time 
+  
 }) 
 
 # Math to calculate discharge
@@ -234,7 +311,7 @@ output$dischargeOutput <- renderText({
     } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Discharge'] <- Discharge 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'discharge_Ls'] <- Discharge 
   
   return(paste0('Discharge: ', Discharge, ' L/s')) 
    
@@ -290,9 +367,8 @@ output$halfheightOutput <- renderText({
     return(paste0('Time to half height: ', "NA seconds"))
   }
   
-  
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'Half_Height'] <- time_to_half 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'travel_time_sec'] <- time_to_half 
   
   return(paste0('Time to half height: ', time_to_half, " seconds"))
   
@@ -303,8 +379,8 @@ output$halfheightOutput <- renderText({
 output$groundwaterOutput <- renderUI({
   req(goop$combined_df)
   
-  first_station <-min(as.numeric(unique(goop$combined_df$station))) # Gets the first station number by finding the minimum numeric value in the 'station' column.
-  last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number by finding the maximum numeric value in the 'station' column.
+  first_station <-min(as.numeric(unique(goop$combined_df$station))) # Gets the first station number from minimum numeric value in the 'station' column
+  last_station <- max(as.numeric(unique(goop$combined_df$station))) # Gets the last station number from the max
 
   # Need more than 1 station, checks that only station available isn't just 'station 1'
   if(last_station == first_station){
@@ -312,8 +388,8 @@ output$groundwaterOutput <- renderUI({
   } 
   
   # Gets discharge values from goop$dischargeDF for the first and last stations
-  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'Discharge'])
-  last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'Discharge'])
+  first_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'discharge_Ls'])
+  last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'discharge_Ls'])
   
   if(first_station_discharge == 0 || last_station_discharge == 0){
     return(p('NA'))
@@ -333,7 +409,7 @@ output$avgDischargeOutput <- renderUI({
   
   sum <- 0
   for(i in as.numeric(unique(goop$combined_df$station))){
-    curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'Discharge'])
+    curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'discharge_Ls'])
     if(is.null(curr_discharge) || is.na(curr_discharge) || curr_discharge == 0){
       return(p('Get discharge for all stations'))
     }
@@ -345,27 +421,75 @@ output$avgDischargeOutput <- renderUI({
   p(paste0(mean,' L/s'))
 })
 
-# Updates the output table when goop$combined_df changes and formats it using kableExtra package  
-observeEvent(goop$combined_df, {
-  output$dischargetable <- function() {
-    goop$dischargeDF %>% # Pipes goop$dischargeDF into kable function for style purposes 
-      knitr::kable("html", col.names =
-                     c("Station", "Discharge (L/s)", "Time to Half Height (sec)")) %>%
-      kable_styling("striped", full_width = F)
-  }
+# Math to calculate velocity
+
+# Peak and Peak Time
+observeEvent(goop$trimmed_slug, {
+  
+  # Peak Conductivity
+  station_slug <- goop$trimmed_slug
+  peak <- max(station_slug$Low_Range)
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'peak_uS'] <- peak 
+  
+  # Peak time
+  index_peak <- which(station_slug$Low_Range == peak)[1]
+  peak_date_time <- (station_slug$Date_Time[index_peak])
+  peak_date_time <- ymd_hms(peak_date_time)
+  peak_time <- format(peak_date_time, format = "%H:%M:%S")
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'peak_time'] <- peak_time
+  
 })
 
+
+
+observeEvent(goop$combined_df, {
+  output$dischargetable <- function() {
+    discharge_table <- goop$dischargeDF
+    discharge_table %>%
+      select(-c(Date, Site)) %>%  # Use 'select' with the negative sign to exclude Date and Site columns
+      knitr::kable("html") %>%
+      kable_styling("striped", full_width = T)
+  }
+})
 
 #
 # DOWNLOAD OUTPUT
 #
 
-# Modal dialog when someone selects download button
+# Function to get all the names
+new_filename <- function() {
+ 
+  # File name for download
+  filename <- uploaded_data$csv_names[1]
+  pattern <- "station_[0-9]_"
+  station_string <- str_extract(filename, pattern)
+  output_filename <- str_replace(filename, pattern, "")
+  return(output_filename)
+  
+  # Retrieve site name
+  
+  
+  # Retrieve station name
+  
+  
+  # Retrieve date
+  
+}
+
+# Modal dialog for downloading 
 observeEvent(input$downloadOutputTable, {
   showModal(modalDialog(
-    title = 'How do you want to download your dataset?',
+    title = 'Download',
+    textInput("stationinput", label = "File name:", value = new_filename()), 
+    br(),
+    p("Check the below site, station, and date pulled from the filename are correct before downloading your data.
+      If you are from outside the Bernhardt Lab or uploaded files without the MacroGas naming convention, 
+      please input your site, station, and date below so they appear correctly:"),
+    textInput("outputsite", label = "Site:", value = ""),
+    textInput("outputstation", label = "Station", value = ""),
+    textInput("outputdate", label = "Date:", value = ""),
+    p("Download output table:"),
     downloadButton('downloadBtnDischarge', 'Download'),
-    actionButton('upload_to_gdrive', 'Upload to Google Drive'),
     easyClose = FALSE,
     footer = tagList(
       modalButton("Close")
@@ -376,21 +500,12 @@ observeEvent(input$downloadOutputTable, {
 # Download handler to write the csv
 output$downloadBtnDischarge <- downloadHandler(
   filename = function() {
-    # Set the filename of the downloaded file
-    "discharge.csv"
+    paste0(input$stationinput)  
   },
   content = function(file) {
-    # Generate the content of the file
     write.csv(goop$dischargeDF, file, row.names = FALSE)
   }
 )
-
-observeEvent(input$upload_to_gdrive, {
-  showModal(modalDialog(
-    textInput('drivePath', 'Please enter the path of the folder in your googledrive:'),
-    actionButton('path_ok', 'OK')
-  ))
-})
 
 observeEvent(input$path_ok,{
   name <- 'discharge.csv'

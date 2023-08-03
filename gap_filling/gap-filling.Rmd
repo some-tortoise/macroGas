@@ -13,29 +13,18 @@ library(lubridate)
 ```
 
 ```{r}
-df <- read.csv("ex_with_do_df.csv", header = F)
-df  <- df[-c(1,2, 2701, 2702, 2703),c(1,2,3,4)]
-colnames(df) <- c("number", "date", "DO", "Temp")
-df <- df[df$DO != '',]
-View(df)
-```
-
-```{r, fig.height=6}
-par(mfrow=c(2,2))
-DO = as.numeric(df$DO)
-df$DO = DO
-
-Temp = as.numeric(df$Temp)
-plot(density(DO))
-plot(density(log(DO)))
-plot(density(Temp))
-plot(Temp, DO)
+# load your own csv file containing DO and other variables
+df <- read.csv("Test.csv")
 ```
 
 ```{r}
 Time = df$date
 Time = strsplit(Time, " ")
 Ex_Time <- c()
+date_index = c()
+pre_date = strsplit(Time[[1]][1], split = "/")[[1]][2]
+pre_index = 1
+# convert time to time of a day
 for(i in 1:length(Time)){
   AM_PM = Time[[i]][3]
   Temp_Time = strsplit(Time[[i]][2], ":")
@@ -48,19 +37,27 @@ for(i in 1:length(Time)){
   if(AM_PM=="PM")
     H = H + 12
   Ex_Time[i] = 60*H + M + S/60
+  if(strsplit(Time[[i]][1], split = "/")[[1]][2] == pre_date)
+    date_index[i] = pre_index
+  else{
+    pre_index = pre_index+1
+    date_index[i] = pre_index+1    
+  }
+  # add date index for different days
+  pre_date = strsplit(Time[[i]][1], split = "/")[[1]][2]
 }
-plot(Ex_Time, DO)
+plot(Ex_Time, df$DO)
 df$Time = Ex_Time
+df$date_index = date_index
 ```
 
 ```{r}
-# manually delete some data
-train_index = c(1:499,600:2698)
-train_df = df[train_index, 3:5]
-test_df = df[-train_index, 3:5]
+# leave only variables for prediction
+missing_index = which(is.na(df$DO))
+observed_df = df[-missing_index, 3:6]
+missing_df = df[missing_index, 3:6]
 p1 <- ggplot()+
-  geom_point(aes(x = train_df$Time, y = train_df$DO), color='grey')+
-  geom_point(aes(x = test_df$Time, y = test_df$DO), color = "red")+
+  geom_point(aes(x = observed_df$Time, y = observed_df$DO), color='grey')+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("original")
 p1
@@ -68,30 +65,28 @@ p1
 
 
 ```{r}
-temp_DO <- test_df$DO
-test_df$DO <- NA
-fit1 <- lm(DO ~ Time + I(Time^2), data = train_df)
-pred1 <- predict(fit1, newdata = test_df)
+fit1 <- lm(DO ~ .+I(Time^2), data = observed_df)
+pred1 <- predict(fit1, newdata = missing_df)
 p2 = ggplot()+
-  geom_point(aes(x = train_df$Time, y = train_df$DO), color="grey")+
-  geom_point(aes(x = test_df$Time, y = pred1), color="red")+
+  geom_point(aes(x = observed_df$Time, y = observed_df$DO), color="grey")+
+  geom_point(aes(x = missing_df$Time, y = pred1), color="red")+
   labs(x="Time in a day(Min)", y="DO")+
-  ggtitle("Quadratic Regression")
+  ggtitle("Regression for all")
 p2
 ```
 
 ```{r}
-mean_rep = train_df %>% 
+mean_rep = observed_df %>% 
   group_by(Time) %>%
   summarise(mean_DO = mean(DO))
 pred2 <- c()
 for(i in 1:100){
-  pred_Time = test_df$Time[i]
+  pred_Time = missing_df$Time[i]
   pred2[i] <- mean_rep[mean_rep$Time==pred_Time,]$mean_DO
 }
 p3 = ggplot()+
-  geom_point(aes(x = df$Time, y = df$DO), color='grey')+
-  geom_point(aes(x = test_df$Time, y = pred2), color = "red")+
+  geom_point(aes(x = observed_df$Time, y = observed_df$DO), color='grey')+
+  geom_point(aes(x = missing_df$Time, y = pred2), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("Mean")
 p3
@@ -99,12 +94,10 @@ p3
 
 ```{r}
 library("DMwR2")
-df_test <- df[,3:5]
-df_test[c(500:600),'DO'] <- NA
-filled_df <- knnImputation(df_test)
+filled_df <- knnImputation(df[,3:6])
 p4 = ggplot()+
-  geom_point(aes(x = filled_df$Time[-c(500:600)], y = filled_df$DO[-c(500:600)]), color='grey')+
-  geom_point(aes(x = filled_df$Time[c(500:600)], y = filled_df$DO[c(500:600)]), color = "red")+
+  geom_point(aes(x = filled_df$Time[-missing_index], y = filled_df$DO[-missing_index]), color='grey')+
+  geom_point(aes(x = filled_df$Time[missing_index], y = filled_df$DO[missing_index]), color = "red")+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("KNN")
 p4
@@ -113,7 +106,6 @@ p4
 ```{r, fig.height=10, fig.width=12}
 library(gridExtra)
 library(grid)
-test_df$DO <- temp_DO
-grid.arrange(p1, p2, p3, p4, ncol=2)
+grid.arrange(p2, p3, p4, ncol=2)
 ```
 

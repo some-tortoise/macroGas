@@ -9,17 +9,19 @@ This app was created for the Bernhardt Lab at Duke University, with the aim of a
   ## Features and Instructions
 **Home**
 
-The home page serves as a hub for the Salt Slug App, providing users with an overview of its features and functionality. It also includes a [resource link](http://dx.doi.org/10.1029/2011WR010942) to the publication by *Covino et al. (2011)* where our calculation methods are used , along with any other relevant information.
+The home page serves as a hub for the Salt Slug App. It includes a [resource link](http://dx.doi.org/10.1029/2011WR010942) to the publication by *Covino et al. (2011)* where our calculation methods are used, along with any other relevant information.
   
 **Upload**
 
-The upload page allows users to download a data template and import their CSV file(s) into the app, either from Google Drive or locally. Users are guided through the process of formatting and uploading their data files. Here are some important instructions for using the upload page:
+The upload page supports two types of data uploads, CSVs exported from HOBOware and CSVs that adhere to a specific format ('clean CSVs'). Users are guided through the process of formatting and uploading their data files. Here are some important instructions for using the upload page:
 
-1. The "Download File" button contains a CSV with an example breakthrough curve in the required formatting. You can use this data to get familiar with using the app.
-2. Match your CSV files to the example formatting. If your data is missing certain fields, you can create the respective column and leave it blank (except for 'Station'). Column naming conventions must match.
-   *Please note that only data from a single tracer injection experiment should be uploaded at a time.*
-3. If uploading through Google Drive, ensure that the CSV formatting matches the required format. In Google Drive, set the access for each CSV to "Anyone with the link" under the "Share" option. Paste the drive link from the "Copy Link" button within "Share" into the app. Please provide links to individual CSV files, as links to folders will not work.
-4. Repeat the process for each station.
+1. If you wish to upload 'clean' CSVs, press the "Download File" button to see the 'clean CSVs'.
+2. If you upload HOBO data, it will be cleaned to meet the app's standards before continuing.
+3. When uploading HOBO data, make sure to enter the correct station number before uploading each new file.
+4. Clean CSVs can be uploaded as individual files for each station or as one CSV file that identifies each station correctly within the station column.
+5. If you accidentally upload the wrong file, simply select it within the 'Your uploaded files' dropdown and choose 'Remove selected dataset'.
+
+   *This app is designed to handle data from one experiment at a time. Please avoid uploading data from multiple salt slug experiments.*
 
 **Trim**
 
@@ -41,7 +43,12 @@ Quality Assurance/Quality Control page allows you to select a station and view t
 
 **Calculate**
 
-Calculate page performs *discharge*  and *time to half height* calculations. Users can visualize the data, manually adjust parameters for calculation, and observe the corresponding results. An output table will display the result. Users can download flagged dataset and output table.
+Calculate page performs *discharge*, *groundwater excharge*  and *time to half height* calculations. Here's how you can use this page:
+
+1. Manually enter the background conductivity, found by looking at the graph and seeing the baseline of conductivity before the curve.
+2. Enter the mass of salt used in your salt slug.
+3. Double click to zoom out of the graph and hover over a point to see its values.
+4. Do this process in full for each station. When finished with all stations, the average discharge and groundwater exchange across all sites will be displayed.
 
 ## Getting Started
 To get started with the Salt Slug App, make sure you have R Studio installed on your computer. Then, clone the repository by running the following command: 
