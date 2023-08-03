@@ -114,6 +114,37 @@ To address missing data, we have tested several imputation methods:
 
 3. **Mean Imputation**: This simple method replaces missing values with the mean values of observed data for the respective variable. It is a quick approach but may not capture underlying patterns in the data.
 
+## Dependencies
+
+To run this project successfully, you will need to have **R Studio** installed on your system. Additionally, ensure that the following R packages are installed:
+
+- shiny
+- reactlog
+- plotly
+- DT
+- htmlwidgets
+- shinyjs
+- shinyFiles
+- shinyTime
+- sortable
+- googledrive
+- readr
+- shinyBS
+- tidyverse
+- dplyr
+- shinythemes
+- lubridate
+- knitr
+- kableExtra
+- reshape2
+- ggplot2
+- data.table
+- janitor
+- remotes
+- streamMetabolizer
+
+If any of these packages are missing, you can install them using the `install.packages()` function in R.
+
 ## Getting Started
 
 1. Make sure you have R Studio installed on your computer. 
@@ -121,9 +152,6 @@ To address missing data, we have tested several imputation methods:
 'git clone https://github.com/some-tortoise/macroGas/edit/main/salt_slug_app.git'
 3. To get started with the Gas App, clone the repository by running the following command: 
 'git clone https://github.com/some-tortoise/macroGas/edit/main/gas_app.git'
-
-#
-*For detailed instructions and information about each page's functionalities, please refer to the apps.*
 
 ## Acknowledgments
 
