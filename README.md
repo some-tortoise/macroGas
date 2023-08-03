@@ -97,7 +97,7 @@ The QA/QC page allows you to efficiently flag data points on the plot for furthe
 
 **View**
 
-This page allows you to conveniently view variables associated with your selected site and station from the uploaded file. To get started, simply choose the date range you want to view the data from.
+This page allows you to conveniently view variables associated with your selected site and station from all processed files within the google drive. To get started, simply choose the date range you want to view the data from.
 
 **DO Data and Metrics**
 
