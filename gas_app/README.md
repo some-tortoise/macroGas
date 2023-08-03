@@ -1,10 +1,11 @@
-  # GHG Visualization Project
+  # HydroGas App
   
-  Welcome to the GHG Visualization Project repository!
+  Welcome to the HydroGas App repository!
 
   ## About
   
-The GHG Visualization App is a powerful tool designed to analyze sensor data. It provides users with an intuitive interface to visualize their data, flag specific data points, determine hypoxia conditions, and perform calculations on gas metrics. 
+The HydroGas App is a tool designed to analyze sensor data. It provides users with an intuitive interface to visualize their data, conduct user-led quality assurance and quality control checks, calculate key metrics such as discharge, time to half height, and groundwater exchange for a given experiment.
+
 This app was created in collaboration with the Bernhardt Lab at Duke University.
 
   ## Features and Instructions
@@ -15,7 +16,7 @@ The Home page provides an overview of the app.
 
 **Upload**
 
-The Upload page allows users to upload csv files.
+The Upload page allows users to upload csv files. Once the file has been uploaded, you can choose 'Skip First Row' to remove the first row of the datatable.  Enter a station and site name, then dataset can be added. 
 
 **QA/QC**
 
