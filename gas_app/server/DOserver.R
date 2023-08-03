@@ -126,47 +126,87 @@ output$do_metrics_full <- renderDT({
   datatable(metrics_dt, options = list(rownames = FALSE, searching = FALSE, paging = FALSE, info = FALSE, ordering = FALSE))
  })
 
+observe({
+  req(input$date_range_input)
+  selected_dates <- input$date_range_input
+  
+  api_url <- paste0("https://archive-api.open-meteo.com/v1/archive?",
+                    "latitude=",input$latitude,
+                    "&longitude=-79.004672",
+                    "&start_date=", selected_dates[1],
+                    "&end_date=", selected_dates[2],
+                    "&hourly=is_day")
+  
+  
+  res <- GET(api_url)
+  apiData <- as.data.frame(fromJSON(rawToChar(res$content)))
+  
+  for(i in 1:nrow(apiData)){
+    apiData[i, 'Date'] <- str_split(apiData[i, 'hourly.time'], 'T')[[1]][1]
+    apiData[i, 'Time'] <- str_sub(str_split(apiData[i, 'hourly.time'], 'T')[[1]][2], 0,2)
+  }
+  
+  goop$daytime_df <- data.frame(
+    Date = apiData['Date'],
+    Time = apiData['Time'],
+    hourly.is_day = apiData['hourly.is_day']
+  )
+})
+
+
+is_daytime <- function(day){
+  
+  dayDate <- str_split(day, ' ')[[1]][1]
+  if(length(str_split(day, ' ')[[1]]) == 1){
+    dayHour <- '00'
+  }else{
+    dayHour <- str_sub((str_split(day, ' ')[[1]][2]),0,2)
+  }
+  
+  for(i in 1:nrow(goop$daytime_df)){
+    if(goop$daytime_df[i,'Date'] == dayDate & goop$daytime_df[i,'Time'] == dayHour){
+      if(goop$daytime_df[i,'hourly.is_day'] == '1'){
+        return(TRUE)
+      }
+    }
+  }
+  return(FALSE)
+}
+
 #
 # NHR/HYPOXIA METRICS
 #
 
-# Create dataframe of only daytime values using calc_is_daytime
+# Create data frame of only daytime values using calc_is_daytime
 light_df <- reactive({
   
   selected_dates <- input$date_range_input
   
-  print(selected_dates[1])
-  print(selected_dates[2])
-  
-  goop$api_url <- paste0("https://archive-api.open-meteo.com/v1/archive?latitude=35.980472&longitude=-79.004672&start_date=",
-                         selected_dates[1],
-                         "&end_date=",
-                         selected_dates[2],
-                         "&is_day")
-  
-  View(goop$api_url)
-  
-  # add the daytime t/f column to combined_df
-  hyp_combined_df <- combined_df() %>%
-    mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
+  hyp_combined_df <- subset(combined_df(), Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+  dates <- as.vector(as.character(hyp_combined_df$Date_Time))
+  for(i in 1:length(dates)){
+    hyp_combined_df[i,'daytime'] <- is_daytime(dates[i])
+  }
   
   # select only points where the daytime column is true
-  light_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
-           daytime == TRUE) 
+  light_combined_df <- subset(hyp_combined_df, daytime == TRUE) 
 })
 
-# Create dataframe of only nighttime values using calc_is_daytime
+# Create data frame of only nighttime values using calc_is_daytime
 dark_df <- reactive({
   selected_dates <- input$date_range_input
-  
-  # add the daytime t/f column to combined_df
-  hyp_combined_df <- combined_df() %>%
-    mutate(daytime = calc_is_daytime(Date_Time, lat = input$latitude))
+
+  hyp_combined_df <- subset(combined_df(), Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2])
+  dates <- as.vector(as.character(hyp_combined_df$Date_Time))
+  for(i in 1:length(dates)){
+    hyp_combined_df[i,'daytime'] <- is_daytime(dates[i])
+  }
   
   # select only points where the daytime column is false
-  dark_combined_df <- subset(hyp_combined_df, Date_Time >= selected_dates[1] & Date_Time <= selected_dates[2] &
-           daytime == FALSE)
-    })
+  dark_combined_df <- subset(hyp_combined_df, daytime == FALSE)
+  #if(nrow(dark_combined_df) == 0) dark_combined_df <- NULL
+
+})
 
 #
 # Daytime Kernel Density Estimation Plot
@@ -174,7 +214,7 @@ dark_df <- reactive({
 
 output$light_kernel <- renderPlot({
   light_data <- light_df() # Retrieve the data frame from reactive light_df
-  if(is.null(light_data$DO_conc) || is.na(light_data$DO_conc)) return()
+  if(is.null(light_data) || !('DO_conc' %in% colnames(light_data))) return()
   kde <- density(light_data$DO_conc)
   plot <- data.frame(DO = kde$x, Density = kde$y)
   light_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -184,8 +224,6 @@ output$light_kernel <- renderPlot({
                 fill = "darkblue", alpha = 0.3) +
     labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
     ggtitle("Light Kernel Density Estimation")
-
-  print(light_plot)
   
   # Return ggplot object
   light_plot
@@ -198,7 +236,7 @@ output$light_kernel <- renderPlot({
 
 output$dark_kernel <- renderPlot({
     dark_data <- dark_df() # Retrieve the data frame from reactive dark_df
-    if(is.null(dark_data$DO_conc) || is.na(dark_data$DO_conc)) return()
+    if(is.null(dark_data) || !('DO_conc' %in% colnames(dark_data))) return()
     kde <- density(dark_data$DO_conc)
     plot <- data.frame(DO = kde$x, Density = kde$y)
     dark_plot <- ggplot(plot, aes(x = DO, y = Density)) +
@@ -208,9 +246,6 @@ output$dark_kernel <- renderPlot({
                   fill = "darkblue", alpha = 0.3) +
       labs(x = "Dissolved Oxygen (mg/L)", y = "Probability Density") +
       ggtitle("Dark Kernel Density Estimation")
-
-    print("TEST")
-    print(dark_plot)
     
     # Return ggplot object
     dark_plot
@@ -234,7 +269,7 @@ output$do_hypoxia_metrics <- renderDT({
   # Use daytime dataframe to calcluate the light probability density
   light_prob_fxn <- function(light_df, h) {
     n_light <- nrow(light_df)
-    if(is.null(light_df$DO_conc) || is.na(light_df$DO_conc)) return()
+    if(is.null(light_df)) return()
     hypoxic_n_light <- sum(light_df$DO_conc < h, na.rm = TRUE) 
     light_prob_dens <- (hypoxic_n_light/n_light)
   }
@@ -242,7 +277,7 @@ output$do_hypoxia_metrics <- renderDT({
   # Use nighttime dataframe to calcluate the light probability density
   dark_prob_fxn <- function(dark_df, h) {
     n_dark <- nrow(dark_df)
-    if(is.null(dark_df$DO_conc) || is.na(dark_df$DO_conc)) return()
+    if(is.null(dark_df)) return()
     hypoxic_n_dark <- sum(dark_df$DO_conc < h, na.rm = TRUE)
     dark_prob_dens <<- (hypoxic_n_dark/n_dark)
   }

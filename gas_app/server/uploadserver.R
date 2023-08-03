@@ -147,7 +147,6 @@ observeEvent(input$uploadBtn, {
   
   includesDateTime <- FALSE
   for(i in 1:length(goop$guessList)){
-    print(goop$guessList[i])
     if(!is.na(goop$guessList[i]) & goop$guessList[i] == 'Date'){
       includesDateTime <- TRUE
     }

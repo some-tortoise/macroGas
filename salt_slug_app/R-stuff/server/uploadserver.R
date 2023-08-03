@@ -211,7 +211,7 @@ observeEvent(input$uploadContinue,{
             Temp_C_Flag = "good", id = row.names(.))
   
   goop$combined_df <- comb_df
-
+  
   updateTabsetPanel(session, inputId = "navbar", selected = "trimpanel")
 }) 
 

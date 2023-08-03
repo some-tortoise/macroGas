@@ -10,12 +10,11 @@ library(jsonlite)
 library(tidyverse)
 library(gridExtra)
 library(lubridate)
-
 ```
 
 
 ```{r setup, include=FALSE}
-df <- read.csv("gas_app/ex_with_do_df.csv", header = F)
+df <- read.csv("ex_with_do_df.csv", header = F)
 df  <- df[-c(1,2),c(1,2,3,4)]
 colnames(df) <- c("id", "Date_Time", "DO", "Temp_C")
 df <- df[df$DO != '',]
@@ -159,6 +158,7 @@ ggplot()+
   labs(x="Time in a day(Min)", y="DO")+
   ggtitle("KNN")
 ```
+
 ```{r}
 test_df$DO <- NA
 fit1 <- lm(DO ~ ., data = train_df)

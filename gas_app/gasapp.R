@@ -23,6 +23,11 @@ require(janitor)
 require(remotes)
 require(streamMetabolizer)
 require(ggplot2)
+require(httr)
+require(jsonlite)
+require(tidyverse)
+require(gridExtra)
+require(lubridate)
 
 # hard coding the location of the processed folder in the macrogas google drive
 PROCESSED_FOLDER <- "https://drive.google.com/drive/u/0/folders/1Ot7VH5dBjkAWFmtOLcA5p5_nyR3lN5ga"
