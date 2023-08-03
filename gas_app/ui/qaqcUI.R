@@ -9,9 +9,9 @@ varContainerUI <- function (id, var = 'Unknown Variable'){
     'Full_Range' = 'Full Range (µS/cm)',
     'High_Range' = 'High Range (µS/cm)',
     'Abs_Pres' = 'Abs Pressure (kPa)'
-  )
+  )#takes variable names and creates a list of more readable versions of these variable names
   
-  alias <- variable_names[var]
+  alias <- variable_names[var] #saves readable variable name for each variable under object alias
   
   
   tagList(
@@ -57,15 +57,16 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         }else{
         }
         
-        
+       #finds the start and end date of the dataframe
         start_date_summary = min(summary_df$Date_Time)
         end_date_summary = max(summary_df$Date_Time)
-        
+      #user-entered date value for calculating summary statistics over a particular day
         summary_daily_dateValue <- input$summary_daily_date
         if(is.null(input$summary_daily_date)){
           summary_daily_dateValue <- start_date_summary
         }
         
+        #user-entered date range value for calculating summary statistics over a custom date range
         summary_custom_startValue <- input$summary_custom_dateRange[1]
         if(is.null(input$summary_custom_dateRange[1])){
           summary_custom_startValue <- start_date_summary
@@ -76,8 +77,10 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
           summary_custom_endValue <- end_date_summary
         }
         
+        #generates df for only user-selected site and station
         df <- summary_df[summary_df$Site == pickedSite() & summary_df$Station == pickedStation(),]
-        
+       
+         #calculates various summary statistics for full date range available
         full_values <- df[(df$Variable == variable), 'Value']
         full_mean <- round(mean(full_values, na.rm = TRUE), 2)
         full_median <- median(full_values, na.rm = TRUE)
@@ -88,6 +91,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         list_of_full_quartiles = round(list_of_full_quartiles, 2)
         full_quartile <- list_of_full_quartiles
         
+        #calculates various summary statistics for one day at a time
         daily_values  <- df[(df$Variable == variable) & (df$Date_Time > summary_daily_dateValue & df$Date_Time < summary_daily_dateValue + 1), 'Value']
         daily_mean <- round(mean(daily_values, na.rm = TRUE), 2)
         daily_median <- median(daily_values, na.rm = TRUE)
@@ -99,7 +103,7 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         list_of_daily_quartiles = round(list_of_daily_quartiles, 2)
         daily_quartile <- list_of_daily_quartiles
        
-        
+        #calculates various summary statistis for a user-entered date range
         custom_values  <- df[(df$Variable == variable) & (df$Date_Time >= summary_custom_startValue & df$Date_Time <= summary_custom_endValue), 'Value']
         custom_mean <- round(mean(custom_values, na.rm = TRUE), 2)
         custom_median <- median(custom_values, na.rm = TRUE)
@@ -109,7 +113,9 @@ varContainerServer <- function(id, variable, goop, dateRange, pickedStation, pic
         list_of_custom_quartiles <- c(quantile(custom_values, na.rm = TRUE)[2][1],quantile(custom_values, na.rm = TRUE)[3][1],quantile(custom_values, na.rm = TRUE)[4][1])
         list_of_custom_quartiles = round(list_of_custom_quartiles, 2)
         custom_quartile <- list_of_custom_quartiles
-        div(class = 'summary-container',
+       
+        #displays summary statistics
+         div(class = 'summary-container',
             div(class = 'summary-flag-container',
                 checkboxInput(paste0(variable,'-summaryFlag'), 'Include Flags?',value = summaryFlagVal)),
             div(class = 'summary-sub-container',
