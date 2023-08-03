@@ -104,7 +104,7 @@ The DO Data and Metrics page displays mean, minimum, maximum, amplitude, and pro
 Missing data imputation is a statistical technique used to predict or estimate missing values in a dataset. In our field data, missing data points can arise due to various reasons, such as malfunctioning sensors, data collection errors, and technical issues.
 
 To address missing data, we have tested several imputation methods: 
-1. **K-Nearest Neighbors (KNN)**: This method estimates missing values by considering the values of neighboring locations. It assumes that similar locations have similar values, making it suitable for spatial data.
+1. **K-Nearest Neighbors (KNN)**: This method estimates missing values by considering the values of neighboring points. It is a flexible method which does not require many assumptions.
 
 2. **Regression Imputation**: This method utilizes regression models to predict missing values based on other variables in the dataset. It captures relationships between variables to impute missing data accurately.
 
