@@ -104,11 +104,13 @@ The DO Data and Metrics page displays mean, minimum, maximum, amplitude, and pro
 Missing data imputation is a statistical technique used to predict or estimate missing values in a dataset. In our field data, missing data points can arise due to various reasons, such as malfunctioning sensors, data collection errors, and technical issues.
 
 To address missing data, we have tested several imputation methods: 
-1. **K-Nearest Neighbors (KNN)**: This method estimates missing values by considering the values of neighboring locations. It assumes that similar locations have similar values, making it suitable for spatial data.
+1. **K-Nearest Neighbors (KNN)**: This method estimates missing values by considering the values of neighboring points. It is a flexible method which does not require many assumptions.
 
 2. **Regression Imputation**: This method utilizes regression models to predict missing values based on other variables in the dataset. It captures relationships between variables to impute missing data accurately.
 
 3. **Mean Imputation**: This simple method replaces missing values with the mean values of observed data for the respective variable. It is a quick approach but may not capture underlying patterns in the data.
+
+In the gap_filling folder, we have imputation codes in gap-filling.Rmd file. In this file, we tested filling a dataset which we manually deleted some DO values with all the three methods, and the results are all pretty good. The Mean Squared Error(MSE) of each method are around 0.2. For imputation work in the future, you just need to upload your own csv file with missing values to replace the Test.csv in the gap-filling.Rmd. However, our models are mostly based on time of a day and temperature. If you want to include more variables for imputation or prediction, you may need to adjust the format of the current models.
 
 ## Dependencies
 

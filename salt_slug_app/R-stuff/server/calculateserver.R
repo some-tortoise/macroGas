@@ -1,11 +1,41 @@
 #
-# BASIC UI 
+# UI
 #
+
+# Modal dialog for entering salt slug mass and salt slug in-time (since these don't change by station)
+observeEvent(input$navbar, {
+  if (input$navbar == "calculatetab" && !is.null(goop$combined_df)) {
+    showModal(modalDialog(
+      p("Please enter the mass of your salt slug and the time it was added to the stream below before continuing to the rest of the calculate page:"),
+      uiOutput("salt_out"),
+      uiOutput("injectiontime_out"),
+      footer = modalButton("Done"), size = "l"
+    ))
+  }
+})
+
+# A renderUI for entering mass of the salt slug
+output$salt_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  numericInput("salt_mass", label = "NaCl Mass, (g):", value = 0)
+}) 
+
+# A renderUI for entering the time the salt slug went in
+output$injectiontime_out <- renderUI({
+  req(goop$calc_curr_station_df)
+  req(goop$calc_curr_station_df_use)
+  fluidRow(
+    column(width = 8,
+           timeInput("injectiontime", label = "Time of injection:", value = "00:00:00"),
+    )
+  )
+}) 
 
 # A renderUI that creates a dropdown to select from the stations that have been uploaded
 output$calc_station <- renderUI({
   if(!is.null(goop$combined_df)){
-    selectInput("calc_station_picker", label = "Choose A Station", sort(unique(goop$combined_df$station)))
+    selectInput("calc_station_picker", label = "Choose A Station:", sort(unique(goop$combined_df$station)))
   }else{
     HTML("<label>Choose A Station<br></br></label>")
   }
@@ -14,61 +44,23 @@ output$calc_station <- renderUI({
 # A renderUI for the background conductivity input
 output$background_out <- renderUI({
   req(goop$calc_curr_station_df)
-  req(goop$calc_curr_station_df_use)
-  fluidRow(
-    column(width = 8,
-           numericInput("background", label = "Background conductivity, (µS/cm):", value = 0)
-    ),
-    column(width = 2,
-           actionButton("enterbackground", label = "Enter")
-    )
-  )
-}
-  )
-
-# A renderUI for entering mass of the salt slug
-output$salt_out <- renderUI({
-  req(goop$calc_curr_station_df)
-  req(goop$calc_curr_station_df_use)
-  fluidRow(
-    column(width = 8,
-           numericInput("salt_mass", label = "NaCl Mass (g):", value = 0)
-    ),
-    column(width = 2,
-           actionButton("entersalt", label = "Enter")
-    )
-  )
+  req(goop$calc_curr_station_df_use)           
+  numericInput("background", label = "Background conductivity, (µS/cm):", value = 0)
 }) 
 
 # A renderUI for entering stream width 
 output$width_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
-  fluidRow(
-    column(width = 8,
-           numericInput("width", label = "Stream width (m):", value = 0)
-    ),
-    column(width = 2,
-           actionButton("enterwidth", label = "Enter")
-    )
-  )
+  numericInput("width", label = "Stream width, (m):", value = 0)
 }) 
 
 # A renderUI for entering distance from station 1 
 output$distance_out <- renderUI({
   req(goop$calc_curr_station_df)
   req(goop$calc_curr_station_df_use)
-  fluidRow(
-    column(width = 8,
-           numericInput("distance", label = "Distance from Station 1, (m):", value = 0)
-    ),
-    column(width = 2,
-           actionButton("enterdistance", label = "Enter")
-    )
-  )
+  numericInput("distance", label = "Distance from injection, (m):", value = 0)
 }) 
-
-
 
 #
 # PLOT 
@@ -80,6 +72,7 @@ observeEvent(input$calc_station_picker, {
   goop$calc_curr_station_df <- na.omit(goop$calc_curr_station_df)
 })
 
+# Excludes 'bad' flags from calculation if user selects the checkbox
 observeEvent(c(input$excludeflags, goop$calc_curr_station_df), {
   if(input$excludeflags == TRUE){
     bad_dates <- goop$bad_dates
@@ -105,37 +98,6 @@ observe({
 observeEvent(input$calc_station_picker, {
   goop$background <- round(((mean(goop$calc_curr_station_df_use$Low_Range)) - 5), 2)
 }) 
-
-# Changes goop$background based on user input and saves to output df
-observeEvent(input$enterbackground,{
-  goop$background <- input$background
-  background_cond <- goop$background
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'bkgnd_uS'] <- background_cond 
-  
-}) 
-
-# Assigns salt mass to goop$Mass_NaCL and saves to output df
-observeEvent(input$entersalt,{
-  goop$Mass_NaCl <- input$salt_mass
-  mass_nacl <- goop$Mass_NaCl
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'slug_mass_g'] <- mass_nacl 
-  
-}) 
-
-# Assigns width of stream to output table
-observeEvent(input$enterwidth, {
-  goop$width <- input$width
-  width <- goop$width
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'width_m'] <- width
-})
-
-# Assigns distance from station 1 to output table
-observeEvent(input$enterdistance, {
-  goop$distance <- input$distance
-  distance <- goop$distance
-  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'station_distance'] <- distance
-})
-
 
 # Renders the plot of the breakthrough curve data
 output$dischargecalcplot <- renderPlotly({
@@ -166,7 +128,7 @@ output$dischargecalcplot <- renderPlotly({
   
   # Plot is based on goop$calc_curr_station_df
   p <- plot_ly(goop$calc_curr_station_df_use, x = ~Date_Time, y = ~Low_Range, 
-          type = 'scatter', mode = 'lines', source = "R") %>%
+               type = 'scatter', mode = 'lines', source = "R") %>%
     # Trace and fill added where xfill isn't NA (between two vertical lines)
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df_use$xfill, tz = 'EST', origin = "1970-01-01"), y = ~Low_Range) %>%
     add_trace(x = ~as.POSIXct(goop$calc_curr_station_df_use$xfill, tz = 'EST', origin = "1970-01-01"), y = ~goop$background, fill = 'tonextx', fillcolor = 'rgba(255, 165, 0, 0.3)', line = list(color = 'black')) %>%
@@ -174,13 +136,13 @@ output$dischargecalcplot <- renderPlotly({
       xaxis = list(title = "Date and Time"), 
       yaxis = list(title = "Low Range Conductivity"),
       showlegend = FALSE, shapes = list(
-      # Left vertical line
-      list(type = "line", x0 = xLeft, x1 = xLeft,
-           y0 = 0, y1 = 1, yref = "paper"),
-      # Right vertical line
-      list(type = "line", x0 = xRight, x1 = xRight,
-           y0 = 0, y1 = 1, yref = "paper")
-    )) %>%
+        # Left vertical line
+        list(type = "line", x0 = xLeft, x1 = xLeft,
+             y0 = 0, y1 = 1, yref = "paper"),
+        # Right vertical line
+        list(type = "line", x0 = xRight, x1 = xRight,
+             y0 = 0, y1 = 1, yref = "paper")
+      )) %>%
     # Gets rid of Plotly modebar and allows the vertical lines to be editable by user
     config(displayModeBar = FALSE, edits = list(shapePosition = TRUE))
   
@@ -210,6 +172,59 @@ observeEvent(event_data("plotly_relayout", source = "R"), {
   }
 }) 
 
+
+#
+# SAVE INPUTS TO OUTPUT DF
+#
+
+# Changes goop$background based on user input and saves to output df
+observeEvent(input$background,{
+  goop$background <- input$background
+  background_cond <- goop$background
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'bkgnd_uS'] <- background_cond 
+  
+}) 
+
+# Assigns salt mass to goop$Mass_NaCL and saves to every row of output df
+observeEvent(input$salt_mass,{
+  goop$Mass_NaCl <- input$salt_mass
+  mass_nacl <- goop$Mass_NaCl
+  goop$dischargeDF$slug_mass_g <- mass_nacl
+  
+}) 
+
+# Assigns width of stream to output table
+observeEvent(input$width, {
+  goop$width <- input$width
+  width <- goop$width
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'width_m'] <- width
+})
+
+# Assigns distance from injection to output table
+observeEvent(input$distance, {
+  goop$distance <- input$distance
+  distance <- goop$distance
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'station_distance'] <- distance
+})
+
+# Add calculate velocity to output df based on distance and travel time
+observeEvent(goop$dischargeDF, {
+  for (i in 1:nrow(goop$dischargeDF)) {
+    goop$dischargeDF$velocity_ms[i] <- (goop$dischargeDF$station_distance[i] / goop$dischargeDF$travel_time_sec[i])
+  }
+})
+
+
+# Assigns injection time to output table
+observeEvent(input$injectiontime, {
+  goop$injectiontime <- input$injectiontime
+  injectiontime <- goop$injectiontime
+  injectiontime <- ymd_hms(injectiontime)
+  injectiontime <- format(injectiontime, format = "%H:%M:%S")
+  goop$dischargeDF$slug_in_time <- injectiontime
+  })
+
+
 #
 # OUTPUT, MATH, TABLE
 #
@@ -224,27 +239,29 @@ observeEvent(c(goop$combined_df), {
     which_station <- c(which_station, paste0('Station ', i))
   } #for loop to name the columns after each unique station in goop$combined_df 
 
-  a <- data.frame('Date' = "", 
-                  'Site' = "",  
+  a <- data.frame('Date' = "-",
+                  'Site' = "-",  
                   'Station' = which_station, # done
                   'station_distance' = zero, # done
                   'slug_mass_g' = zero, # done
-                  'slug_in_time' = zero, 
+                  'slug_in_time' = zero, # done
                   'integration_start_time' = zero, # done
                   'integration_end_time' = zero, # done
-                  'integral' = zero, # ???
+                  'integral' = zero, # done
                   "half_peak_time" = zero, 
                   'peak_time' = zero, # done
                   "discharge_Ls" = zero, # done
-                  "gw_discharge_Ls" = zero, 
+                  "gw_discharge_Ls" = zero, # done
+                  "overall_gw_discharge_Ls" = "", # done
                   "travel_time_sec" = zero, # done
-                  "velocity_ms" = zero,
+                  "velocity_ms" = zero, # done
                   "width_m" = zero, # done
                   "bkgnd_uS" = zero, # done
                   "peak_uS" = zero, # done
-                  "slug_recovered_g" = zero)
-
+                  "slug_recovered_g" = zero) # just leave blank so done
+  
   goop$dischargeDF <- a
+  
 }) 
 
 # Creates goop$trimmed_slug that only contains values between the left and right bars to do calculations with later
@@ -311,13 +328,15 @@ output$dischargeOutput <- renderText({
     } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
+  # Adds both discharge and integral to output DF
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'discharge_Ls'] <- Discharge 
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'integral'] <- Area 
   
   return(paste0('Discharge: ', Discharge, ' L/s')) 
    
  }) 
 
-# Math to calculate time to half height
+# Math to calculate time to half height and half peak time
 output$halfheightOutput <- renderText({
   
   # Requirements
@@ -335,7 +354,7 @@ output$halfheightOutput <- renderText({
   station_slug <- goop$trimmed_slug
   start_time <- goop$calc_xLeft
   
-  # Identify the max conductivity (highest point on the BTC) and its index
+  # Identify the max conductivity and its index
   Cmax <- max(station_slug$Low_Range)
   index_Cmax <- which(station_slug$Low_Range == Cmax)[1]
 
@@ -362,6 +381,7 @@ output$halfheightOutput <- renderText({
   start_time <- station_slug$Date_Time[index_start_time] # Extract the start_time from the 'station_slug' data frame using the index 'index_start_time'
   Chalf_time <- station_slug$Date_Time[index_Chalf] # Extract the Chalf_time from the 'station_slug' data frame using the index 'index_Chalf'
   time_to_half <- ((as.numeric(Chalf_time) - as.numeric(start_time))) 
+  goop$time_to_half <- time_to_half
   
   if(is.na(time_to_half) || is.null(time_to_half) || length(time_to_half) == 0){
     return(paste0('Time to half height: ', "NA seconds"))
@@ -370,12 +390,19 @@ output$halfheightOutput <- renderText({
   # Update Half_Height in goop for the rows where station column matches the user input in calc_station_picker
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'travel_time_sec'] <- time_to_half 
   
-  return(paste0('Time to half height: ', time_to_half, " seconds"))
+  # half_peak_time (easiest to do in this observe block bc of index_Chalf)
+  half_peak_date_time <- station_slug$Date_Time[index_Chalf]
+  half_peak_date_time <- ymd_hms(half_peak_date_time)
+  half_peak_time <- format(half_peak_date_time, format = "%H:%M:%S")
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ',input$calc_station_picker), 'half_peak_time'] <- half_peak_time
   
+  
+  # have to run the return last so back to printing time to half onto the page
+  return(paste0('Time to half height: ', time_to_half, " seconds"))
 
 })
 
-# Math to calculate groundwater exchange
+# Math to calculate overall groundwater exchange
 output$groundwaterOutput <- renderUI({
   req(goop$combined_df)
   
@@ -392,38 +419,32 @@ output$groundwaterOutput <- renderUI({
   last_station_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', last_station), 'discharge_Ls'])
   
   if(first_station_discharge == 0 || last_station_discharge == 0){
-    return(p('NA'))
+    return(p('NA -- please finish calculating discharge for every station.'))
   }
   
   # Calculate exchange by subtracting last station from first station discharge
-  diff <- first_station_discharge - last_station_discharge
+  diff <- last_station_discharge - first_station_discharge
+  
+  #Assign to last column of output df
+  goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'overall_gw_discharge_Ls'] <- diff 
   
   p(paste0(diff, ' L/s'))
 })
 
-# Math to calculate average discharge
-output$avgDischargeOutput <- renderUI({
-  if(length(unique(goop$combined_df$station)) == 0){
-    return(p('Need at least one station'))
-  }
-  
-  sum <- 0
-  for(i in as.numeric(unique(goop$combined_df$station))){
-    curr_discharge <- as.numeric(goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', i), 'discharge_Ls'])
-    if(is.null(curr_discharge) || is.na(curr_discharge) || curr_discharge == 0){
-      return(p('Get discharge for all stations'))
+# Add each station's discharge to output df
+observeEvent(goop$dischargeDF, {
+  # Check if goop$dischargeDF has more than 1 row
+  if (nrow(goop$dischargeDF) > 1) {
+    # For loop to calc gw discharge for as many rows as present starting at row 2
+    for (i in 2:nrow(goop$dischargeDF)) {
+      goop$dischargeDF$gw_discharge_Ls[i] <- goop$dischargeDF$discharge_Ls[i] - goop$dischargeDF$discharge_Ls[i - 1]
     }
-    sum <- sum + curr_discharge
-  }
-  
-  
-  mean <- sum / length(unique(goop$combined_df$station))
-  p(paste0(mean,' L/s'))
+  } else {
+      goop$dischargeDF$gw_discharge_Ls <- "NA"
+      }
 })
 
-# Math to calculate velocity
-
-# Peak and Peak Time
+# Calculate peak and peak time and add to output table
 observeEvent(goop$trimmed_slug, {
   
   # Peak Conductivity
@@ -440,13 +461,12 @@ observeEvent(goop$trimmed_slug, {
   
 })
 
-
-
+# Show final output table
 observeEvent(goop$combined_df, {
   output$dischargetable <- function() {
     discharge_table <- goop$dischargeDF
     discharge_table %>%
-      select(-c(Date, Site)) %>%  # Use 'select' with the negative sign to exclude Date and Site columns
+      select(-c(Date, Site)) %>%  # What columns to exclude from view
       knitr::kable("html") %>%
       kable_styling("striped", full_width = T)
   }
@@ -456,24 +476,37 @@ observeEvent(goop$combined_df, {
 # DOWNLOAD OUTPUT
 #
 
-# Function to get all the names
+# Function to create file name for download
 new_filename <- function() {
- 
-  # File name for download
   filename <- uploaded_data$csv_names[1]
   pattern <- "station_[0-9]_"
   station_string <- str_extract(filename, pattern)
   output_filename <- str_replace(filename, pattern, "")
   return(output_filename)
+}
   
-  # Retrieve site name
-  
-  
-  # Retrieve station name
-  
-  
-  # Retrieve date
-  
+# Function to get site name from filename
+get_site_name <- function() {
+  filename <- uploaded_data$csv_names[1]
+  pattern <- "mgas_(.*?)_station"
+  site_name <- regmatches(filename, regexpr(pattern, filename))
+  if (length(site_name) > 0) {
+    return(gsub("mgas_|_station", "", site_name))
+  } else {
+    return(NULL)
+  }
+}
+
+# Function to get date from filename
+extract_date <- function() {
+  filename <- uploaded_data$csv_names[1]
+  pattern <- "\\d{4}-\\d{2}-\\d{2}"
+  date <- regmatches(filename, regexpr(pattern, filename))
+  if (length(date) > 0) {
+    return(date)
+  } else {
+    return(NULL)
+  }
 }
 
 # Modal dialog for downloading 
@@ -482,19 +515,30 @@ observeEvent(input$downloadOutputTable, {
     title = 'Download',
     textInput("stationinput", label = "File name:", value = new_filename()), 
     br(),
-    p("Check the below site, station, and date pulled from the filename are correct before downloading your data.
+    p("Check the following site and date pulled from the filename are correct before downloading your data.
       If you are from outside the Bernhardt Lab or uploaded files without the MacroGas naming convention, 
-      please input your site, station, and date below so they appear correctly:"),
-    textInput("outputsite", label = "Site:", value = ""),
-    textInput("outputstation", label = "Station", value = ""),
-    textInput("outputdate", label = "Date:", value = ""),
-    p("Download output table:"),
+      please add your site and date below so they appear correctly:"),
+    textInput("outputsite", label = "Site:", value = get_site_name()),
+    textInput("outputdate", label = "Date:", value = extract_date()),
+    tags$b(p("Download output table:")),
+    hr(),
     downloadButton('downloadBtnDischarge', 'Download'),
     easyClose = FALSE,
     footer = tagList(
       modalButton("Close")
     )
   ))
+})
+
+# Put site and date into final output table based on our guess/if changed by user
+observeEvent(input$outputsite, {
+  site <- input$outputsite
+  goop$dischargeDF$Site <- site 
+})
+
+observeEvent(input$outputdate, {
+  date <- input$outputdate
+  goop$dischargeDF$Date <- date 
 })
 
 # Download handler to write the csv

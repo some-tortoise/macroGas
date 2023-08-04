@@ -81,25 +81,6 @@ plot(density(df$Temp_C))
 plot(df$Temp, df$DO)
 ```
 
-```{r}
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.is_day)) + 
-#   geom_point()
-# 
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.rain)) + 
-#   geom_point()
-# 
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.temperature_2m)) + 
-#   geom_point()
-# 
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.direct_radiation)) + 
-#   geom_point()
-# 
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.windspeed_10m)) + 
-#   geom_point()
-# 
-# ggplot(data = data, mapping = aes(x = hourly.time, y = hourly.cloudcover)) + 
-#   geom_point()
-```
 
 ```{r}
 new_df = df[726:2698,]

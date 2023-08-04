@@ -14,7 +14,7 @@ div(class = 'qaqc panel-container',
             uiOutput('main_plot'),
             div(class = 'qaqc--continue-stuff',
                 div(class = 'qaqc--continue-container',
-                    p('When you have finished flagging, press continue'),
+                    p('When you have finished flagging, press continue  '),
                     actionButton('qaqcContinue', class='continue-btn', 'Continue')
                     )
                 )

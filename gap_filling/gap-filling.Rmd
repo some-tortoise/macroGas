@@ -24,7 +24,7 @@ Ex_Time <- c()
 date_index = c()
 pre_date = strsplit(Time[[1]][1], split = "/")[[1]][2]
 pre_index = 1
-# convert time to time of a day
+# convert time to time of a day (0-1440 minutes)
 for(i in 1:length(Time)){
   AM_PM = Time[[i]][3]
   Temp_Time = strsplit(Time[[i]][2], ":")
@@ -46,7 +46,6 @@ for(i in 1:length(Time)){
   # add date index for different days
   pre_date = strsplit(Time[[i]][1], split = "/")[[1]][2]
 }
-plot(Ex_Time, df$DO)
 df$Time = Ex_Time
 df$date_index = date_index
 ```
@@ -56,31 +55,34 @@ df$date_index = date_index
 missing_index = which(is.na(df$DO))
 observed_df = df[-missing_index, 3:6]
 missing_df = df[missing_index, 3:6]
+# see the relationship between DO and time of a day
 p1 <- ggplot()+
   geom_point(aes(x = observed_df$Time, y = observed_df$DO), color='grey')+
   labs(x="Time in a day(Min)", y="DO")+
-  ggtitle("original")
+  ggtitle("observed data")
 p1
 ```
 
 
 ```{r}
+# fit a regression model with all variables and Time^2
 fit1 <- lm(DO ~ .+I(Time^2), data = observed_df)
 pred1 <- predict(fit1, newdata = missing_df)
 p2 = ggplot()+
   geom_point(aes(x = observed_df$Time, y = observed_df$DO), color="grey")+
   geom_point(aes(x = missing_df$Time, y = pred1), color="red")+
   labs(x="Time in a day(Min)", y="DO")+
-  ggtitle("Regression for all")
+  ggtitle("Regression Model")
 p2
 ```
 
 ```{r}
+# using mean of DO in different days at a time to predict
 mean_rep = observed_df %>% 
   group_by(Time) %>%
   summarise(mean_DO = mean(DO))
 pred2 <- c()
-for(i in 1:100){
+for(i in 1:nrow(missing_df)){
   pred_Time = missing_df$Time[i]
   pred2[i] <- mean_rep[mean_rep$Time==pred_Time,]$mean_DO
 }
@@ -93,6 +95,7 @@ p3
 ```
 
 ```{r}
+# k-nearest neighbors imputation
 library("DMwR2")
 filled_df <- knnImputation(df[,3:6])
 p4 = ggplot()+
@@ -104,8 +107,10 @@ p4
 ```
 
 ```{r, fig.height=10, fig.width=12}
+# see the difference among different imputation method
 library(gridExtra)
 library(grid)
 grid.arrange(p2, p3, p4, ncol=2)
 ```
+
 

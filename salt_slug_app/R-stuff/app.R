@@ -51,7 +51,7 @@ ui <- fluidPage(class = 'body-container',
                  tabPanel(title = 'QA/QC',
                           value = "flagpanel",
                           source("ui/flag.R")[1]),
-                 tabPanel('Calculate',
+                 tabPanel('Calculate', value = "calculatetab",
                           source("ui/calculate.R")[1])
              ),
 
@@ -64,7 +64,7 @@ ui <- fluidPage(class = 'body-container',
         $(nextTab).tab('show');
       }
     });
-  ")),
+  "))
   )
  
 server <-  function(input, output, session) {
