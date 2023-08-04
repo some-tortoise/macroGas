@@ -210,7 +210,7 @@ observeEvent(input$distance, {
 # Add calculate velocity to output df based on distance and travel time
 observeEvent(goop$dischargeDF, {
   for (i in 1:nrow(goop$dischargeDF)) {
-    goop$dischargeDF$velocity_ms[i] <- (goop$dischargeDF$station_distance[i] / goop$dischargeDF$travel_time_sec[i])
+    goop$dischargeDF$velocity_ms[i] <- round((goop$dischargeDF$station_distance[i] / goop$dischargeDF$travel_time_sec[i]), 3)
   }
 })
 
@@ -319,12 +319,12 @@ output$dischargeOutput <- renderText({
                     0),
            Area = NaCl_Conc * diff_time_btwn_observations) 
   
-  Area <- sum(station_slug$Area) # Area under the curve is the sum of the Area column
+  Area <- round(sum(station_slug$Area), 3) # Area under the curve is the sum of the Area column
   
   if(is.null(goop$Mass_NaCl)){
     Discharge = 0
     }else{
-    Discharge = round(goop$Mass_NaCl / Area, 2)
+    Discharge = round(goop$Mass_NaCl / Area, 3)
     } # Round the discharge to 2 points
   
   # Updates the 'Discharge' column in goop$dischargeDF for the rows where the 'Station' column matches the selected station name from the input 'calc_station_picker'
@@ -423,7 +423,7 @@ output$groundwaterOutput <- renderUI({
   }
   
   # Calculate exchange by subtracting last station from first station discharge
-  diff <- last_station_discharge - first_station_discharge
+  diff <- round((last_station_discharge - first_station_discharge), 3)
   
   #Assign to last column of output df
   goop$dischargeDF[goop$dischargeDF$Station == paste0('Station ', first_station), 'overall_gw_discharge_Ls'] <- diff 
@@ -437,7 +437,7 @@ observeEvent(goop$dischargeDF, {
   if (nrow(goop$dischargeDF) > 1) {
     # For loop to calc gw discharge for as many rows as present starting at row 2
     for (i in 2:nrow(goop$dischargeDF)) {
-      goop$dischargeDF$gw_discharge_Ls[i] <- goop$dischargeDF$discharge_Ls[i] - goop$dischargeDF$discharge_Ls[i - 1]
+      goop$dischargeDF$gw_discharge_Ls[i] <- round((goop$dischargeDF$discharge_Ls[i] - goop$dischargeDF$discharge_Ls[i - 1]), 3)
     }
   } else {
       goop$dischargeDF$gw_discharge_Ls <- "NA"
