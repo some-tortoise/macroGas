@@ -1,8 +1,3 @@
-library(shiny) # for webpage creation
-library(plotly) # for interactive graphs
-library(DT) # for datatables
-library(shinyTime)
-
 div(class = 'calculate panel-container',
     
     div(class = 'calculate--box1',
@@ -26,15 +21,14 @@ div(class = 'calculate panel-container',
         div(class = 'calculate--box3',
             div(class = 'general-stats-out',
                 p(class = 'general-val-title', 'Groundwater Exchange: '),
+                p("(calculated as last station - first station)"),
                 p(class = 'general-val', uiOutput('groundwaterOutput')),
-                p(class = 'general-val-title', 'Average Discharge: '),
-                p(class = 'general-val', uiOutput('avgDischargeOutput'))
-                ),
-            div(class = 'calculate--downloads-container',
+                hr(),
+                br(),
                 actionButton('downloadOutputTable', 'Download Output Table')
                 )
             ),
-        tableOutput("dischargetable")
+          tableOutput("dischargetable")
         ),
     div(class = 'instructions-container', id = 'calcInstructionsBtn', '?'),
     div(id = 'calc-modal-container',
@@ -65,3 +59,4 @@ div(class = 'calculate panel-container',
                      ")
     )
     )
+
