@@ -11,7 +11,6 @@ require(shinyjs)
 require(shinyFiles)
 require(shinyTime) 
 require(sortable)
-require(googledrive)
 require(readr)
 require(shinyBS)
 require(tidyverse)
@@ -22,9 +21,6 @@ require(knitr)
 require(kableExtra)
 require(reshape2)
 require(ggplot2)
-
-# Sys.setenv(GOOGLE_APPLICATION_CREDENTIALS = "keyFile.json")
-# drive_auth()
 
 combined_df <- NULL
 

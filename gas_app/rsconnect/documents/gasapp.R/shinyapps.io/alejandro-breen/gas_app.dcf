@@ -5,9 +5,10 @@ account: alejandro-breen
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 9512906
-bundleId: 7519848
+bundleId: 7529253
 url: https://alejandro-breen.shinyapps.io/gas_app/
-when: 1690911520.95351
-lastSyncTime: 1690911520.95352
+when: 1691098128.98563
+lastSyncTime: 1691098128.98564
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: processed_cb_poolDown_2023-06-14.csv|processed_erwin_downstream_2023-05-31.csv
