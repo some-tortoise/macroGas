@@ -260,8 +260,6 @@ observeEvent(c(goop$combined_df), {
                   "peak_uS" = zero, # done
                   "slug_recovered_g" = zero) # just leave blank so done
   
-  view(a)
-  
   goop$dischargeDF <- a
   
 }) 

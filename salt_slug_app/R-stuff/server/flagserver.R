@@ -113,13 +113,9 @@ observeEvent(input$flag_btn, {
 
   # Assigns the flag from input$flag_type to where the id and station match from selectedData()
   goop$melted_combined_df[((goop$melted_combined_df$id %in% selectedData()$id) & (goop$melted_combined_df$Station %in% selectedData()$Station)), "Flag"] <- input$flag_type  
-  # goop$combined_df[((goop$combined_df$id %in% selectedData()$id) & (goop$combined_df$station %in% selectedData()$station)), flag_name] <- input$flag_type
-  
+
 })
 
-# all_dates <- reactive({
-#   req(goop$melted_combined_df)
-# })
 
 #
 # EXPORT 
@@ -153,11 +149,9 @@ observeEvent(input$downloadFlaggedDataset, {
 
 output$downloadBtn <- downloadHandler(
   filename = function() {
-    # Set the filename of the downloaded file
     "processed.csv"
   },
   content = function(file) {
-    # Generate the content of the file
     write.csv(goop$melted_combined_df, file, row.names = FALSE)
   }
 )
